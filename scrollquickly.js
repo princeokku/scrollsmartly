@@ -60,6 +60,7 @@
 				addEvent(linkElms[i], 'click', startScroll);
 				if(anchorElm !== null){
 					anchorElms['#' + hashStr] = anchorElm;
+					console.log(hashStr, anchorElm);
 				}
 			}
 		}
@@ -67,13 +68,12 @@
 		// 外部からページ内リンク付きで呼び出された場合
 		if(activateInitialScroll){
 			if(window.attachEvent && !window.opera){
-				// IEの場合はちょっと待ってからスクロール
+				// IEの場合は少し待ってからスクロール
 				setTimeout(function(){
 					scrollTo(0, 0);
 					setScroll('#' + location.href.split('#')[0]);
 				}, 50);
 			}else{
-				// IE以外はそのままGO
 				scrollTo(0, 0);
 				setScroll('#' + location.href.split('#')[0]);
 			}
