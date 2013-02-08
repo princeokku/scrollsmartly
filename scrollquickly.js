@@ -13,20 +13,17 @@
 */
 
 (function(){
+	// Preference
 	var easing = 0.25;
 	var interval = 20;
-	var d = document;
-	var targetX = 0;
-	var targetY = 0;
-	var targetHash = '';
+	var activateInitialScroll = false;
+
+	var targetX = 0, targetY = 0, targetHash = '';
 	var scrolling = false;
 	var splitHref = location.href.split('#');
-	var currentHref_WOHash = splitHref[0];
-	var incomingHash = splitHref[1];
-	var prevX = null;
-	var prevY = null;
+	var prevX = null, prevY = null;
 	var starting = 0;
-	var anchorElms = [document.documentElement || document.body];
+	var anchorElms = {'#' : document.documentElement || document.body};
 
 	function addEvent(eventTarget, eventName, func){
 		if(eventTarget.addEventListener){
@@ -36,17 +33,17 @@
 		}
 	}
 
-	// ドキュメント読み込み完了時にinit()を実行する
 	addEvent(window, 'load', init);
 
-	// ドキュメント読み込み完了時の処理
 	function init(){
+		var currentHref_WOHash = location.href.split('#')[0];
 		// ページ内リンクにイベントを設定する
 		var linkElms = document.links;
 		for(var i=0; i<linkElms.length; i++){
 			var hrefStr = linkElms[i].href;
 			var splitterIndex = hrefStr.lastIndexOf('#');
-			var anchorElm = document.getElementById(hrefStr.substr(splitterIndex + 1));
+			var hashStr = hrefStr.substr(splitterIndex + 1);
+			var anchorElm = document.getElementById(hashStr);
 
 			/*
 			イベントリスナーを登録するリンク:
@@ -58,29 +55,29 @@
 			・href属性に '#' を含むが、当該リンクのあるページ内のものではない、別ページのアンカーへのリンク
 			・href属性を持たないa要素
 			*/
+
 			if(hrefStr.substring(0, splitterIndex) === currentHref_WOHash){
+				addEvent(linkElms[i], 'click', startScroll);
 				if(anchorElm !== null){
-					addEvent(linkElms[i], 'click', startScroll);
-					anchorElms.push(anchorElm);
-				}/*else if(){
-					
-				}*/
+					anchorElms['#' + hashStr] = anchorElm;
+				}
 			}
 		}
 
-		/*
 		// 外部からページ内リンク付きで呼び出された場合
-		if(incomingHash){
+		if(activateInitialScroll){
 			if(window.attachEvent && !window.opera){
 				// IEの場合はちょっと待ってからスクロール
-				setTimeout(function(){scrollTo(0,0);setScroll('#'+incomingHash);},50);
+				setTimeout(function(){
+					scrollTo(0, 0);
+					setScroll('#' + location.href.split('#')[0]);
+				}, 50);
 			}else{
 				// IE以外はそのままGO
 				scrollTo(0, 0);
-				setScroll('#'+incomingHash);
+				setScroll('#' + location.href.split('#')[0]);
 			}
 		}
-		*/
 	}
 
 	function startScroll(event){
@@ -89,21 +86,14 @@
 		}else if(window.event){ // IE
 			window.event.returnValue = false;
 		}
-		setScroll(this.hash); //linkElms[i].hash
+		setScroll(this.hash || '#'); //linkElms[i].hash
 	}
 
 	function setScroll(hash){
 		// ハッシュからターゲット要素の座標を取得
-		var targetElm = null;
-		for(var i=1, targetId = hash.substr(1); i < anchorElms.length; i++){
-			if(anchorElms[i].id === targetId){
-				targetElm = anchorElms[i];
-				break;
-			}
-		}
-
+		var targetElm = anchorElms[hash];
 		if(targetElm === null){
-			targetElm = anchorElms[0];
+			targetElm = anchorElms['#'];
 		}
 		// スクロール先座標をセットする
 		var x = 0;
@@ -125,8 +115,8 @@
 	}
 
 	function scroll(){
-		var currentX = d.documentElement.scrollLeft||d.body.scrollLeft;
-		var currentY = d.documentElement.scrollTop||d.body.scrollTop;
+		var currentX = document.documentElement.scrollLeft||document.body.scrollLeft;
+		var currentY = document.documentElement.scrollTop||document.body.scrollTop;
 		var vx = (targetX - currentX) * easing;
 		var vy = (targetY - currentY) * easing;
 		var nextX = currentX + vx;
@@ -141,7 +131,7 @@
 			return;
 		}else{
 			// 繰り返し
-			scrollTo(parseInt(nextX), parseInt(nextY));
+			scrollTo(parseInt(nextX, 10), parseInt(nextY, 10));
 			prevX = currentX;
 			prevY = currentY;
 			setTimeout(function(){ scroll(); }, interval);
@@ -155,25 +145,26 @@
 	function getWindowSize(){
 		var result = {};
 		if(window.innerWidth){
-			var box = d.createElement('div');
-			with(box.style){
-				position = 'absolute';
-				top = '0px';
-				left = '0px';
-				width = '100%';
-				height = '100%';
-				margin = '0px';
-				padding = '0px';
-				border = 'none';
-				visibility = 'hidden';
-			}
-			d.body.appendChild(box);
+			var box = document.createElement('div');
+			box.style.position = 'absolute';
+			box.style.top = '0px';
+			box.style.left = '0px';
+			box.style.width = '100%';
+			box.style.height = '100%';
+			box.style.margin = '0px';
+			box.style.padding = '0px';
+			box.style.border = 'none';
+			box.style.visibility = 'hidden';
+			document.body.appendChild(box);
 			var width = box.offsetWidth;
 			var height = box.offsetHeight;
-			d.body.removeChild(box);
+			document.body.removeChild(box);
 			result = {width:width, height:height};
 		}else{
-			result = {width:d.documentElement.clientWidth || d.body.clientWidth, height:d.documentElement.clientHeight || d.body.clientHeight};
+			result = {
+				width:document.documentElement.clientWidth || document.body.clientWidth,
+				height:document.documentElement.clientHeight || document.body.clientHeight
+			};
 		}
 		return result;
 	}
