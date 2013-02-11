@@ -20,51 +20,70 @@
 
 	var targetX = 0, targetY = 0, targetHash = '';
 	var scrolling = false;
-	var splitHref = location.href.split('#');
 	var prevX = null, prevY = null;
-	var starting = 0;
-	var anchorElms = {'#' : document.documentElement || document.body};
+	
+	var rootElm = document.documentElement || document.body;
+	var anchorElms = {'#': rootElm};
 
-	function addEvent(eventTarget, eventName, func){
-		if(eventTarget.addEventListener){
+	var addEvent;
+	if(window.addEventListener){
+		addEvent = function(eventTarget, eventName, func){
 			eventTarget.addEventListener(eventName, func, false);
-		}else if(window.attachEvent){ // IE
+		};
+	}else if(window.attachEvent){ // IE
+		addEvent = function(eventTarget, eventName, func){
 			eventTarget.attachEvent('on'+eventName, function(){func.apply(eventTarget);});
-		}
+		};
 	}
 
 	addEvent(window, 'load', init);
 
-	function init(){
+	var startScroll;
+	function init(loadEvent){
+		if(loadEvent){
+			startScroll = function(event){
+				event.preventDefault();
+				setScroll(this.hash || '#'); // linkElms[i].hash
+			};
+		}else if(window.event){ // IE
+			startScroll = function(){
+				window.event.returnValue = false;
+				setScroll(this.hash || '#');// linkElms[i].hash
+			};
+		}
+		
 		var currentHref_WOHash = location.href.split('#')[0];
 		// ページ内リンクにイベントを設定する
 		var linkElms = document.links;
 		for(var i=0; i<linkElms.length; i++){
 			var hrefStr = linkElms[i].href;
 			var splitterIndex = hrefStr.lastIndexOf('#');
-			var hashStr = hrefStr.substr(splitterIndex + 1);
-			var anchorElm = document.getElementById(hashStr);
 
 			/*
 			イベントリスナーを登録するリンク:
-			・href属性が '#anchor' で始まるページ内リンク -> id='anchor' である要素へのスクロール
+			・href属性が '#' で始まるページ内リンクであり、尚かつ、それが指し示すアンカーがページ内に存在するもの
+				-> id='anchor' である要素へのスクロール
 			・href属性が '#' 一文字のみのリンク -> ドキュメントの最上端へのスクロール
 			
 			イベントリスナーを登録しないリンク:
 			・href属性に '#' が含まれないリンク
+			・href属性に '#' を含むが、当該リンクが指し示すアンカーが存在しないリンク
 			・href属性に '#' を含むが、当該リンクのあるページ内のものではない、別ページのアンカーへのリンク
 			・href属性を持たないa要素
 			*/
 
 			if(hrefStr.substring(0, splitterIndex) === currentHref_WOHash){
-				addEvent(linkElms[i], 'click', startScroll);
-				if(anchorElm !== null){
+				var hashStr = hrefStr.substr(splitterIndex + 1);
+				var anchorElm = document.getElementById(hashStr);
+				if(anchorElm){
 					anchorElms['#' + hashStr] = anchorElm;
-					console.log(hashStr, anchorElm);
+					addEvent(linkElms[i], 'click', startScroll);
+				}else if(hashStr === ''){
+					addEvent(linkElms[i], 'click', startScroll);
 				}
 			}
 		}
-
+		
 		// 外部からページ内リンク付きで呼び出された場合
 		if(activateInitialScroll){
 			if(window.attachEvent && !window.opera){
@@ -80,21 +99,10 @@
 		}
 	}
 
-	function startScroll(event){
-		if(event){
-			event.preventDefault();
-		}else if(window.event){ // IE
-			window.event.returnValue = false;
-		}
-		setScroll(this.hash || '#'); //linkElms[i].hash
-	}
-
 	function setScroll(hash){
 		// ハッシュからターゲット要素の座標を取得
 		var targetElm = anchorElms[hash];
-		if(targetElm === null){
-			targetElm = anchorElms['#'];
-		}
+
 		// スクロール先座標をセットする
 		var x = 0;
 		var y = 0;
@@ -115,14 +123,14 @@
 	}
 
 	function scroll(){
-		var currentX = document.documentElement.scrollLeft||document.body.scrollLeft;
-		var currentY = document.documentElement.scrollTop||document.body.scrollTop;
+		var currentX = document.documentElement.scrollLeft || document.body.scrollLeft;
+		var currentY = document.documentElement.scrollTop || document.body.scrollTop;
 		var vx = (targetX - currentX) * easing;
 		var vy = (targetY - currentY) * easing;
 		var nextX = currentX + vx;
 		var nextY = currentY + vy;
-		if((Math.abs(vx) < 1 && Math.abs(vy) < 1)
-		|| (prevX === currentX && prevY === currentY)){
+		if((Math.abs(vx) < 1 && Math.abs(vy) < 1) ||
+		(prevX === currentX && prevY === currentY)){
 			// 目標座標付近に到達していたら終了
 			scrollTo(targetX, targetY);
 			scrolling = false;
@@ -137,14 +145,35 @@
 			setTimeout(function(){ scroll(); }, interval);
 		}
 	}
-   
-	function getDocumentSize(){
-		return {width:Math.max(document.body.scrollWidth, document.documentElement.scrollWidth), height:Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)};
-	}
-
-	function getWindowSize(){
-		var result = {};
-		if(window.innerWidth){
+	
+	var getScrollMaxXY;
+	if(window.scrollMaxX && window.scrollMaxY){
+		getScrollMaxXY = function(){
+			return {x: window.scrollMaxX, y: window.scrollMaxY};
+		};
+	}else{
+		getScrollMaxXY = function(){
+			var documentSize = getDocumentSize();
+			var windowSize = getWindowSize();
+			return {
+				x: documentSize.width - windowSize.width,
+				y: documentSize.height - windowSize.height
+			};
+		};
+		
+		var getDocumentSize = function(){
+			return {
+				width: Math.max(document.body.scrollWidth, document.documentElement.scrollWidth),
+				height: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
+			};
+		};
+		
+		var getWindowSize;
+		if(rootElm.clientWidth){
+			getWindowSize = function(){
+				return {width: rootElm.clientWidth, height: rootElm.clientHeight};
+			};
+		}else if(window.innerWidth){
 			var box = document.createElement('div');
 			box.style.position = 'absolute';
 			box.style.top = '0px';
@@ -155,27 +184,14 @@
 			box.style.padding = '0px';
 			box.style.border = 'none';
 			box.style.visibility = 'hidden';
-			document.body.appendChild(box);
-			var width = box.offsetWidth;
-			var height = box.offsetHeight;
-			document.body.removeChild(box);
-			result = {width:width, height:height};
-		}else{
-			result = {
-				width:document.documentElement.clientWidth || document.body.clientWidth,
-				height:document.documentElement.clientHeight || document.body.clientHeight
+
+			getWindowSize = function(){
+				document.body.appendChild(box);
+				var result = {width: box.offsetWidth, height: box.offsetHeight};
+				document.body.removeChild(box);
+				return result;
 			};
 		}
-		return result;
 	}
-   
-	function getScrollMaxXY() {
-		if(window.scrollMaxX && window.scrollMaxY){
-			return {x:window.scrollMaxX, y:window.scrollMaxY};
-		}
-		var documentSize = getDocumentSize();
-		var windowSize = getWindowSize();
-		return {x:documentSize.width - windowSize.width, y:documentSize.height - windowSize.height};
-	}
-   
+	
 }());
