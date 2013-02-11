@@ -48,7 +48,7 @@
 		}else if(window.event){ // IE
 			startScroll = function(){
 				window.event.returnValue = false;
-				setScroll(this.hash || '#');// linkElms[i].hash
+				setScroll(this.hash || '#'); // linkElms[i].hash
 			};
 		}
 		
