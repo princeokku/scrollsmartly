@@ -25,6 +25,12 @@
 	var rootElm = document.documentElement || document.body;
 	var anchorElms = {'#': rootElm};
 
+	//ハッシュが '#' 一文字のみである場合、それを取り除く
+	if(location.href.split('#')[1] === undefined && 'replaceState' in history){
+		history.replaceState("", document.title, location.pathname);
+		incomingHash = '';
+	}
+	
 	var addEvent;
 	if(window.addEventListener){
 		addEvent = function(eventTarget, eventName, func){
