@@ -26,7 +26,7 @@
 	var anchorElms = {'#': rootElm};
 
 	//ハッシュが '#' 一文字のみである場合、それを取り除く
-	if(location.href.split('#')[1] === undefined && 'replaceState' in history){
+	if(! location.href.split('#')[1] && 'replaceState' in history){
 		history.replaceState("", document.title, location.pathname);
 		incomingHash = '';
 	}
