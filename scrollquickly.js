@@ -3,7 +3,8 @@
  * Copyright (c) 2013 Shinnosuke Watanabe
  * https://github.com/shinnn
  * Licensed under the MIT License:
- * 
+ * http://www.opensource.org/licenses/mit-license.php
+ *
  * This branch is originated from:
  *
  *   scrollsmoothly.js
@@ -19,6 +20,7 @@
 	var activateInitialScroll = true;
 
 	var targetX = 0, targetY = 0, targetHash = '';
+	var currentX = 0, currentY = 0;
 	var scrolling = false;
 	var prevX = null, prevY = null;
 	
@@ -31,42 +33,54 @@
 	}
 	
 	var addEvent, removeEvent;
-	var addHashChangeEvent, removeHashChangeEvent;
 	if(window.addEventListener !== undefined){
 		addEvent = function(elm, eventType, func){
 			elm.addEventListener(eventType, func, false);
 		};
-
-		addHashChangeEvent = function(){
-			window.addEventListener('hashchange', onPopScroll, false);
-		};
-		removeHashChangeEvent = function(){
-			window.removeEventListener('hashchange', onPopScroll, false);			
-		};
-
 	}else if(window.attachEvent !== undefined){ // IE
 		addEvent = function(elm, eventType, func){
 			elm.attachEvent('on'+eventType, function(){func.apply(elm);});
 		};
-
-		addHashChangeEvent = function(){
-			console.log('setpop');
-			window.attachEvent('onhashchange', onPopScroll);
-		};
-		removeHashChangeEvent = function(){
-			window.detachEvent('onhashchange', onPopScroll);			
-		};
 	}
-	
-	/*
-	function onPopScroll(e){
-		console.log(e);
-		if(e){
-			e.preventDefault();
+		
+	var addHashChangeEvent = null;
+	var removeHashChangeEvent = null;
+	if(window.onhashchange !== undefined){
+		if(window.addEventListener !== undefined){
+			addHashChangeEvent = function(){
+				window.addEventListener('hashchange', onBackOrForward, false);
+			};
+			removeHashChangeEvent = function(){
+				window.removeEventListener('hashchange', onBackOrForward, false);
+			};
+		}else if(window.attachEvent !== undefined){
+			addHashChangeEvent = function(){
+				window.attachEvent('onhashchange', onBackOrForward);
+			};
+			removeHashChangeEvent = function(){
+				window.detachEvent('onhashchange', onBackOrForward);			
+			};
 		}
-		setScroll(location.hash || '#');
+		
+		var onBackOrForward = function(){
+			scrollTo(currentX, currentY);
+			setScroll(location.hash || '#');
+		};
+	
+		var scrollTimer = null;
+		var finishScrollInterval = interval * 10;
+		var finishScroll = function(){
+			if(scrollTimer !== null){
+				clearTimeout(scrollTimer);
+			}
+			scrollTimer = setTimeout(function(){
+				getCurrentXY();
+			}, finishScrollInterval);
+		};
+	
+		addHashChangeEvent();
+		addEvent(window, 'scroll', finishScroll);	
 	}
-	*/
 	
 	addEvent(window, 'load', init);
 	
@@ -123,7 +137,7 @@
 				// 少し待ってからスクロール
 				setTimeout(function(){
 					scrollTo(0, 0);
-					setScroll(location.hash );
+					setScroll(location.hash);
 				}, 50);
 			}else{
 				scrollTo(0, 0);
@@ -156,8 +170,7 @@
 	}
 
 	function scroll(){
-		var currentX = document.documentElement.scrollLeft || document.body.scrollLeft;
-		var currentY = document.documentElement.scrollTop || document.body.scrollTop;
+		getCurrentXY();
 		var vx = (targetX - currentX) * easing;
 		var vy = (targetY - currentY) * easing;
 		var nextX = currentX + vx;
@@ -167,9 +180,19 @@
 			// 目標座標付近に到達していたら終了
 			scrollTo(targetX, targetY);
 			scrolling = false;
-			if(targetHash === '#' && history.pushState !== undefined){
-				history.pushState('', document.title, location.pathname);
-			}else{
+			if(targetHash === '#'){
+				if(location.hash !== '' && history.pushState !== undefined){
+					if(addHashChangeEvent !== null){
+						removeHashChangeEvent();
+						setTimeout(function(){ addHashChangeEvent(); }, 50);
+					}
+					history.pushState('', document.title, location.pathname);					
+				}
+			}else if(targetHash !== location.hash){
+				if(addHashChangeEvent !== null){
+					removeHashChangeEvent();
+					setTimeout(function(){ addHashChangeEvent(); }, 50);
+				}
 				location.hash = targetHash;
 			}
 			prevX = prevY = null;
@@ -181,6 +204,11 @@
 			prevY = currentY;
 			setTimeout(function(){ scroll(); }, interval);
 		}
+	}
+	
+	function getCurrentXY(){
+		currentX = document.documentElement.scrollLeft || document.body.scrollLeft;
+		currentY = document.documentElement.scrollTop || document.body.scrollTop;	
 	}
 	
 	var getScrollMaxXY;

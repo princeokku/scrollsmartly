@@ -1,0 +1,41 @@
+$segmentSize : 800px;
+
+body{
+  width: $segmentSize * 4;
+  height: $segmentSize * 4;
+}
+
+.line{
+  float: left;
+  width: ($segmentSize + (20 + 10)*2) * 3;
+}
+
+.segment{
+  float: left;
+  width: $segmentSize;
+  height: 800px;
+  margin: 20px;
+  //background-color: #AAAAAA;
+  border-radius: 40px;
+  border:10px solid #FFFFFF;
+}
+
+.segment a{
+  display: block;
+  width: 1em;
+  height: 1em;
+  color: #FEFFFF;
+  text-decoration: none;
+  font-size: 400px;
+  line-height: 1;
+  text-shadow:10px 10px #EEEEEE;
+}
+
+$hue : 0%;
+@each $elm in '#a', '#b', '#c', '#d', '#e', '#f', '#g', '#h', '#i'{
+  $hue : $hue + 8;
+  $color : hsl($hue, 80%, 80%);
+  #{$elm}{
+    background-color: $color;
+  }
+}

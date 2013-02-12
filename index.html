@@ -1,44 +1,54 @@
 <!DOCTYPE html>
 <html lang='ja'>
 <head>
-<meta charset='utf-8'>
-<title>scrollquickly.js Demo</title>
+  <meta charset='utf-8'>
+  <title>scrollquickly.js Demo</title>
 
-<meta name='keywords' content="JavaScript">
-<meta name='description' content="">
-<meta name='author' content="Shinnosuke Watanabe">
+  <meta name='keywords' content="JavaScript">
+  <meta name='description' content="">
+  <meta name='author' content="Shinnosuke Watanabe">
 
-<meta property='og:type' content='website' />
-<meta property='og:url' content="" />
-<meta property='og:image' content="" />
-<meta property='og:description' content="" />
-<meta property='og:site_name' content="" />
+  <meta property='og:type' content='website' />
+  <meta property='og:url' content="" />
+  <meta property='og:image' content="" />
+  <meta property='og:description' content="" />
+  <meta property='og:site_name' content="" />
 
-<link href='css/normalize.css' rel='stylesheet' media='screen' />
-<link href='css/styles.css' rel='stylesheet' media='screen' />
+  <link href='css/normalize.css' rel='stylesheet' media='screen' />
+  <link href='css/styles.css' rel='stylesheet' media='screen' />
 
-<script src='scrollquickly.js'></script>
+  <script src='scrollquickly.js'></script>
 
 </head>
 <body>
-<div id='container'>
-  <a href='#a'>A</a>
-  <a href='#b'>B</a>
-  <a href='#c'>C</a>
-  <a href='#d'>D</a>
-  <a href='#i'>I</a>
-  <a href='#j'>J</a>
-  <div id ='a'><a href='#'>a</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <div id ='b'><a href='#'>b</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <div id ='c'><a href='#'>c</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <div id ='d'><a href='#'>d</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <div id ='e'><a href='#'>e</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <div id ='f'><a href='#'>f</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <div id ='g'><a href='#asd'>g</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <div id ='h'><a>h</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <div id ='i'><a href='#'>i</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <div id ='j'><a href='#'>j</a></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-</div>
+  <header>
+    <a href='#a'>A</a>
+    <a href='#b'>B</a>
+    <a href='#c'>C</a>
+    <a href='#d'>D</a>
+    <a href='#e'>E</a>
+    <a href='#f'>F</a>
+    <a href='#g'>G</a>
+    <a href='#h'>H</a>
+    <a href='#i'>I</a>
+  </header>
+  <div id='container'>
+    <div class='line'>
+      <div id ='a' class='segment'><a href='#b'>a</a></div>
+      <div id ='b' class='segment'><a href='#c'>b</a></div>
+      <div id ='c' class='segment'><a href='#d'>c</a></div>
+    </div>
+    <div class='line'>
+      <div id ='d' class='segment'><a href='#e'>d</a></div>
+      <div id ='e' class='segment'><a href='#f'>e</a></div>
+      <div id ='f' class='segment'><a href='#g'>f</a></div>
+    </div>
+    <div class='line'>
+      <div id ='g' class='segment'><a href='#h'>g</a></div>
+      <div id ='h' class='segment'><a href='#i'>h</a></div>
+      <div id ='i' class='segment'><a href='#a'>i</a></div>
+    </div>
+  </div>
 </body>
 
 </html>
