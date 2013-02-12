@@ -16,7 +16,7 @@
 	// Preference
 	var easing = 0.25;
 	var interval = 20;
-	var activateInitialScroll = false;
+	var activateInitialScroll = true;
 
 	var targetX = 0, targetY = 0, targetHash = '';
 	var scrolling = false;
@@ -26,24 +26,50 @@
 	var anchorElms = {'#': rootElm};
 
 	//ハッシュが '#' 一文字のみである場合、それを取り除く
-	if(! location.href.split('#')[1] && 'replaceState' in history){
+	if(location.hash === '' && history.replaceState !== undefined){
 		history.replaceState("", document.title, location.pathname);
-		incomingHash = '';
 	}
 	
-	var addEvent;
-	if(window.addEventListener){
-		addEvent = function(eventTarget, eventName, func){
-			eventTarget.addEventListener(eventName, func, false);
+	var addEvent, removeEvent;
+	var addHashChangeEvent, removeHashChangeEvent;
+	if(window.addEventListener !== undefined){
+		addEvent = function(elm, eventType, func){
+			elm.addEventListener(eventType, func, false);
 		};
-	}else if(window.attachEvent){ // IE
-		addEvent = function(eventTarget, eventName, func){
-			eventTarget.attachEvent('on'+eventName, function(){func.apply(eventTarget);});
+
+		addHashChangeEvent = function(){
+			window.addEventListener('hashchange', onPopScroll, false);
+		};
+		removeHashChangeEvent = function(){
+			window.removeEventListener('hashchange', onPopScroll, false);			
+		};
+
+	}else if(window.attachEvent !== undefined){ // IE
+		addEvent = function(elm, eventType, func){
+			elm.attachEvent('on'+eventType, function(){func.apply(elm);});
+		};
+
+		addHashChangeEvent = function(){
+			console.log('setpop');
+			window.attachEvent('onhashchange', onPopScroll);
+		};
+		removeHashChangeEvent = function(){
+			window.detachEvent('onhashchange', onPopScroll);			
 		};
 	}
-
+	
+	/*
+	function onPopScroll(e){
+		console.log(e);
+		if(e){
+			e.preventDefault();
+		}
+		setScroll(location.hash || '#');
+	}
+	*/
+	
 	addEvent(window, 'load', init);
-
+	
 	var startScroll;
 	function init(loadEvent){
 		if(loadEvent){
@@ -51,7 +77,7 @@
 				event.preventDefault();
 				setScroll(this.hash || '#'); // linkElms[i].hash
 			};
-		}else if(window.event){ // IE
+		}else if('event' in window){ // IE
 			startScroll = function(){
 				window.event.returnValue = false;
 				setScroll(this.hash || '#'); // linkElms[i].hash
@@ -80,8 +106,8 @@
 
 			if(hrefStr.substring(0, splitterIndex) === currentHref_WOHash){
 				var hashStr = hrefStr.substr(splitterIndex + 1);
-				var anchorElm = document.getElementById(hashStr);
-				if(anchorElm){
+				var anchorElm;
+				if(hashStr !== '' && (anchorElm = document.getElementById(hashStr))){
 					anchorElms['#' + hashStr] = anchorElm;
 					addEvent(linkElms[i], 'click', startScroll);
 				}else if(hashStr === ''){
@@ -91,16 +117,17 @@
 		}
 		
 		// 外部からページ内リンク付きで呼び出された場合
-		if(activateInitialScroll){
-			if(window.attachEvent && !window.opera){
-				// IEの場合は少し待ってからスクロール
+		if(activateInitialScroll && location.hash !== ''){
+			if(window.attachEvent !== undefined &&
+			window.opera === undefined){ // IE
+				// 少し待ってからスクロール
 				setTimeout(function(){
 					scrollTo(0, 0);
-					setScroll('#' + location.href.split('#')[0]);
+					setScroll(location.hash );
 				}, 50);
 			}else{
 				scrollTo(0, 0);
-				setScroll('#' + location.href.split('#')[0]);
+				setScroll(location.hash);
 			}
 		}
 	}
@@ -140,7 +167,11 @@
 			// 目標座標付近に到達していたら終了
 			scrollTo(targetX, targetY);
 			scrolling = false;
-			location.hash = targetHash;
+			if(targetHash === '#' && history.pushState !== undefined){
+				history.pushState('', document.title, location.pathname);
+			}else{
+				location.hash = targetHash;
+			}
 			prevX = prevY = null;
 			return;
 		}else{
@@ -153,7 +184,7 @@
 	}
 	
 	var getScrollMaxXY;
-	if(window.scrollMaxX && window.scrollMaxY){
+	if(window.scrollMaxX !== undefined){
 		getScrollMaxXY = function(){
 			return {x: window.scrollMaxX, y: window.scrollMaxY};
 		};
@@ -175,7 +206,7 @@
 		};
 		
 		var getWindowSize;
-		if(rootElm.clientWidth){
+		if(rootElm.clientWidth !== undefined){
 			getWindowSize = function(){
 				return {width: rootElm.clientWidth, height: rootElm.clientHeight};
 			};
@@ -199,5 +230,5 @@
 			};
 		}
 	}
-	
+		
 }());
