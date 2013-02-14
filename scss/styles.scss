@@ -3,6 +3,47 @@ $segmentSize : 800px;
 body{
   width: $segmentSize * 4;
   height: $segmentSize * 4;
+  -webkit-text-size-adjust: 100%;
+}
+
+a{
+  text-decoration: none;
+}
+
+$headerHeight : 90px;
+
+header{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: $headerHeight;
+  background: rgba(6, 6, 6, .45);
+}
+
+$monitorSize : $headerHeight - 15;
+
+#monitor{
+  margin: ($headerHeight - $monitorSize) * 0.5;
+  width: $monitorSize;
+  height: $monitorSize;
+}
+
+#monitor a{
+  display: block;
+  float: left;
+  margin: 1px;
+  width: $monitorSize * 0.3;
+  height: $monitorSize * 0.3;
+  background: #FFFFFF;
+  color: #999999;
+  text-align: center;
+}
+
+#container{
+  margin: 0 auto 0 auto;
+  width: $segmentSize * 3.5;
+  height: $segmentSize * 3.5;
 }
 
 .line{
@@ -24,15 +65,14 @@ body{
   width: 1em;
   height: 1em;
   color: #FEFFFF;
-  text-decoration: none;
   font-size: 400px;
   line-height: 1;
   text-shadow:10px 10px #EEEEEE;
 }
 
-$hue : 0%;
+$hue : -40%;
 @each $elm in '#a', '#b', '#c', '#d', '#e', '#f', '#g', '#h', '#i'{
-  $hue : $hue + 8;
+  $hue : $hue + 40%;
   $color : hsl($hue, 80%, 80%);
   #{$elm}{
     background-color: $color;

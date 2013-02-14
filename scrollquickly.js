@@ -13,17 +13,20 @@
  *   Licensed under the MIT License:
 */
 
-(function(){
-	// Preference
-	var easing = 0.25;
-	var interval = 20;
-	var activateInitialScroll = true;
+var sqObj = {};
+sqObj.easing = 0.25;
+sqObj.interval = 15;
+sqObj.initialScrollEnabled = true;
+sqObj.callback = function(){
+};
 
+sqObj.hash = '#';
+
+(function(){
 	var targetX = 0, targetY = 0, targetHash = '';
 	var currentX = 0, currentY = 0;
 	var scrolling = false;
 	var prevX = null, prevY = null;
-	
 	var rootElm = document.documentElement || document.body;
 	var anchorElms = {'#': rootElm};
 
@@ -32,43 +35,44 @@
 		history.replaceState("", document.title, location.pathname);
 	}
 	
-	var addEvent, removeEvent;
+	var addEvent, removeEvent, addClickEvent;
 	if(window.addEventListener !== undefined){
 		addEvent = function(elm, eventType, func){
 			elm.addEventListener(eventType, func, false);
 		};
-	}else if(window.attachEvent !== undefined){ // IE
+		
+		removeEvent = function(elm, eventType, func){
+			elm.removeEventListener(eventType, func, false);
+		};
+
+		addClickEvent = function(elm, func){
+			elm.addEventListener('click', func, false);
+		};
+	}else if(window.attachEvent !== undefined || // IE
+	'attachEvent' in window){ // Old Opera
 		addEvent = function(elm, eventType, func){
-			elm.attachEvent('on'+eventType, function(){func.apply(elm);});
+			elm.attachEvent('on'+eventType, func);
+		};
+		
+		removeEvent = function(elm, eventType, func){
+			elm.detachEvent('on'+eventType, func);
+		};
+
+		addClickEvent = function(elm, func){
+			elm.attachEvent('onclick', function(){func.apply(elm);});			
 		};
 	}
-		
-	var addHashChangeEvent = null;
-	var removeHashChangeEvent = null;
-	if(window.onhashchange !== undefined){
-		if(window.addEventListener !== undefined){
-			addHashChangeEvent = function(){
-				window.addEventListener('hashchange', onBackOrForward, false);
-			};
-			removeHashChangeEvent = function(){
-				window.removeEventListener('hashchange', onBackOrForward, false);
-			};
-		}else if(window.attachEvent !== undefined){
-			addHashChangeEvent = function(){
-				window.attachEvent('onhashchange', onBackOrForward);
-			};
-			removeHashChangeEvent = function(){
-				window.detachEvent('onhashchange', onBackOrForward);			
-			};
-		}
-		
+	
+	var hashChangeAvailable = (window.onhashchange !== undefined);
+	if(hashChangeAvailable){
 		var onBackOrForward = function(){
 			scrollTo(currentX, currentY);
 			setScroll(location.hash || '#');
 		};
 	
 		var scrollTimer = null;
-		var finishScrollInterval = interval * 10;
+		var finishScrollInterval = sqObj.interval * 10;
+		
 		var finishScroll = function(){
 			if(scrollTimer !== null){
 				clearTimeout(scrollTimer);
@@ -77,8 +81,8 @@
 				getCurrentXY();
 			}, finishScrollInterval);
 		};
-	
-		addHashChangeEvent();
+		
+		addEvent(window, 'hashchange', onBackOrForward);
 		addEvent(window, 'scroll', finishScroll);	
 	}
 	
@@ -123,15 +127,15 @@
 				var anchorElm;
 				if(hashStr !== '' && (anchorElm = document.getElementById(hashStr))){
 					anchorElms['#' + hashStr] = anchorElm;
-					addEvent(linkElms[i], 'click', startScroll);
+					addClickEvent(linkElms[i], startScroll);
 				}else if(hashStr === ''){
-					addEvent(linkElms[i], 'click', startScroll);
+					addClickEvent(linkElms[i], startScroll);
 				}
 			}
 		}
 		
 		// 外部からページ内リンク付きで呼び出された場合
-		if(activateInitialScroll && location.hash !== ''){
+		if(sqObj.initialScrollEnabled && location.hash !== ''){
 			if(window.attachEvent !== undefined &&
 			window.opera === undefined){ // IE
 				// 少し待ってからスクロール
@@ -162,6 +166,11 @@
 		targetX = Math.min(x, maxScroll.x);
 		targetY = Math.min(y, maxScroll.y);
 		targetHash = hash;
+
+		if(hashChangeAvailable){
+			removeEvent(window, 'scroll', finishScroll);
+		}
+
 		// スクロール停止中ならスクロール開始
 		if(!scrolling){
 			scrolling = true;
@@ -171,10 +180,8 @@
 
 	function scroll(){
 		getCurrentXY();
-		var vx = (targetX - currentX) * easing;
-		var vy = (targetY - currentY) * easing;
-		var nextX = currentX + vx;
-		var nextY = currentY + vy;
+		var vx = (targetX - currentX) * sqObj.easing;
+		var vy = (targetY - currentY) * sqObj.easing;
 		if((Math.abs(vx) < 1 && Math.abs(vy) < 1) ||
 		(prevX === currentX && prevY === currentY)){
 			// 目標座標付近に到達していたら終了
@@ -182,33 +189,45 @@
 			scrolling = false;
 			if(targetHash === '#'){
 				if(location.hash !== '' && history.pushState !== undefined){
-					if(addHashChangeEvent !== null){
-						removeHashChangeEvent();
-						setTimeout(function(){ addHashChangeEvent(); }, 50);
+					if(hashChangeAvailable){
+						removeEvent(window, 'hashchange', onBackOrForward);
+						addEvent(window, 'scroll', finishScroll);
+						setTimeout(function(){
+							addEvent(window, 'hashchange', onBackOrForward);
+						}, 30);
 					}
 					history.pushState('', document.title, location.pathname);					
 				}
 			}else if(targetHash !== location.hash){
-				if(addHashChangeEvent !== null){
-					removeHashChangeEvent();
-					setTimeout(function(){ addHashChangeEvent(); }, 50);
+				if(hashChangeAvailable){
+					removeEvent(window, 'hashchange', onBackOrForward);
+					addEvent(window, 'scroll', finishScroll);
+					setTimeout(function(){
+						addEvent(window, 'hashchange', onBackOrForward);
+					}, 30);
 				}
 				location.hash = targetHash;
+			}
+			sqObj.hash = targetHash;
+			if(typeof sqObj.callback === 'function'){
+				sqObj.callback();
 			}
 			prevX = prevY = null;
 			return;
 		}else{
 			// 繰り返し
-			scrollTo(parseInt(nextX, 10), parseInt(nextY, 10));
+			var nextX = currentX + vx;
+			var nextY = currentY + vy;
+			scrollTo(Math.ceil(nextX), Math.ceil(nextY));
 			prevX = currentX;
 			prevY = currentY;
-			setTimeout(function(){ scroll(); }, interval);
+			setTimeout(function(){ scroll(); }, sqObj.interval);
 		}
 	}
 	
 	function getCurrentXY(){
 		currentX = document.documentElement.scrollLeft || document.body.scrollLeft;
-		currentY = document.documentElement.scrollTop || document.body.scrollTop;	
+		currentY = document.documentElement.scrollTop || document.body.scrollTop;
 	}
 	
 	var getScrollMaxXY;
