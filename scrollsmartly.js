@@ -1,5 +1,5 @@
 /* 
- * scrollquickly.js
+ * scrollsmartly.js
  * Copyright (c) 2013 Shinnosuke Watanabe
  * https://github.com/shinnn
  * Licensed under the MIT License:
@@ -13,23 +13,39 @@
  *   Licensed under the MIT License:
 */
 
-var sqObj = {};
-sqObj.easing = 0.25;
-sqObj.interval = 15;
-sqObj.initialScrollEnabled = true;
-sqObj.callback = function(){
+var smartly = {};
+
+// Preference
+smartly.easing = 0.25;
+smartly.interval = 15;
+smartly.initialScrollEnabled = true;
+smartly.callback = function(){
 };
 
-sqObj.hash = '#';
+smartly.scrolling = false;
+smartly.hash = '#';
+
+smartly.on = function(elm, hashStr){
+	if(elm.dataset.noscroll){
+		delete elm.dataset.noscroll;
+	}
+	if(!elm.hash || typeof hashStr === 'string'){
+		elm.hash = '#' + hashStr;
+	}
+};
+
+
+smartly.off = function(elm){
+  elm.dataset.noscroll = 'true';
+};
 
 (function(){
 	var targetX = 0, targetY = 0, targetHash = '';
 	var currentX = 0, currentY = 0;
-	var scrolling = false;
 	var prevX = null, prevY = null;
 	var rootElm = document.documentElement || document.body;
-	var anchorElms = {'#': rootElm};
-
+	var anchorElms = { '': rootElm };
+  
 	//ハッシュが '#' 一文字のみである場合、それを取り除く
 	if(location.hash === '' && history.replaceState !== undefined){
 		history.replaceState("", document.title, location.pathname);
@@ -65,13 +81,19 @@ sqObj.hash = '#';
 	
 	var hashChangeAvailable = (window.onhashchange !== undefined);
 	if(hashChangeAvailable){
+		var scrollPrevented = false;
+		
 		var onBackOrForward = function(){
-			scrollTo(currentX, currentY);
-			setScroll(location.hash || '#');
+      if(scrollPrevented){
+				scrollPrevented = false;
+				return;
+			}
+      scrollTo(currentX, currentY);
+			smartly.scroll(location.hash.substr(1) || '');
 		};
 	
 		var scrollTimer = null;
-		var finishScrollInterval = sqObj.interval * 10;
+		var finishScrollInterval = smartly.interval * 10;
 		
 		var finishScroll = function(){
 			if(scrollTimer !== null){
@@ -92,13 +114,21 @@ sqObj.hash = '#';
 	function init(loadEvent){
 		if(loadEvent){
 			startScroll = function(event){
-				event.preventDefault();
-				setScroll(this.hash || '#'); // linkElms[i].hash
+        if(this.dataset.noscroll){
+          scrollPrevented = true;
+          return;
+        }
+        event.preventDefault();
+        smartly.scroll(this.hash.substr(1)); // linkElms[i].hash
 			};
 		}else if('event' in window){ // IE
 			startScroll = function(){
+        if(this.dataset.noscroll){
+          scrollPrevented = true;
+          return;
+        }
 				window.event.returnValue = false;
-				setScroll(this.hash || '#'); // linkElms[i].hash
+				smartly.scroll(this.hash.substr(1)); // linkElms[i].hash
 			};
 		}
 		
@@ -126,7 +156,7 @@ sqObj.hash = '#';
 				var hashStr = hrefStr.substr(splitterIndex + 1);
 				var anchorElm;
 				if(hashStr !== '' && (anchorElm = document.getElementById(hashStr))){
-					anchorElms['#' + hashStr] = anchorElm;
+					anchorElms['' + hashStr] = anchorElm;
 					addClickEvent(linkElms[i], startScroll);
 				}else if(hashStr === ''){
 					addClickEvent(linkElms[i], startScroll);
@@ -135,25 +165,25 @@ sqObj.hash = '#';
 		}
 		
 		// 外部からページ内リンク付きで呼び出された場合
-		if(sqObj.initialScrollEnabled && location.hash !== ''){
+		if(smartly.initialScrollEnabled && location.hash !== ''){
 			if(window.attachEvent !== undefined &&
 			window.opera === undefined){ // IE
 				// 少し待ってからスクロール
 				setTimeout(function(){
 					scrollTo(0, 0);
-					setScroll(location.hash);
+					smartly.scroll(location.hash.substr(1));
 				}, 50);
 			}else{
 				scrollTo(0, 0);
-				setScroll(location.hash);
+				smartly.scroll(location.hash.substr(1));
 			}
 		}
 	}
 
-	function setScroll(hash){
+	smartly.scroll = function(hash){
 		// ハッシュからターゲット要素の座標を取得
 		var targetElm = anchorElms[hash];
-
+		if(targetElm === undefined){ return; }
 		// スクロール先座標をセットする
 		var x = 0;
 		var y = 0;
@@ -172,21 +202,21 @@ sqObj.hash = '#';
 		}
 
 		// スクロール停止中ならスクロール開始
-		if(!scrolling){
-			scrolling = true;
-			scroll();
+		if(!smartly.scrolling){
+			smartly.scrolling = true;
+			processScroll();
 		}
-	}
+	};
 
-	function scroll(){
+	function processScroll(){
 		getCurrentXY();
-		var vx = (targetX - currentX) * sqObj.easing;
-		var vy = (targetY - currentY) * sqObj.easing;
+		var vx = (targetX - currentX) * smartly.easing;
+		var vy = (targetY - currentY) * smartly.easing;
 		if((Math.abs(vx) < 1 && Math.abs(vy) < 1) ||
 		(prevX === currentX && prevY === currentY)){
 			// 目標座標付近に到達していたら終了
 			scrollTo(targetX, targetY);
-			scrolling = false;
+			smartly.scrolling = false;
 			if(targetHash === '#'){
 				if(location.hash !== '' && history.pushState !== undefined){
 					if(hashChangeAvailable){
@@ -208,9 +238,9 @@ sqObj.hash = '#';
 				}
 				location.hash = targetHash;
 			}
-			sqObj.hash = targetHash;
-			if(typeof sqObj.callback === 'function'){
-				sqObj.callback();
+			smartly.hash = targetHash;
+			if(typeof smartly.callback === 'function'){
+				smartly.callback();
 			}
 			prevX = prevY = null;
 			return;
@@ -220,8 +250,8 @@ sqObj.hash = '#';
 			var nextY = currentY + vy;
 			scrollTo(Math.ceil(nextX), Math.ceil(nextY));
 			prevX = currentX;
-			prevY = currentY;
-			setTimeout(function(){ scroll(); }, sqObj.interval);
+			prevY = currentY;			
+			setTimeout(function(){ processScroll(); }, smartly.interval);
 		}
 	}
 	
@@ -277,5 +307,6 @@ sqObj.hash = '#';
 			};
 		}
 	}
+	console.log(anchorElms);
 		
 }());
