@@ -15,15 +15,14 @@
 
 var smartly = {};
 
-// Preference
-smartly.easing = 0.25;
-smartly.interval = 15;
-smartly.first = true;
-smartly.initScroll = true;
-smartly.callback = function(){
-};
-
 (function(){
+	//Preference
+	smartly.easing = 0.25;
+	smartly.interval = 15;
+	smartly.scrollDefault = true;
+	smartly.scrollIn = true;
+	smartly.callback = undefined;
+
 	smartly.scrollingTo = null;
 	smartly.scrolledTo = null;
 
@@ -42,11 +41,9 @@ smartly.callback = function(){
 		addEvent = function(elm, eventType, func){
 			elm.addEventListener(eventType, func, false);
 		};
-		
 		removeEvent = function(elm, eventType, func){
 			elm.removeEventListener(eventType, func, false);
 		};
-
 		addClickEvent = function(elm){
 			elm.addEventListener('click', startScroll, false);
 		};
@@ -55,17 +52,17 @@ smartly.callback = function(){
 		addEvent = function(elm, eventType, func){
 			elm.attachEvent('on'+eventType, func);
 		};
-		
 		removeEvent = function(elm, eventType, func){
 			elm.detachEvent('on'+eventType, func);
 		};
-
 		addClickEvent = function(elm){
 			elm.attachEvent('onclick', function(){startScroll.apply(elm);});
 		};
 	}
 	
 	var hashChangeAvailable = (window.onhashchange !== undefined);
+	var hashChangeTimer;
+
 	if(hashChangeAvailable){
 		var scrollPrevented = false;
 		
@@ -91,17 +88,18 @@ smartly.callback = function(){
 		};
 	}
 	
-	if(smartly.first === true){
+	if(smartly.scrollDefault === true){
 		addEvent(window, 'load', function(){ smartly.init(); });
 	}
 	
 	var startScroll;
 	smartly.init = function(loadEvent){
-		removeEvent(window, 'hashchange', onBackOrForward);
-		addEvent(window, 'hashchange', onBackOrForward);
-		removeEvent(window, 'scroll', finishScroll);
-		addEvent(window, 'scroll', finishScroll);	
-
+		if(hashChangeAvailable){
+			removeEvent(window, 'hashchange', onBackOrForward);
+			addEvent(window, 'hashchange', onBackOrForward);
+			removeEvent(window, 'scroll', finishScroll);
+			addEvent(window, 'scroll', finishScroll);	
+		}
 		if(loadEvent){
 			startScroll = function(event){
         if(this.dataset.noscroll === 'true'){
@@ -155,7 +153,7 @@ smartly.callback = function(){
 		}
 		
 		// 外部からページ内リンク付きで呼び出された場合
-		if(smartly.initScroll && location.hash !== ''){
+		if(smartly.scrollIn && location.hash !== ''){
 			if(window.attachEvent !== undefined &&
 			window.opera === undefined){ // IE
 				// 少し待ってからスクロール
@@ -177,15 +175,16 @@ smartly.callback = function(){
 		targetHash = hash;
 
 		if(hashChangeAvailable){
+			clearTimeout(hashChangeTimer);
 			removeEvent(window, 'scroll', finishScroll);
 		}
 
 		// スクロール停止中ならスクロール開始
 		if(smartly.scrollingTo === null){
-			smartly.scrollingTo = targetHash;
+			smartly.scrollingTo = targetElm;
 			processScroll();
 		}
-		return targetHash;
+		return targetElm;
 	};
 
 	function processScroll(){
@@ -212,23 +211,11 @@ smartly.callback = function(){
 			smartly.scrollingTo = null;
 			if(targetHash === ''){
 				if(location.hash !== '' && history.pushState !== undefined){
-					if(hashChangeAvailable){
-						removeEvent(window, 'hashchange', onBackOrForward);
-						addEvent(window, 'scroll', finishScroll);
-						setTimeout(function(){
-							addEvent(window, 'hashchange', onBackOrForward);
-						}, 30);
-					}
+					resetHashChangeEvent();
 					history.pushState('', document.title, location.pathname);					
 				}
 			}else if(targetHash !== location.hash){
-				if(hashChangeAvailable){
-					removeEvent(window, 'hashchange', onBackOrForward);
-					addEvent(window, 'scroll', finishScroll);
-					setTimeout(function(){
-						addEvent(window, 'hashchange', onBackOrForward);
-					}, 30);
-				}
+				resetHashChangeEvent();
 				location.hash = targetHash;
 			}
 			smartly.scrolledTo = targetHash;
@@ -245,6 +232,16 @@ smartly.callback = function(){
 			prevX = currentX;
 			prevY = currentY;			
 			setTimeout(function(){ processScroll(); }, smartly.interval);
+		}
+	}
+	
+	function resetHashChangeEvent(){
+		if(hashChangeAvailable){
+			removeEvent(window, 'hashchange', onBackOrForward);
+			addEvent(window, 'scroll', finishScroll);
+			hashChangeTimer = setTimeout(function(){
+				addEvent(window, 'hashchange', onBackOrForward);
+			}, 30);
 		}
 	}
 	
