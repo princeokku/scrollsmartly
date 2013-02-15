@@ -18,33 +18,19 @@ var smartly = {};
 // Preference
 smartly.easing = 0.25;
 smartly.interval = 15;
-smartly.initialScrollEnabled = true;
+smartly.first = true;
+smartly.initScroll = true;
 smartly.callback = function(){
 };
 
-smartly.scrolling = false;
-smartly.hash = '#';
-
-smartly.on = function(elm, hashStr){
-	if(elm.dataset.noscroll){
-		delete elm.dataset.noscroll;
-	}
-	if(!elm.hash || typeof hashStr === 'string'){
-		elm.hash = '#' + hashStr;
-	}
-};
-
-
-smartly.off = function(elm){
-  elm.dataset.noscroll = 'true';
-};
-
 (function(){
-	var targetX = 0, targetY = 0, targetHash = '';
+	smartly.scrollingTo = null;
+	smartly.scrolledTo = null;
+
+	var targetX = 0, targetY = 0, targetElm, targetHash = '';
 	var currentX = 0, currentY = 0;
 	var prevX = null, prevY = null;
 	var rootElm = document.documentElement || document.body;
-	var anchorElms = { '': rootElm };
   
 	//ハッシュが '#' 一文字のみである場合、それを取り除く
 	if(location.hash === '' && history.replaceState !== undefined){
@@ -61,8 +47,8 @@ smartly.off = function(elm){
 			elm.removeEventListener(eventType, func, false);
 		};
 
-		addClickEvent = function(elm, func){
-			elm.addEventListener('click', func, false);
+		addClickEvent = function(elm){
+			elm.addEventListener('click', startScroll, false);
 		};
 	}else if(window.attachEvent !== undefined || // IE
 	'attachEvent' in window){ // Old Opera
@@ -74,8 +60,8 @@ smartly.off = function(elm){
 			elm.detachEvent('on'+eventType, func);
 		};
 
-		addClickEvent = function(elm, func){
-			elm.attachEvent('onclick', function(){func.apply(elm);});			
+		addClickEvent = function(elm){
+			elm.attachEvent('onclick', function(){startScroll.apply(elm);});
 		};
 	}
 	
@@ -103,31 +89,37 @@ smartly.off = function(elm){
 				getCurrentXY();
 			}, finishScrollInterval);
 		};
-		
-		addEvent(window, 'hashchange', onBackOrForward);
-		addEvent(window, 'scroll', finishScroll);	
 	}
 	
-	addEvent(window, 'load', init);
+	if(smartly.first === true){
+		addEvent(window, 'load', function(){ smartly.init(); });
+	}
 	
 	var startScroll;
-	function init(loadEvent){
+	smartly.init = function(loadEvent){
+		removeEvent(window, 'hashchange', onBackOrForward);
+		addEvent(window, 'hashchange', onBackOrForward);
+		removeEvent(window, 'scroll', finishScroll);
+		addEvent(window, 'scroll', finishScroll);	
+
 		if(loadEvent){
 			startScroll = function(event){
-        if(this.dataset.noscroll){
+        if(this.dataset.noscroll === 'true'){
           scrollPrevented = true;
           return;
         }
         event.preventDefault();
+        event.stopPropagation();
         smartly.scroll(this.hash.substr(1)); // linkElms[i].hash
 			};
 		}else if('event' in window){ // IE
 			startScroll = function(){
-        if(this.dataset.noscroll){
+        if(this.dataset.noscroll === 'true'){
           scrollPrevented = true;
           return;
         }
 				window.event.returnValue = false;
+				window.event.cancelBubble = true;
 				smartly.scroll(this.hash.substr(1)); // linkElms[i].hash
 			};
 		}
@@ -154,18 +146,16 @@ smartly.off = function(elm){
 
 			if(hrefStr.substring(0, splitterIndex) === currentHref_WOHash){
 				var hashStr = hrefStr.substr(splitterIndex + 1);
-				var anchorElm;
-				if(hashStr !== '' && (anchorElm = document.getElementById(hashStr))){
-					anchorElms['' + hashStr] = anchorElm;
-					addClickEvent(linkElms[i], startScroll);
+				if(hashStr !== '' && document.getElementById(hashStr)){
+					addClickEvent(linkElms[i]);
 				}else if(hashStr === ''){
-					addClickEvent(linkElms[i], startScroll);
+					addClickEvent(linkElms[i]);
 				}
 			}
 		}
 		
 		// 外部からページ内リンク付きで呼び出された場合
-		if(smartly.initialScrollEnabled && location.hash !== ''){
+		if(smartly.initScroll && location.hash !== ''){
 			if(window.attachEvent !== undefined &&
 			window.opera === undefined){ // IE
 				// 少し待ってからスクロール
@@ -178,23 +168,12 @@ smartly.off = function(elm){
 				smartly.scroll(location.hash.substr(1));
 			}
 		}
-	}
+	};
 
 	smartly.scroll = function(hash){
 		// ハッシュからターゲット要素の座標を取得
-		var targetElm = anchorElms[hash];
-		if(targetElm === undefined){ return; }
-		// スクロール先座標をセットする
-		var x = 0;
-		var y = 0;
-		while(targetElm){
-			x += targetElm.offsetLeft;
-			y += targetElm.offsetTop;
-			targetElm = targetElm.offsetParent;
-		}
-		var maxScroll = getScrollMaxXY();
-		targetX = Math.min(x, maxScroll.x);
-		targetY = Math.min(y, maxScroll.y);
+		targetElm = hash !== ''? document.getElementById(hash): rootElm;
+		if(targetElm === null){ return; }
 		targetHash = hash;
 
 		if(hashChangeAvailable){
@@ -202,13 +181,27 @@ smartly.off = function(elm){
 		}
 
 		// スクロール停止中ならスクロール開始
-		if(!smartly.scrolling){
-			smartly.scrolling = true;
+		if(smartly.scrollingTo === null){
+			smartly.scrollingTo = targetHash;
 			processScroll();
 		}
+		return targetHash;
 	};
 
 	function processScroll(){
+		// スクロール先座標をセットする
+		var x = 0;
+		var y = 0;
+		var elm = targetElm;
+		while(elm){
+			x += elm.offsetLeft;
+			y += elm.offsetTop;
+			elm = elm.offsetParent;
+		}
+		var maxScroll = getScrollMaxXY();
+		targetX = Math.min(x, maxScroll.x);
+		targetY = Math.min(y, maxScroll.y);
+
 		getCurrentXY();
 		var vx = (targetX - currentX) * smartly.easing;
 		var vy = (targetY - currentY) * smartly.easing;
@@ -216,8 +209,8 @@ smartly.off = function(elm){
 		(prevX === currentX && prevY === currentY)){
 			// 目標座標付近に到達していたら終了
 			scrollTo(targetX, targetY);
-			smartly.scrolling = false;
-			if(targetHash === '#'){
+			smartly.scrollingTo = null;
+			if(targetHash === ''){
 				if(location.hash !== '' && history.pushState !== undefined){
 					if(hashChangeAvailable){
 						removeEvent(window, 'hashchange', onBackOrForward);
@@ -238,7 +231,7 @@ smartly.off = function(elm){
 				}
 				location.hash = targetHash;
 			}
-			smartly.hash = targetHash;
+			smartly.scrolledTo = targetHash;
 			if(typeof smartly.callback === 'function'){
 				smartly.callback();
 			}
@@ -307,6 +300,26 @@ smartly.off = function(elm){
 			};
 		}
 	}
-	console.log(anchorElms);
-		
+	
+	smartly.on = function(elm, hashArg){
+		var hashStr = hashArg? String(hashArg): '';
+		if(!elm.hash ||
+			(elm.dataset.noscroll !== undefined && hashArg !== undefined)){
+			elm.hash = '#' + hashStr;
+		}else if(elm.hash){
+			elm.hash = '#';
+		}
+		if(elm.dataset.noscroll !== undefined || elm.dataset.noscroll === 'true'){
+			elm.dataset.noscroll = 'false';
+		}else{
+			addClickEvent(elm);
+		}
+		elm.style.cursor = 'pointer';
+	};
+
+	smartly.off = function(elm){
+		elm.dataset.noscroll = 'true';
+		elm.style.cursor = '';
+	};
+	
 }());

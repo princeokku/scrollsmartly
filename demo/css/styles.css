@@ -1,0 +1,32 @@
+/* line 1, ../scss/styles.scss */
+body {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* line 5, ../scss/styles.scss */
+a {
+  text-decoration: none;
+}
+
+/* line 9, ../scss/styles.scss */
+header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background: rgba(6, 6, 6, 0.45);
+}
+
+/* line 17, ../scss/styles.scss */
+#container {
+  margin: 0 auto 0 auto;
+}
+
+/* line 21, ../scss/styles.scss */
+.segment {
+  display: block;
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  background: #333333;
+}
