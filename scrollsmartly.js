@@ -6,11 +6,10 @@
  * http://www.opensource.org/licenses/mit-license.php
  *
  * This branch is originated from:
- *
  *   scrollsmoothly.js
  *   Copyright (c) 2008 KAZUMiX
  *   http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly
- *   Licensed under the MIT License:
+ *   Licensed under the MIT License
 */
 
 var smartly = {};
@@ -19,7 +18,7 @@ var smartly = {};
 	//Preference
 	smartly.easing = 0.25;
 	smartly.interval = 15;
-	smartly.scrollDefault = true;
+	smartly.applyDefault = true;
 	smartly.scrollIn = true;
 	smartly.callback = undefined;
 
@@ -88,7 +87,7 @@ var smartly = {};
 		};
 	}
 	
-	if(smartly.scrollDefault === true){
+	if(smartly.applyDefault === true){
 		addEvent(window, 'load', function(){ smartly.init(); });
 	}
 	

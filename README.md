@@ -1,23 +1,28 @@
 #scrollsmartly.js
 ##概要
-[scrollsmoothly.js](http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly) (Copyright(C) [KAZUMiX](http://d.hatena.ne.jp/KAZUMiX/)) を基に機能の追加、アルゴリズムの改善を行い作成した、Webサイトにページ内スムーズスクロール機能を追加するためのJavaScriptライブラリです。
+Webサイトにページ内スムーズスクロール機能を追加するためのJavaScriptライブラリです。単一ページのサイトなどの制作に役立ちます。  
+*scrollsmartly.js*は*[scrollsmoothly.js](http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly)* (Copyright(C) [KAZUMiX](http://d.hatena.ne.jp/KAZUMiX/)) をフォークし、機能の追加、アルゴリズムの改善を行ったものです。
 ##基本的な使い方
-scrollsmartly.jsはscrollsmoothly.jsと同様に、href属性が`#`で始まる、通常ならページ内リンクとして機能するa要素に自動的にスムーズスクロールを割り当てます。
-本ライブラリは、headタグ内などでscrollsmartly.jsファイルを読み込むだけで、その効果をWebページに適用します。
+headタグ内などで`scrollsmartly.js`ファイルを読み込むだけで、href属性が`#`で始まる、通常はページ内リンクとして機能するa要素全てに対し自動的にスムーズスクロール機能を上書きします。
 ####読み込み方の例
 ```html
-<script src='PATH/scrollsmoothly.js'></script>
+<script src='PATH/scrollsmartly.js'></script>
 ```
-scrollsmartly.jsの最も基本的な用途、つまり、全てのページ内リンクを内スクロールボタンに置き換えることだけが目的なのであれば、その他にスクリプトを書く必要はありません。
+後述する*scrollsmartly.js*のその他の機能を使わない場合であれば、上記以外のスクリプトを書く必要はありません。
 
-##scrollsmoothlyからの変更点
-
+##scrollsmoothly.jsからの変更点
 ###"smartly" オブジェクトによる自由なユーザー設定
-デフォルト動作、スクロール速度などサイト作成者が変更する際、
+ライブラリの読み込みと同時に生成される`smartly`オブジェクトのプロパティおよびメソッドを用いて、デフォルト動作、スクロール速度などをサイト作成者が変更できます。
 
 ###スクロールで「戻る」「進む」
-
+*scrollsmartly.js*（および、その他のスムーズスクロール系ライブラリ）には、ブラウザで履歴を前後した際に、URLのハッシュとページの表示位置が一致しないという問題がありました。
+*scrollsmartly.js*では、履歴の前後に合わせて適切な位置にスクロールすることで、その問題を解決しています。
 ###クロスブラウザ対応のパフォーマンス向上
-
-##scrollsmoothlyから継承した特徴
-###jQuery非依存
+メソッドの有無など、ブラウザ判定を行う頻度をできるだけ少なくするよう改善しました。
+##ライセンス
+本ライブラリのライセンスには[MIT License](http://opensource.org/licenses/mit-license.php)を採用しています。
+##謝辞
+本ライブラリのフォーク元である*scrollsmoothly.js*の作者、KAZUMiX氏に感謝します。  
+**[scrollsmoothly.js](http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly)**  
+Copyright (c) 2008 [KAZUMiX](http://d.hatena.ne.jp/KAZUMiX/)  
+Licensed under the MIT License  
