@@ -12,7 +12,9 @@
  *   Licensed under the MIT License
 */
 
-var smartly = {};
+if(!window.smartly){
+	var smartly = {};
+}
 
 (function(){
 	//Preference
@@ -35,7 +37,7 @@ var smartly = {};
 		history.replaceState("", document.title, location.pathname);
 	}
 	
-	var addEvent, removeEvent, addClickEvent;
+	var addEvent, removeEvent;
 	if(window.addEventListener !== undefined){
 		addEvent = function(elm, eventType, func){
 			elm.addEventListener(eventType, func, false);
@@ -43,19 +45,12 @@ var smartly = {};
 		removeEvent = function(elm, eventType, func){
 			elm.removeEventListener(eventType, func, false);
 		};
-		addClickEvent = function(elm){
-			elm.addEventListener('click', startScroll, false);
-		};
-	}else if(window.attachEvent !== undefined || // IE
-	'attachEvent' in window){ // Old Opera
+	}else if('attachEvent' in window){ // IE and old Opera
 		addEvent = function(elm, eventType, func){
 			elm.attachEvent('on'+eventType, func);
 		};
 		removeEvent = function(elm, eventType, func){
 			elm.detachEvent('on'+eventType, func);
-		};
-		addClickEvent = function(elm){
-			elm.attachEvent('onclick', function(){startScroll.apply(elm);});
 		};
 	}
 	
@@ -63,13 +58,7 @@ var smartly = {};
 	var hashChangeTimer;
 
 	if(hashChangeAvailable){
-		var scrollPrevented = false;
-		
 		var onBackOrForward = function(){
-      if(scrollPrevented){
-				scrollPrevented = false;
-				return;
-			}
       scrollTo(currentX, currentY);
 			smartly.scroll(location.hash.substr(1) || '');
 		};
@@ -87,38 +76,34 @@ var smartly = {};
 		};
 	}
 	
+	var startScroll;
+	addEvent(window, 'load', function(loadEvent){
+		if(loadEvent){
+			startScroll = function(clickEvent){
+				clickEvent.preventDefault();
+				clickEvent.stopPropagation();
+				smartly.scroll(this.hash.substr(1)); // linkElms[i].hash
+			};
+		}else if('event' in window){ // IE
+			startScroll = function(){
+				var self = event.srcElement;
+				event.returnValue = false;
+				event.cancelBubble = true;
+				smartly.scroll(self.hash.substr(1)); // linkElms[i].hash
+			};
+		}
+	});
+
 	if(smartly.applyDefault === true){
 		addEvent(window, 'load', function(){ smartly.init(); });
-	}
+	}	
 	
-	var startScroll;
 	smartly.init = function(loadEvent){
 		if(hashChangeAvailable){
 			removeEvent(window, 'hashchange', onBackOrForward);
 			addEvent(window, 'hashchange', onBackOrForward);
 			removeEvent(window, 'scroll', finishScroll);
 			addEvent(window, 'scroll', finishScroll);	
-		}
-		if(loadEvent){
-			startScroll = function(event){
-        if(this.dataset.noscroll === 'true'){
-          scrollPrevented = true;
-          return;
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        smartly.scroll(this.hash.substr(1)); // linkElms[i].hash
-			};
-		}else if('event' in window){ // IE
-			startScroll = function(){
-        if(this.dataset.noscroll === 'true'){
-          scrollPrevented = true;
-          return;
-        }
-				window.event.returnValue = false;
-				window.event.cancelBubble = true;
-				smartly.scroll(this.hash.substr(1)); // linkElms[i].hash
-			};
 		}
 		
 		var currentHref_WOHash = location.href.split('#')[0];
@@ -144,9 +129,9 @@ var smartly = {};
 			if(hrefStr.substring(0, splitterIndex) === currentHref_WOHash){
 				var hashStr = hrefStr.substr(splitterIndex + 1);
 				if(hashStr !== '' && document.getElementById(hashStr)){
-					addClickEvent(linkElms[i]);
+					addEvent(linkElms[i], 'click', startScroll);
 				}else if(hashStr === ''){
-					addClickEvent(linkElms[i]);
+					addEvent(linkElms[i], 'click', startScroll);
 				}
 			}
 		}
@@ -168,15 +153,15 @@ var smartly = {};
 	};
 
 	smartly.scroll = function(hash){
+		if(hashChangeAvailable){
+			removeEvent(window, 'scroll', finishScroll);
+			clearTimeout(hashChangeTimer);
+		}
+		
 		// ハッシュからターゲット要素の座標を取得
 		targetElm = hash !== ''? document.getElementById(hash): rootElm;
 		if(targetElm === null){ return; }
 		targetHash = hash;
-
-		if(hashChangeAvailable){
-			clearTimeout(hashChangeTimer);
-			removeEvent(window, 'scroll', finishScroll);
-		}
 
 		// スクロール停止中ならスクロール開始
 		if(smartly.scrollingTo === null){
@@ -207,7 +192,6 @@ var smartly = {};
 		(prevX === currentX && prevY === currentY)){
 			// 目標座標付近に到達していたら終了
 			scrollTo(targetX, targetY);
-			smartly.scrollingTo = null;
 			if(targetHash === ''){
 				if(location.hash !== '' && history.pushState !== undefined){
 					resetHashChangeEvent();
@@ -217,11 +201,11 @@ var smartly = {};
 				resetHashChangeEvent();
 				location.hash = targetHash;
 			}
-			smartly.scrolledTo = targetHash;
+			smartly.scrolledTo = targetElm;
+			smartly.scrollingTo = prevX = prevY = null;
 			if(typeof smartly.callback === 'function'){
 				smartly.callback();
 			}
-			prevX = prevY = null;
 			return;
 		}else{
 			// 繰り返し
@@ -298,24 +282,24 @@ var smartly = {};
 	}
 	
 	smartly.on = function(elm, hashArg){
+		removeEvent(elm, 'click', startScroll);
+
 		var hashStr = hashArg? String(hashArg): '';
-		if(!elm.hash ||
-			(elm.dataset.noscroll !== undefined && hashArg !== undefined)){
+		if(!elm.hash || hashArg !== undefined){
 			elm.hash = '#' + hashStr;
 		}else if(elm.hash){
 			elm.hash = '#';
 		}
-		if(elm.dataset.noscroll !== undefined || elm.dataset.noscroll === 'true'){
-			elm.dataset.noscroll = 'false';
-		}else{
-			addClickEvent(elm);
-		}
+
+		addEvent(elm, 'click', startScroll);
 		elm.style.cursor = 'pointer';
+		return elm.hash.substr(1);
 	};
 
 	smartly.off = function(elm){
-		elm.dataset.noscroll = 'true';
+		removeEvent(elm, 'click', startScroll);
 		elm.style.cursor = '';
+		return elm.hash.substr(1);
 	};
 	
 }());
