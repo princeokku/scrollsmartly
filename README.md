@@ -26,31 +26,31 @@ jQueryなどの、本ライブラリ以外のJavaScriptライブラリとの依�
 ##4. API
 
 ###プロパティ
-* ####`smartly.easing`
+* `smartly.easing`
 型: **Number**  
 初期値: **0.25**
 
-* ####`smartly.interval`
+* `smartly.interval`
 型: **Number**  
 初期値: **0.25**
 
-* ####`smartly.applyDefault`
+* `smartly.applyDefault`
 型: **Boolean**  
 初期値: **true**
 
-* ####`smartly.scrollIn`
+* `smartly.scrollIn`
 型: **Boolean**  
 初期値: **true**
 
-* ####`smartly.callback`
+* `smartly.callback`
 型: **Function**  
 初期値: **undefined**
 
-* ####`smartly.scrollingTo`
+* `smartly.scrollingTo`
 型: **Object (Element)**  
 初期値: **null**
 
-* ####`smartly.scrolledTo`
+* `smartly.scrolledTo`
 型: **Object (Element)**  
 初期値: **null**
 
