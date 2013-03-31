@@ -33,7 +33,8 @@ if(!window.smartly){
 	var rootElm = document.documentElement || document.body;
   
 	//ハッシュが '#' 一文字のみである場合、それを取り除く
-	if(location.hash === '' && history.replaceState !== undefined){
+	if(location.hash === ''&& location.href.indexOf('#') !== -1 &&
+	history.replaceState !== undefined){
 		history.replaceState("", document.title, location.pathname);
 	}
 	

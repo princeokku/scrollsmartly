@@ -23,9 +23,48 @@ href属性が`#`のみである要素、つまり初期のスクロール位置�
 * ###その他のライブラリに依存しない
 jQueryなどの、本ライブラリ以外のJavaScriptライブラリとの依存関係がありません。
 
-##4. ライセンス
+##4. API
+
+###プロパティ
+* ####`smartly.easing`
+
+
+* ####`smartly.interval`
+
+
+* ####`smartly.easing`
+
+
+* ####`smartly.interval`
+
+
+* ####`smartly.applyDefault`
+
+
+* ####`smartly.scrollIn`
+
+
+* ####`smartly.scrollIn`
+
+
+* ####`smartly.callback`
+
+
+* ####`smartly.scrollingTo`
+
+
+* ####`smartly.scrolledTo`
+
+
+###メソッド
+* ####`smartly.on`
+
+
+* ####`smartly.off`
+
+##5. ライセンス
 本ライブラリのライセンスには[MIT License](http://opensource.org/licenses/mit-license.php)を採用しています。
-##5. 謝辞
+##6. 謝辞
 本ライブラリのフォーク元である *scrollsmoothly.js* の作者、KAZUMiX氏に感謝します。  
 **[scrollsmoothly.js](http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly)**  
 Copyright (c) 2008 [KAZUMiX](http://d.hatena.ne.jp/KAZUMiX/)  
