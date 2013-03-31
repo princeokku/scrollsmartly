@@ -28,40 +28,39 @@ jQueryなどの、本ライブラリ以外のJavaScriptライブラリとの依�
 ###プロパティ
 * ####`smartly.easing`
 型: **Number**  
-初期値: 0.25
+初期値: **0.25**
 
 * ####`smartly.interval`
-
-
-* ####`smartly.easing`
-
-
-* ####`smartly.interval`
-
+型: **Number**  
+初期値: **0.25**
 
 * ####`smartly.applyDefault`
-
-
-* ####`smartly.scrollIn`
-
+型: **Boolean**  
+初期値: **true**
 
 * ####`smartly.scrollIn`
-
+型: **Boolean**  
+初期値: **true**
 
 * ####`smartly.callback`
-
+型: **Function**  
+初期値: **undefined**
 
 * ####`smartly.scrollingTo`
-
+型: **Object (Element)**  
+初期値: **null**
 
 * ####`smartly.scrolledTo`
-
+型: **Object (Element)**  
+初期値: **null**
 
 ###メソッド
-* ####`smartly.on`
+* ####`smartly.on`  
 
 
 * ####`smartly.off`
+
+
 
 ##5. ライセンス
 本ライブラリのライセンスには[MIT License](http://opensource.org/licenses/mit-license.php)を採用しています。
