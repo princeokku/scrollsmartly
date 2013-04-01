@@ -47,14 +47,17 @@ jQueryなどの、本ライブラリ以外のJavaScriptライブラリとの依�
 初期値: **undefined**
 
 * ####`smartly.scrollingTo`
-型: **Object (Element)**  
+型: **Object (HTMLElement)**  
 初期値: **null**
 
 * ####`smartly.scrolledTo`
-型: **Object (Element)**  
+型: **Object (HTMLElement)**  
 初期値: **null**
 
 ###メソッド
+* ####`smartly.scroll`
+
+
 * ####`smartly.on`  
 
 
