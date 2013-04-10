@@ -1,18 +1,18 @@
 /* 
- * scrollsmartly.js
+ * scrollsmartly.js v0.1
  * Copyright (c) 2013 Shinnosuke Watanabe
  * https://github.com/shinnn
  * Licensed under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
- * This branch is originated from:
+ * This program is the branch originated from:
  *   scrollsmoothly.js
  *   Copyright (c) 2008 KAZUMiX
  *   http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly
  *   Licensed under the MIT License
 */
 
-if(!window.smartly){
+if(! window.smartly){
 	var smartly = {};
 }
 
