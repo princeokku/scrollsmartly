@@ -59,9 +59,18 @@ if(! window.smartly){
 	var hashChangeTimer;
 
 	if(hashChangeAvailable){
+		var historyMoved = true;
+
 		var onBackOrForward = function(){
+			if(! historyMoved){
+				console.log(6776);
+				return;
+			}
+			
       scrollTo(currentX, currentY);
 			smartly.scroll(location.hash.substr(1) || '');
+			
+			// hashchange イベントの cancelable プロパティは false なので、return false; などは不要
 		};
 	
 		var scrollTimer = null;
@@ -101,9 +110,7 @@ if(! window.smartly){
 	
 	smartly.init = function(loadEvent){
 		if(hashChangeAvailable){
-			removeEvent(window, 'hashchange', onBackOrForward);
 			addEvent(window, 'hashchange', onBackOrForward);
-			removeEvent(window, 'scroll', finishScroll);
 			addEvent(window, 'scroll', finishScroll);	
 		}
 		
@@ -154,11 +161,7 @@ if(! window.smartly){
 	};
 
 	smartly.scroll = function(hash){
-		if(hashChangeAvailable){
-			removeEvent(window, 'scroll', finishScroll);
-			clearTimeout(hashChangeTimer);
-		}
-		
+		resetHashChangeEvent(true);
 		// ハッシュからターゲット要素の座標を取得
 		targetElm = hash !== ''? document.getElementById(hash): rootElm;
 		if(targetElm === null){ return; }
@@ -188,11 +191,11 @@ if(! window.smartly){
 
 		getCurrentXY();
     
-    if(smartly.easing > 1){
-      smartly.easing = 1;
-    }else if(smartly.easing < 0){
-      smartly.easing = 0;
-    }
+		if(smartly.easing > 1){
+			smartly.easing = 1;
+		}else if(smartly.easing < 0){
+			smartly.easing = 0;
+		}
 		var vx = (targetX - currentX) * smartly.easing;
 		var vy = (targetY - currentY) * smartly.easing;
 		if((Math.abs(vx) < 1 && Math.abs(vy) < 1) ||
@@ -201,11 +204,11 @@ if(! window.smartly){
 			scrollTo(targetX, targetY);
 			if(targetHash === ''){
 				if(location.hash !== '' && history.pushState !== undefined){
-					resetHashChangeEvent();
+					resetHashChangeEvent(false);
 					history.pushState('', document.title, location.pathname);					
 				}
 			}else if(targetHash !== location.hash){
-				resetHashChangeEvent();
+				resetHashChangeEvent(false);
 				location.hash = targetHash;
 			}
 			smartly.scrolledTo = targetElm;
@@ -225,12 +228,21 @@ if(! window.smartly){
 		}
 	}
 	
-	function resetHashChangeEvent(){
+	function resetHashChangeEvent(scrollBeginning){
 		if(hashChangeAvailable){
-			removeEvent(window, 'hashchange', onBackOrForward);
+			return;
+		}
+		
+		if(scrollBeginning){
+			removeEvent(window, 'scroll', finishScroll);
+
+			clearTimeout(hashChangeTimer);			
+		}else{
 			addEvent(window, 'scroll', finishScroll);
-			hashChangeTimer = setTimeout(function(){
-				addEvent(window, 'hashchange', onBackOrForward);
+
+			historyMoved = false;
+			hashChangeTimer = setTimeout( function(){
+				historyMoved = true;
 			}, 30);
 		}
 	}

@@ -1,4 +1,5 @@
 #scrollsmartly.js – Smooth Scroll Library for JavaScript
+
 ##1. 概要
 Webサイトにページ内スムーズスクロール機能を追加するためのJavaScriptライブラリです。単一ページのサイトなどの制作に役立ちます。 *[scrollsmoothly.js](http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly)* (Copyright(C) [KAZUMiX](http://d.hatena.ne.jp/KAZUMiX/)) をフォークし、機能の追加、アルゴリズムの改善を行ったものです。
 ##2. 基本的な使い方
@@ -21,26 +22,18 @@ href属性が`#`のみである要素、つまり初期のスクロール位置�
 通常、そのようなリンクをクリックした際には、URLは`#`で終わる、例えば https://github.com/shinnn/scrollsmartly# のようなものになりますが、本ライブラリでは自動的に`#`を取り除き、 https://github.com/shinnn/scrollsmartly のようなハッシュのないURLに整形します。
 
 * ###その他のライブラリに依存しない
-jQueryなどの、本ライブラリ以外のJavaScriptライブラリとの依存関係がありません。ただし、Internet Exproler 6, 7などの[hashchange イベント](https://developer.mozilla.org/en-US/docs/DOM/Mozilla_event_reference/hashchange)を実装していないブラウザでは、履歴の前後の伴うスクロールを行うことができません。旧バージョンのIEなどを含めた多くのブラウザで動作させるには、[History.js](https://github.com/browserstate/history.js)を別途用意し、下記のように *scrollsmartly.js* より先にロードする必要があります。
+jQueryなどの、本ライブラリ以外のJavaScriptライブラリとの依存関係がありません。ただし、Internet Exproler 6, 7などの[HashChangeEvent](https://developer.mozilla.org/en-US/docs/DOM/Mozilla_event_reference/hashchange)を実装していないブラウザでは、履歴の前後に伴うスクロールを行うことができません。旧バージョンのIEなどを含めた多くのブラウザで動作させるには、HashChangeEventを補完するライブラリを別途用意し、下記のように *scrollsmartly.js* より先にロードする必要があります。
+
 ```html
 <script src='PATH/history.js'></script>
 <script src='PATH/scrollsmartly.js'></script>
 ```
 
+HashChangeEventを補完できるライブラリはいくつか公開されていますが、動作確認を行っているのは[History API JavaScript Library](https://github.com/devote/HTML5-History-API)(© Dmitrii Pakhtinov)です。こちらの使用を推奨します。
+
 ##4. API
 
 ###プロパティ
-* ####`smartly.easing`
-型: **Number**(推奨する値の範囲: 0 < number < 1)   
-初期値: **0.25**  
-値が小さいほど、
-ref console.warn
-
-* ####`smartly.interval`
-型: **Number**  
-初期値: **15**  
-
-
 * ####`smartly.applyDefault`
 型: **Boolean**  
 初期値: **true**  
