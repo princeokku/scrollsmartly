@@ -187,6 +187,12 @@ if(! window.smartly){
 		targetY = Math.min(y, maxScroll.y);
 
 		getCurrentXY();
+    
+    if(smartly.easing > 1){
+      smartly.easing = 1;
+    }else if(smartly.easing < 0){
+      smartly.easing = 0;
+    }
 		var vx = (targetX - currentX) * smartly.easing;
 		var vy = (targetY - currentY) * smartly.easing;
 		if((Math.abs(vx) < 1 && Math.abs(vy) < 1) ||
