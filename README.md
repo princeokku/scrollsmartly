@@ -23,12 +23,10 @@ href属性が`#`のみである要素、つまり初期のスクロール位置�
 
 * ###その他のライブラリに依存しない
 jQueryなどの、本ライブラリ以外のJavaScriptライブラリとの依存関係がありません。ただし、Internet Exproler 6, 7などの[HashChangeEvent](https://developer.mozilla.org/en-US/docs/DOM/Mozilla_event_reference/hashchange)を実装していないブラウザでは、履歴の前後に伴うスクロールを行うことができません。旧バージョンのIEなどを含めた多くのブラウザで動作させるには、HashChangeEventを補完するライブラリを別途用意し、下記のように *scrollsmartly.js* より先にロードする必要があります。
-
 ```html
 <script src='PATH/history.js'></script>
 <script src='PATH/scrollsmartly.js'></script>
 ```
-
 HashChangeEventを補完できるライブラリはいくつか公開されていますが、動作確認を行っているのは[History API JavaScript Library](https://github.com/devote/HTML5-History-API)(© Dmitrii Pakhtinov)です。こちらの使用を推奨します。
 
 ##4. API
