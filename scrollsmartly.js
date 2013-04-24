@@ -17,6 +17,7 @@ if(! window.smartly){
 }
 
 (function(){
+
 	//Preference
 	smartly.easing = 0.25;
 	smartly.interval = 15;
@@ -35,7 +36,7 @@ if(! window.smartly){
 	//ハッシュが '#' 一文字のみである場合、それを取り除く
 	if(location.hash === ''&& location.href.indexOf('#') !== -1 &&
 	history.replaceState !== undefined){
-		history.replaceState("", document.title, location.pathname);
+		history.replaceState('', document.title, location.pathname);
 	}
 	
 	var addEvent, removeEvent;
@@ -63,7 +64,7 @@ if(! window.smartly){
 
 		var onBackOrForward = function(){
 			if(! historyMoved){
-				console.log(6776);
+				// 履歴の前後ではなく、本ライブラリのスクロールにより hashchange イベントが起きた場合
 				return;
 			}
 			
