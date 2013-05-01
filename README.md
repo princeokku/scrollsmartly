@@ -32,6 +32,7 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 ##4. API
 
 ###プロパティ
+
 * ####`smartly.applyDefault`
 型: **Boolean**  
 初期値: **true**  
@@ -46,7 +47,14 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 * ####`smartly.scrollingTo`
 型: **Object (HTMLElement)**  
 初期値: **null**  
-現在のスクロール先要素です。`smartly.scroll`メソッドが実行された際に、最終的なスクロール先となる要素が本プロパティに代入されます。スクロールが完了したときに、初期値である`null`が再度代入されます。
+現在のスクロール先要素です。`smartly.scroll`メソッドが実行された際に、最終的なスクロール先となる要素が本プロパティに代入されます。  
+スクロールが完了したときに初期値である`null`が再度代入されます。スクロール中であるかどうかを判別したい場合は、下記のように処理します。
+す。
+```js
+if(smartly.scrolingTo !== null){
+  //スクロール中であれば行う処理
+}
+```
 
 * ####`smartly.scrolledTo`
 型: **Object (HTMLElement)**  
@@ -59,6 +67,7 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 `smartly.scroll`メソッドによるスクロールが完了した際に実行するコールバック関数を指定できます。コールバック関数が実行される直前に、`scrolledTo`プロパティは更新され、`scrollingTo`プロパティは`null`になります。
 
 ###メソッド
+
 * ####`smartly.init`
 全てのページ内リンクのデフォルト動作を無効 (
 `event.preventDefault`と`event.stopPropagation`を実行）にし、代わりに、本来のリンク先であるアンカーへのスムーズスクロールを起動するボタンにします。
@@ -68,13 +77,23 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 引数1: **hash**
 
 * ####`smartly.on(element [, id])`
-指定した要素のクリックイベントに、`smartly.scroll`メソッドを紐付けます。
+指定した要素のクリックイベントに、`smartly.scroll`メソッドをイベントリスナーとして登録します。
 引数1: **element**  
 引数2: **hash**
 
 * ####`smartly.off(element)`
 指定した要素のクリックイベントに紐付いている`smartly.scroll`メソッドを取り除きます。  
 引数1: **element**
+
+###イベント
+
+* ####`smartlystart`
+型: **Object (HTMLEvent)**
+`smartly.scroll`メソッドが実行され、スクロールが始まる直前に発生します。
+
+* ####`smartlyend`
+型: **Object (HTMLEvent)**
+`smartly.scroll`メソッドが実行され、スクロールが目標に到達した直後に発生します。
 
 ##5. ライセンス
 本ライブラリのライセンスには [MIT License](http://opensource.org/licenses/mit-license.php) を採用しています。
