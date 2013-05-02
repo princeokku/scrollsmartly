@@ -26,25 +26,86 @@ function(){
 */
 
 (function(){
-	var _inner = {};
+	var _inner = {
+		"initAuto": true,
+		"initScroll": true,
+		"callback": undefined,
+		"queue": [],
+		"transit": [],
+		"mutated": null,
+		"reachedCurrentTarget": true
+	};
+	
+	smartly.set = function(){
+		switch (arguments.length){
+			case 1:
+			if(typeof arguments[0] === 'object'){
+				for(var key in propertiesObj){
+					if(smartly.hasOwnProperty(key)){
+						smartly[key] = propertiesObj[key];
+					}
+				}
+			}
+			break;
+			
+			case 2:
+			if(smartly.hasOwnProperty(arguments[0])){
+				smartly[arguments[0]] = arguments[1];
+			}
+			break;
+		}
+		
+		dequeue();
+		return smartly;
+	};
 
-	_inner.initAuto = true;
-	_inner.initScroll = true;
-	_inner.callback = null;
-	_inner.mutated = null;
+	// 遅延処理メソッド
+	smartly.delay = function(time){
+		
+		var waitObj = {};
+		for(var key in smartly){
+			if(typeof smartly[key] === 'function' && key !== 'delay'){
+				waitObj[key] = setFunctionDelay(smartly[key], time);
+			}else{
+				waitObj[key] = smartly[key];				
+			}
+		}
+		
+		function setFunctionDelay(func, delay){
+			return function(){
+				var args = arguments;
+		
+				_inner.queue[_inner.queue.length] = function(){
+					setTimeout(function(){
+						func.apply(smartly, args);
+					}, delay);
+				};
+		
+				return smartly.delay(0);
+			};
+		}
+		
+		return waitObj;
+	};	
+	
+	function dequeue(){
+		if(_inner.queue.length > 0){
+			console.log(_inner.queue);
+			var currentQueue = _inner.queue.shift();
+				currentQueue();
+		}
+	}
 	
 	//Preference
 	smartly.easing = 0.25;
 	smartly.interval = 15;
 	smartly.scrollingTo = null;
 	smartly.scrolledTo = null;
-	smartly.isFollowing = true;
-		
-	smartly.start = {'x': 0, 'y': 0};
-	smartly.current = smartly.end = smartly.start;
+	
+	smartly.start = {"x": 0, "y": 0};
+	smartly.current = smartly.end = smartly.scrollable = smartly.start;
 	
 	smartly.shiftTo = function(){
-		
 	};
 	
 	var targetX = 0, targetY = 0, targetElm, targetHash = '';
@@ -86,11 +147,11 @@ function(){
 			// 履歴の前後ではなく、本ライブラリのスクロールにより hashchange イベントが起きた場合
 			return;
 		}
-			
+		
 		scrollTo(currentX, currentY);
-		smartly.scroll(location.hash.substr(1) || '');
+		smartly.scroll(location.hash.substring(1) || '');
 			
-		// hashchange イベントの cancelable プロパティは false なので、return false; などは不要
+		// HashChangeEvent の cancelable プロパティは false なので、return false; などは不要
 	};
 	
 	var scrollTimerID = null;
@@ -110,46 +171,62 @@ function(){
 	window.WebKitMutationObserver || window.MozMutationObserver || false;
 	
 	var observer;
+	
+	function reportMutated(){
+		_inner.mutated = true;				
+	}
+	
 	if(MutationObserver){
 		observer = new MutationObserver( function(mutations){
-			_inner.mutated = true;
+			reportMutated();
 		});
+		
+	}else if('onpropertychange' in window){
+		observer = function(){
+			this.observe = function(elm){
+				addEvent(elm, 'propertychange', reportMutated);
+			};
+			
+			this.disconnect = function(){
+				removeEvent(elm, 'propertychange', reportMutated);				
+			};
+		};
 		
 	}else{
 		// 変更通知を受け取れないので、以後、常にDOM変更が行われていることを前提に処理する
 		_inner.mutated = true;
 	}
 
-	// カスタムイベント
-	var smartlyStartEvent = document.createEvent('HTMLEvents');
-	smartlyStartEvent.initEvent('smartlystart', false, false);
-	
-	var smartlyEndEvent = document.createEvent('HTMLEvents');
-	smartlyEndEvent.initEvent('smartlyend', false, false);
-	
 	var startScroll;
 	
 	// on + event type のかたちの名を持つイベントリスナーを、当該イベントに登録する関数
-	var handleCustomEvent;
+	var setCustomHTMLEvent;
+	var smartlyStartEvent, smartlyEndEvent;
 	
 	// 全体の初期設定
-	addEvent(window, 'load', function(loadEvent){
-		if(loadEvent){
-			
+	var basicSettings = function(e){
+		if(e){
 			startScroll = function(clickEvent){
 				clickEvent.preventDefault();
 				clickEvent.stopPropagation();
-				smartly.scroll(this.hash.substr(1)); // linkElms[i].hash
+				smartly.scroll(this.hash.substring(1)); // linkElms[i].hash
 			};
 			
-			handleCustomEvent = function(eventType){
+			setCustomHTMLEvent = function(eventType){
+				var htmlEvent = document.createEvent('HTMLEvents');
+				htmlEvent.initEvent(eventType, false, false);
+				
 				window['on'+eventType] = null;
 
 				addEvent(window, eventType, function(e){
 					if(typeof window['on'+eventType] === 'function'){
 						window['on'+eventType](e);
+					}else if(window['on'+eventType] !== null){
+						console.log('on'+eventType, window['on'+eventType]); // デバッグ用
 					}
 				});
+				
+				return htmlEvent;
 			};
 		
 		}else if('event' in window){ // IE
@@ -158,36 +235,69 @@ function(){
 				var self = event.srcElement;
 				event.returnValue = false;
 				event.cancelBubble = true;
-				smartly.scroll(self.hash.substr(1)); // linkElms[i].hash
+				smartly.scroll(self.hash.substring(1)); // linkElms[i].hash
 			};
 
-			handleCustomEvent = function(eventType){
+			setCustomHTMLEvent = function(eventType){
+				var htmlEvent = document.createEvent('HTMLEvents');
+				htmlEvent.initEvent(eventType, false, false);
+
 				window['on'+eventType] = null;
 
 				addEvent(window, eventType, function(){
 					var e = event;
 					if(typeof window['on'+eventType] === 'function'){
 						window['on'+eventType](e);
+					}else if(window['on'+eventType] !== null){
+						console.log('on'+eventType, window['on'+eventType]);
 					}
 				});
 			};
 		}
+
+		smartlyStartEvent = setCustomHTMLEvent('smartlystart');
+		smartlyEndEvent = setCustomHTMLEvent('smartlyend');
 		
-		handleCustomEvent('smartlystart');
-		handleCustomEvent('smartlyend');
+		basicSettings = function(){};
+	};
+
+	addEvent(document, 'DOMContentLoaded', function(e){		
+		basicSettings(e);
+	});
+		
+	addEvent(window, 'load', function(e){
+		basicSettings(e);
+		
+		// https://developer.mozilla.org/ja/docs/DOM/EventTarget.addEventListener
+		// #Multiple_identical_event_listeners
+		addEvent(window, 'hashchange', onBackOrForward);
+		addEvent(window, 'scroll', finishScroll);	
 		
 		getCurrentXY();
+		
+		// 外部からページ内リンク付きで呼び出された場合
+		if(_inner.initScroll && location.hash !== ''){
+			if(window.attachEvent !== undefined &&
+			window.opera === undefined){ // IE
+				// 少し待ってからスクロール
+				setTimeout(function(){
+					scrollTo(0, 0);
+					smartly.scroll(location.hash.substring(1));
+				}, 30);
+			}else{
+				scrollTo(0, 0);
+				smartly.scroll(location.hash.substring(1));
+			}
+		}
+		
 	});
 
 	
 	if(_inner.initAuto === true){
-		addEvent(window, 'load', function(){ smartly.init(); });
+		addEvent(window, 'load', function(){ smartly.all(); });
 	}
 	
-	smartly.init = function(){
-		// https://developer.mozilla.org/ja/docs/DOM/EventTarget.addEventListener#Multiple_identical_event_listeners
-		addEvent(window, 'hashchange', onBackOrForward);
-		addEvent(window, 'scroll', finishScroll);	
+	smartly.all = function(){
 		
 		var currentHref_WOHash = location.href.split('#')[0];
 		// ページ内リンクにイベントを設定する
@@ -219,24 +329,12 @@ function(){
 			}
 		}
 		
-		// 外部からページ内リンク付きで呼び出された場合
-		if(_inner.initScroll && location.hash !== ''){
-			if(window.attachEvent !== undefined &&
-			window.opera === undefined){ // IE
-				// 少し待ってからスクロール
-				setTimeout(function(){
-					scrollTo(0, 0);
-					smartly.scroll(location.hash.substr(1));
-				}, 50);
-			}else{
-				scrollTo(0, 0);
-				smartly.scroll(location.hash.substr(1));
-			}
-		}
+		return smartly;
 	};
 
 	smartly.scroll = function(){
-		var target = '';
+		
+		var targets = [''];
 		var callback = null;
 		
 		switch (arguments.length){
@@ -244,80 +342,134 @@ function(){
 			break;
 			
 			case 1:
-			if(typeof arguments[0] !== 'function'){
-				target = arguments[0];
+			if(typeof arguments[0] === 'object'){
+				if(arguments[0].via !== undefined){
+					if(arguments[0].via.push !== undefined){
+						targets = arguments[0].via;
+					}else{
+						targets = [arguments[0].via];
+					}
+					
+					if(arguments[0].to !== undefined){
+						targets.push(arguments[0].to);
+					}
+					
+				}else{
+					targets[0] = arguments[0].to;					
+				}
+				callback = arguments[0].callback !== undefined? arguments[0].callback: callback;
+
+			}else if(typeof arguments[0] !== 'function'){
+				targets[0] = arguments[0];
+
 			}else{
 				callback = arguments[0];
 			}
 			break;
 			
+			case 2:
+			if(typeof arguments[1] === 'function'){
+				targets[0] = arguments[0];
+				callback = arguments[1];				
+			}else{
+				targets[0] = arguments[0];
+				targets[1] = arguments[1];
+			}
+			break;
+			
 			default:
-			target = arguments[0];
-			callback = arguments[1];
+			var lastKey = arguments.length-1;
+			
+			for(var i=0; i < lastKey; i++){
+				targets[i] = arguments[i];
+			}
+			
+			if(typeof arguments[lastKey] === 'function'){
+				callback = arguments[lastKey];
+				
+			}else{
+				targets[lastKey] = arguments[lastKey];
+			}
+			
+			break;
 		}
 		
-		resetHashChangeEvent(true);
-		
+		var currentTarget = targets.shift();
+				
 		// ターゲット要素の座標を取得
-		if(target.nodeType === 1){
-			targetElm = target;
+		if(currentTarget.nodeType === 1){ // ELEMENT Node である場合
+			targetElm = currentTarget;
+			targetHash = currentTarget.id;
 			
-			// 後にtargetHashに代入するため、id属性を表す文字列に変換しておく
-			target = target.id;
-			
-		}else if(typeof target === 'string'){
-			if(target !== ''){
-				targetElm = document.getElementById(target);
+		}else if(typeof currentTarget === 'string'){
+			if(currentTarget !== ''){
+				targetElm = document.getElementById(currentTarget);
 			}else if(smartly.homeElement){
 				targetElm = smartly.homeElement;
 			}else{
 				targetElm = rootElm;
 			}
+			
+			targetHash = currentTarget;
 		}
 		
 		if(targetElm === null){
-			return false;
+			return smartly;
 		}
-
-		targetHash = target;
-
+		
+		if(targets.length > 0){
+			_inner.transit = targets;
+		}
+		console.log(_inner.transit);
+		
 		setTargetXY();
 
 		// スクロール中にターゲット要素が移動した際、追跡するかどうか
-		if(smartly.isFollowing){
-			if(observer !== undefined){
-				observer.observe( targetElm, {
-					attributes: true, 
-					childList: true, 
-					characterData: true
-				});
-			}
+		if(observer !== undefined){
+			observer.observe( targetElm, {
+				attributes: true, 
+				childList: true,
+				characterData: true
+			});
 		}
 
-		// スクロール停止中ならスクロール開始
-		if(smartly.scrollingTo === null){
+		// スクロール中ではない場合、またはスクロール中であっても、次の目標にまだ到達していない場合
+		if(smartly.scrollingTo === null || ! _inner.reachedCurrentTarget){
+			// スクロールの開始処理
+			
 			smartly.scrollingTo = targetElm;
-			processScroll();
+
+			// 'callback' 引数をコールバック関数に設定する
+			_inner.callback = callback || null;
+
+			clearTimeout(scrollProcessID);
+
+			// smartlystart イベントを発生させる
+			window.dispatchEvent(smartlyStartEvent);			
+			
+		}else{
+			smartly.scrollingTo = targetElm;
 		}
 		
-		// smartlystart イベントを発生させる
-		window.dispatchEvent(smartlyStartEvent);
+		removeEvent(window, 'scroll', finishScroll);
+		resetHashChangeEvent(true);
 		
-		// 'callback' 引数をコールバック関数に設定する
-		_inner.callback = callback; 
-
-		return targetElm;
+		_inner.reachedCurrentTarget = false;
+		processScroll();
+				
+		return smartly;
 	};
+	
+	var scrollProcessID;
 
 	function processScroll(){
-		if(smartly.isFollowing){
-			if(_inner.mutated === true){
-				// スクロール中に、ターゲット要素に対するDOMの変更があった場合、再度ターゲット要素の座標を取得する
-				setTargetXY();
-				console.log('mutated');
-			}
-			_inner.mutated = false;
+		
+		if(_inner.mutated === true){
+			// スクロール中にターゲット要素に対するDOMの変更があった場合、再度ターゲット要素の座標を取得する
+			setTargetXY();
+			console.log('mutated');
 		}
+		_inner.mutated = false;
 
 		getCurrentXY();
 		
@@ -330,40 +482,57 @@ function(){
 		var vy = (targetY - currentY) * smartly.easing;
 		
 		if((Math.abs(vx) < 1 && Math.abs(vy) < 1) ||
-		(prevX === currentX && prevY === currentY)){ // 目標座標付近に到達していたら終了
+		(prevX === currentX && prevY === currentY) ||
+		_inner.reachedCurrentTarget){ // 目標座標付近に到達した場合
 			
 			if(observer !== undefined){
 				observer.disconnect(); // DOMの変更通知の受取を止める
 			}
-			scrollTo(targetX, targetY);
 			
-			//
-						
-			smartly.scrolledTo = targetElm;
-			smartly.scrollingTo = prevX = prevY = null;
+			addEvent(window, 'scroll', finishScroll);
 
-			if(typeof _inner.callback === 'function'){
-				_inner.callback();
+			if(_inner.reachedCurrentTarget){ // scroll.cancel が呼ばれていた場合
+				return;
 			}
 			
-			// smartlyend イベントを発生させる
-			window.dispatchEvent(smartlyEndEvent);
-			return;
-			
-		}else{
-			// 繰り返し
-			scrollTo(
-				Math.ceil(currentX + vx),
-				Math.ceil(currentY + vy)
-			);
-			prevX = currentX;
-			prevY = currentY;
+			scrollTo(targetX, targetY);
+			smartly.scrolledTo = targetElm;
 
-			setTimeout(
-				function(){ processScroll(); },
-				smartly.interval
-			);
+			_inner.reachedCurrentTarget = true; // 直近の目標に到達したことを表す
+						
+			if(_inner.transit.length > 0){ // 経由する要素がまだ残っている場合
+				smartly.scroll(_inner.transit.shift());
+				
+			}else{ // 経由すべき要素は残っていないため、スクロールを完了する				
+				setLocationHash();
+
+				smartly.scrollingTo = prevX = prevY = null;
+				
+				if(typeof _inner.callback === 'function'){
+					_inner.callback();
+				}
+								
+				dequeue();
+			
+				// smartlyend イベントを発生させる
+				window.dispatchEvent(smartlyEndEvent);				
+			}
+
+			return;
 		}
+		
+		// 繰り返し
+		scrollTo(
+			Math.ceil(currentX + vx),
+			Math.ceil(currentY + vy)
+		);
+		prevX = currentX;
+		prevY = currentY;
+
+		scrollProcessID = setTimeout(
+			function(){ processScroll(); },
+			smartly.interval
+		);
 	}
 	
 	function setLocationHash(){
@@ -383,20 +552,17 @@ function(){
 	
 	function resetHashChangeEvent(scrollBeginning){
 		if(scrollBeginning){
-			removeEvent(window, 'scroll', finishScroll);
 
 			clearTimeout(hashChangeTimerID);
 
 		}else{
-			addEvent(window, 'scroll', finishScroll);
-
 			// 検知対象の HashChangeEvent では「ない」ことを表す
 			historyMoved = false;
 			
 			// HashChangeEvent が発生し終わった頃に、これから起こる HashChangeEvent が検知対象となるよう再設定する
 			hashChangeTimerID = setTimeout( function(){
 				historyMoved = true;
-			}, 30);
+			}, 25);
 		}
 	}
 	
@@ -468,15 +634,12 @@ function(){
 		targetY = Math.min(y, maxScroll.y);
 	}
 	
-	smartly.setup =function(applyInitially, scrollInitially){
-		if(applyInitially){
-			
-		}
-		if(scrollInitially){
-			
-		}		
+	smartly.cancel = function(){
+		_inner.reachedCurrentTarget = true; // 目標に到達「したこと」にし、スクロール処理を終了させる
+		_inner.transit= [];
+		smartly.scrollingTo = null;
 	};
-	
+		
 	smartly.on = function(elm, hashArg){
 		removeEvent(elm, 'click', startScroll);
 

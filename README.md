@@ -1,14 +1,21 @@
 #scrollsmartly.js – Smooth Scroll Library for JavaScript
 
 ##1. 概要
+
 Webサイトにページ内スムーズスクロール機能を追加するためのJavaScriptライブラリです。単一ページのサイトなどの制作に役立ちます。 *[scrollsmoothly.js](http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly)* (Copyright(C) [KAZUMiX](http://d.hatena.ne.jp/KAZUMiX/)) をフォークし、機能の追加、アルゴリズムの改善を行ったものです。
+
 ##2. 基本的な使い方
-headタグ内などで`scrollsmartly.js`ファイルを読み込むだけで、href属性が`#`で始まる、通常はページ内リンクとして機能するa要素全てに対し自動的にスムーズスクロール機能を上書きします。
+
+`smartly.all`メソッドを呼び出すことで、href属性が`#`で始まる、通常はページ内リンクとして機能するa要素全てに対し自動的にスムーズスクロール機能を上書きします。
+
 ####読み込み方の例
+
 ```html
 <script src='PATH/scrollsmartly.js'></script>
+<script>
+  smartly.all();
+</script>
 ```
-後述する *scrollsmartly.js* のその他の機能を使わない場合であれば、上記以外のスクリプトを書く必要はありません。
 
 ##3. 特徴
 * ###`smartly`オブジェクトによる自由なユーザー設定
@@ -33,17 +40,6 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 
 ###プロパティ
 
-* ####`smartly.applyDefault`
-型: **Boolean**  
-初期値: **true**  
-`true`である場合、`window.load`イベント発生時に`smartly.init`メソッドを実行します。`false`である場合は実行されません。  
-本プロパティの真偽判定は`window.load`イベント発生時に行われます。よって、本プロパティの値を変更するのは`window.load`イベント発生より前のタイミングである必要があります。
-
-* ####`smartly.scrollIn`
-型: **Boolean**  
-初期値: **true**  
-`true`である場合、ページの読み込み時に
-
 * ####`smartly.scrollingTo`
 型: **Object (HTMLElement)**  
 初期値: **null**  
@@ -61,20 +57,33 @@ if(smartly.scrolingTo !== null){
 初期値: **null**  
 直前のスクロールで到達した要素です。`smartly.scroll`メソッドによるスクロールが完了した直後に、その際のスクロール先だった要素が代入されます。
 
-* ####`smartly.callback`
-型: **Function**  
-初期値: **undefined**  
-`smartly.scroll`メソッドによるスクロールが完了した際に実行するコールバック関数を指定できます。コールバック関数が実行される直前に、`scrolledTo`プロパティは更新され、`scrollingTo`プロパティは`null`になります。
+* ####`smartly.homeElement`
+型: **Object (HTMLElement)**  
+初期値: **html 要素**  
+目標要素が指定されていないスクロールは、全てこの要素へのスクロールとなります。
 
 ###メソッド
 
-* ####`smartly.init`
+* ####`smartly.all()`
 全てのページ内リンクのデフォルト動作を無効 (
 `event.preventDefault`と`event.stopPropagation`を実行）にし、代わりに、本来のリンク先であるアンカーへのスムーズスクロールを起動するボタンにします。
 
-* ####`smartly.scroll([id])`
-指定したid属性を持つ要素へのスクロールを行います。  
-引数1: **hash**
+    * #####引数: なし
+    
+    * #####戻り値: *(Object) smartly*
+
+* ####`smartly.scroll([via1], [via2 …], [to], [callback])`, `smartly.scroll([properties])`
+指定した要素へのスクロールを行います。経由する要素や、スクロールが完了した際に実行するコールバック関数を指定できます。
+
+    * #####引数: *via*
+    
+    * #####戻り値: *(Object) smartly*
+
+* ####`smartly.delay([milliSeconds])`
+指定したid属性を持つ要素へのスクロールを行います。
+
+   * #####引数1: *milliSeconds*  
+   
 
 * ####`smartly.on(element [, id])`
 指定した要素のクリックイベントに、`smartly.scroll`メソッドをイベントリスナーとして登録します。
@@ -88,18 +97,21 @@ if(smartly.scrolingTo !== null){
 ###イベント
 
 * ####`smartlystart`
-型: **Object (HTMLEvent)**
+型: **Object (HTMLEvent)**  
 `smartly.scroll`メソッドが実行され、スクロールが始まる直前に発生します。
 
 * ####`smartlyend`
-型: **Object (HTMLEvent)**
+型: **Object (HTMLEvent)**  
 `smartly.scroll`メソッドが実行され、スクロールが目標に到達した直後に発生します。
 
 ##5. ライセンス
+
 本ライブラリのライセンスには [MIT License](http://opensource.org/licenses/mit-license.php) を採用しています。
 
 ##6. 謝辞
-本ライブラリのフォーク元である *scrollsmoothly.js* の作者、KAZUMiX氏に感謝します。  
+
+本ライブラリのフォーク元である *scrollsmoothly.js* の作者、KAZUMiX氏に感謝します。
+
 **[scrollsmoothly.js](http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly)**  
 Copyright (c) 2008 [KAZUMiX](http://d.hatena.ne.jp/KAZUMiX/)  
 Licensed under the MIT License  
