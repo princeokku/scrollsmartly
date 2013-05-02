@@ -62,6 +62,16 @@ if(smartly.scrolingTo !== null){
 初期値: **html 要素**  
 目標要素が指定されていないスクロールは、全てこの要素へのスクロールとなります。
 
+* ####`smartly.viewpoint.keyword`
+型: **Stirng**  
+初期値: **'left top'**  
+到達地点の座標を設定します。
+
+* ####`smartly.viewpoint.x`, `smartly.viewpoint.y`
+型: **Stirng**  
+初期値: **'left top'**  
+到達地点の座標を設定します。
+
 ###メソッド
 
 * ####`smartly.all()`
@@ -72,14 +82,14 @@ if(smartly.scrolingTo !== null){
     
     * #####戻り値: *(Object) smartly*
 
-* ####`smartly.scroll([via1], [via2 …], [to], [callback])`, `smartly.scroll([properties])`
+* ####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`, `smartly.scroll([properties])`
 指定した要素へのスクロールを行います。経由する要素や、スクロールが完了した際に実行するコールバック関数を指定できます。
 
     * #####引数: *via*
     
     * #####戻り値: *(Object) smartly*
 
-* ####`smartly.delay([milliSeconds])`
+* ####`smartly.delay([function, ] [milliSeconds])`
 指定したid属性を持つ要素へのスクロールを行います。
 
    * #####引数1: *milliSeconds*  

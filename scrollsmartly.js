@@ -33,7 +33,8 @@ function(){
 		"queue": [],
 		"transit": [],
 		"mutated": null,
-		"reachedCurrentTarget": true
+		"reachedCurrentTarget": true,
+		"focusShifted": false
 	};
 	
 	smartly.set = function(){
@@ -60,7 +61,35 @@ function(){
 	};
 
 	// 遅延処理メソッド
-	smartly.delay = function(time){
+	smartly.delay = function(){
+		var func = function(){};
+		var time = 0;
+		var args = [];
+
+		switch(arguments.length){
+			case 0:
+			break;
+			
+			case 1:
+			if(typeof arguments[0] === 'function'){
+				func = arguments[0];
+			}else{
+				time = arguments[0];
+			}
+			break;
+			
+			case 2:
+			func = arguments[0];
+			time = arguments[1];
+			break;
+			
+			default:
+			func = arguments[0];
+			time = arguments[1];
+			for(var i=2; i < arguments.length; i++){
+				args[i-2] = arguments[i];
+			}
+		}
 		
 		var waitObj = {};
 		for(var key in smartly){
@@ -71,15 +100,22 @@ function(){
 			}
 		}
 		
-		function setFunctionDelay(func, delay){
+		function setFunctionDelay(origFunc, delay){
 			return function(){
-				var args = arguments;
-		
-				_inner.queue[_inner.queue.length] = function(){
+				var origArgs = arguments;
+				
+				var delayedFunction = function(){
 					setTimeout(function(){
-						func.apply(smartly, args);
+						func.apply(this, args);
+						origFunc.apply(smartly, origArgs);
 					}, delay);
 				};
+
+				if(smartly.scrollingTo !== null){
+					_inner.queue[_inner.queue.length] = delayedFunction;
+				}else{
+					delayedFunction();
+				}
 		
 				return smartly.delay(0);
 			};
@@ -104,15 +140,20 @@ function(){
 	
 	smartly.start = {"x": 0, "y": 0};
 	smartly.current = smartly.end = smartly.scrollable = smartly.start;
-	
-	smartly.shiftTo = function(){
+
+	smartly.viewpoint = function(){
+
 	};
-	
+	smartly.viewpoint.keyword = 'left top';
+	smartly.viewpoint.x = 0;
+	smartly.viewpoint.y = 0;
+		
 	var targetX = 0, targetY = 0, targetElm, targetHash = '';
 	var currentX = 0, currentY = 0;
 	var prevX = null, prevY = null;
 	var rootElm = document.documentElement || document.body;
   smartly.homeElement = rootElm;
+	var windowWidth = 0, windowHeight = 0;
 	
 	//ハッシュが '#' 一文字のみである場合、それを取り除く
 	if(location.hash === ''&& location.href.indexOf('#') !== -1 &&
@@ -165,6 +206,18 @@ function(){
 			getCurrentXY();
 		}, finishScrollInterval);
 	};
+	
+	var resizeTimerID = null;
+	var resizeCompleteInterval = 30;
+		
+	var resizeCompleteHandler = function(){
+		if(resizeTimerID !== null){
+			clearTimeout(scrollTimerID);
+		}
+		resizeTimerID = setTimeout(function(){
+			reportMutated();
+		}, resizeCompleteInterval);
+	};
 
 	// MutationObserver の polyfill
 	MutationObserver = window.MutationObserver ||
@@ -182,14 +235,14 @@ function(){
 		});
 		
 	}else if('onpropertychange' in window){
-		observer = function(){
-			this.observe = function(elm){
+		observer = {
+			"observe": function(elm){
 				addEvent(elm, 'propertychange', reportMutated);
-			};
+			},
 			
-			this.disconnect = function(){
+			"disconnect": function(){
 				removeEvent(elm, 'propertychange', reportMutated);				
-			};
+			}
 		};
 		
 	}else{
@@ -271,9 +324,11 @@ function(){
 		// https://developer.mozilla.org/ja/docs/DOM/EventTarget.addEventListener
 		// #Multiple_identical_event_listeners
 		addEvent(window, 'hashchange', onBackOrForward);
-		addEvent(window, 'scroll', finishScroll);	
+		addEvent(window, 'scroll', finishScroll);
+		addEvent(window, 'resize', resizeCompleteHandler);
 		
 		getCurrentXY();
+		getWindowSize();
 		
 		// 外部からページ内リンク付きで呼び出された場合
 		if(_inner.initScroll && location.hash !== ''){
@@ -504,7 +559,7 @@ function(){
 				smartly.scroll(_inner.transit.shift());
 				
 			}else{ // 経由すべき要素は残っていないため、スクロールを完了する				
-				setLocationHash();
+				//setLocationHash();
 
 				smartly.scrollingTo = prevX = prevY = null;
 				
@@ -572,6 +627,7 @@ function(){
 	}	
 	
 	var getScrollMaxXY;
+	
 	if(window.scrollMaxX !== undefined){
 		getScrollMaxXY = function(){
 			return {x: window.scrollMaxX, y: window.scrollMaxY};
@@ -579,60 +635,161 @@ function(){
 	}else{
 		getScrollMaxXY = function(){
 			var documentSize = getDocumentSize();
-			var windowSize = getWindowSize();
+			getWindowSize();
 			return {
-				x: documentSize.width - windowSize.width,
-				y: documentSize.height - windowSize.height
+				x: documentSize.width - windowWidth,
+				y: documentSize.height - windowHeight
 			};
 		};
 		
 		var getDocumentSize = function(){
-			return {
+			return{
 				width: Math.max(document.body.scrollWidth, document.documentElement.scrollWidth),
 				height: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
 			};
 		};
-		
-		var getWindowSize;
-		if(rootElm.clientWidth !== undefined){
-			getWindowSize = function(){
-				return {width: rootElm.clientWidth, height: rootElm.clientHeight};
-			};
-		}else if(window.innerWidth){
-			var box = document.createElement('div');
-			box.style.position = 'absolute';
-			box.style.top = '0px';
-			box.style.left = '0px';
-			box.style.width = '100%';
-			box.style.height = '100%';
-			box.style.margin = '0px';
-			box.style.padding = '0px';
-			box.style.border = 'none';
-			box.style.visibility = 'hidden';
-
-			getWindowSize = function(){
-				document.body.appendChild(box);
-				var result = {width: box.offsetWidth, height: box.offsetHeight};
-				document.body.removeChild(box);
-				return result;
-			};
-		}
 	}
 	
+	var getWindowSize;
+	
+	if(rootElm.clientWidth !== undefined){
+		getWindowSize = function(){
+			windowWidth = rootElm.clientWidth;
+			windowHeight = rootElm.clientHeight;			
+		};
+		
+	}else if(window.innerWidth){
+		var box = document.createElement('div');
+		box.style.position = 'absolute';
+		box.style.top = '0px';
+		box.style.left = '0px';
+		box.style.width = '100%';
+		box.style.height = '100%';
+		box.style.margin = '0px';
+		box.style.padding = '0px';
+		box.style.border = 'none';
+		box.style.visibility = 'hidden';
+
+		getWindowSize = function(){
+			document.body.appendChild(box);
+			windowWidth = box.offsetWidth;
+			windowHeight = box.offsetHeight;			
+			document.body.removeChild(box);
+		};
+	}
+		
 	function setTargetXY(){
 		// スクロール先座標をセットする
 		var x = 0;
 		var y = 0;
 		var elm = targetElm;
+		
 		while(elm){
-			x += elm.offsetLeft;
-			y += elm.offsetTop;
+			if(elm.offsetLeft !== undefined){
+				x += elm.offsetLeft;
+				y += elm.offsetTop;
+				
+			}else{
+				var rect = elm.getBoundingClientRect();
+				x += rect.left;
+				y += rect.top;
+			}
+			
 			elm = elm.offsetParent;
 		}
 		var maxScroll = getScrollMaxXY();
-		targetX = Math.min(x, maxScroll.x);
-		targetY = Math.min(y, maxScroll.y);
+		
+		var viewpoint = parseViewpointKeyword();
+		
+		targetX = Math.min(
+			x - viewpoint.x + smartly.viewpoint.x,
+			maxScroll.x
+		);
+		if(targetX < 0){
+			targetX = 0;
+		}
+
+		targetY = Math.min(
+			y - viewpoint.y + smartly.viewpoint.y,
+			maxScroll.y
+		);
+		if(targetY < 0){
+			targetY = 0;
+		}
 	}
+	
+	function parseViewpointKeyword(){
+		var keywordX = 0;
+		var keywordY = 0;
+
+		if(smartly.viewpoint.keyword && smartly.viewpoint.keyword !== 'left top'){
+			words = String(smartly.viewpoint.keyword).split(' ');
+			if(words.length === 1){
+				words[1] = words[0];
+			}
+			
+			var elmWidth, elmHeight;
+			if(targetElm.offsetWidth !== undefined){
+				elmWidth = targetElm.offsetWidth;
+				elmHeight = targetElm.offsetHeight;
+				
+			}else{
+				var targetRect = targetElm.getBoundingClientRect();
+				elmWidth = targetRect.width;
+				elmHeight = targetRect.height;
+			}
+			
+			var fraction;
+			
+			switch(words[0]){
+				case 'left':
+				fraction = 0;
+				break;
+				
+				case 'center':
+				fraction = 0.5;
+				break;
+				
+				case 'right':
+				fraction = 1;
+				break;
+				
+				default:
+				if(words[0].charAt(words[0].length-1) === '%'){
+					fraction = parseFloat(words[0]) * 0.01;
+				}
+				break;
+			}
+			
+			keywordX = parseInt((windowWidth - elmWidth) * fraction, 10);
+
+			switch(words[1]){
+				case 'top':
+				fraction = 0;
+				break;
+				
+				case 'center':
+				fraction = 0.5;
+				break;
+				
+				case 'bottom':
+				fraction = 1;
+				break;
+				
+				default:
+				if(words[1].charAt(words[1].length-1) === '%'){
+					fraction = parseFloat(words[1]) * 0.01;
+				}
+				break;
+			}
+			
+			keywordY = parseInt((windowHeight - elmHeight) * fraction, 10);
+		}
+		
+		return {"x": keywordX, "y": keywordY};
+	}
+	
+	var actualViewpointShift = {"x": 0, "y": 0};
 	
 	smartly.cancel = function(){
 		_inner.reachedCurrentTarget = true; // 目標に到達「したこと」にし、スクロール処理を終了させる
