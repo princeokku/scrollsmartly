@@ -17,7 +17,10 @@ if(! window.smartly){
 }
 
 (function(){
+	var currentHref_WOHash = location.href.split('#')[0];
+	
 	var _inner = {
+		"scrollProcessInterval": 15,
 		"stillLoading": true,
 		"callback": undefined,
 		"delayedFunctionsQueue": [],
@@ -254,27 +257,28 @@ if(! window.smartly){
 	var smartlyStartEvent, smartlyEndEvent;
 	
 	// 全体の初期設定
-	var basicSettings = function(e){
-		//console.log(Boolean(e), e);
-		
+	var basicSettings = function(e){		
 		if(e){
 			startScroll = function(clickEvent){
 				clickEvent.preventDefault();
 				clickEvent.stopPropagation();
-				smartly.scroll(this.hash.substring(1)); // linkElms[i].hash
+				if(this.scrollSmartlyTarget !== undefined){
+					smartly.scroll(this.scrollSmartlyTarget);					
+				}else{
+					smartly.scroll(this.hash.substring(1));
+				}
 			};
 			
 			setCustomHTMLEvent = function(eventType){
 				var htmlEvent = document.createEvent('HTMLEvents');
 				htmlEvent.initEvent(eventType, false, false);
-				
 				window['on'+eventType] = null;
 
 				addEvent(window, eventType, function(e){
 					if(typeof window['on'+eventType] === 'function'){
 						window['on'+eventType](e);
 					}else if(window['on'+eventType] !== null){
-						console.log('on'+eventType, window['on'+eventType]); // デバッグ用
+						console.log('on'+eventType+':', window['on'+eventType]); // デバッグ用
 					}
 				});
 				
@@ -287,13 +291,12 @@ if(! window.smartly){
 				var self = event.srcElement;
 				event.returnValue = false;
 				event.cancelBubble = true;
-				smartly.scroll(self.hash.substring(1)); // linkElms[i].hash
+				smartly.scroll(self.hash.substring(1));
 			};
 
 			setCustomHTMLEvent = function(eventType){
 				var htmlEvent = document.createEvent('HTMLEvents');
 				htmlEvent.initEvent(eventType, false, false);
-
 				window['on'+eventType] = null;
 
 				addEvent(window, eventType, function(){
@@ -301,9 +304,11 @@ if(! window.smartly){
 					if(typeof window['on'+eventType] === 'function'){
 						window['on'+eventType](e);
 					}else if(window['on'+eventType] !== null){
-						console.log('on'+eventType, window['on'+eventType]);
+						console.log('on'+eventType+':', window['on'+eventType]);
 					}
 				});
+			
+				return htmlEvent;
 			};
 		}
 
@@ -485,6 +490,9 @@ if(! window.smartly){
 	};
 	
 	var scrollProcessID;
+	
+	var round = Math.round;
+	var abs = Math.abs;
 
 	function processScroll(){
 		
@@ -505,7 +513,7 @@ if(! window.smartly){
 		var vx = (targetX - currentX) * smartly.easing;
 		var vy = (targetY - currentY) * smartly.easing;
 		
-		if((Math.abs(vx) < 1 && Math.abs(vy) < 1) ||
+		if((abs(vx) < 0.1 && abs(vy) < 0.1) ||
 		(prevX === currentX && prevY === currentY) ||
 		_inner.reachedCurrentTarget){ // 目標座標付近に到達した場合
 			
@@ -515,13 +523,12 @@ if(! window.smartly){
 			
 			addEvent(window, 'scroll', finishScroll);
 
-			if(_inner.reachedCurrentTarget){ // scroll.cancel が呼ばれていた場合
+			if(_inner.reachedCurrentTarget){ // scroll.stop が呼ばれていた場合
 				return;
 			}
 			
 			scrollTo(targetX, targetY);
 			smartly.scrolledTo = targetElm;
-
 			_inner.reachedCurrentTarget = true; // 直近の目標に到達したことを表す
 						
 			if(_inner.transit.length > 0){ // 経由する要素がまだ残っている場合
@@ -529,7 +536,6 @@ if(! window.smartly){
 				
 			}else{ // 経由すべき要素は残っていないため、スクロールを完了する				
 				setLocationHash();
-
 				smartly.scrollingTo = prevX = prevY = null;
 				
 				if(typeof _inner.callback === 'function'){
@@ -537,7 +543,6 @@ if(! window.smartly){
 				}
 								
 				dequeue();
-			
 				// smartlyend イベントを発生させる
 				window.dispatchEvent(smartlyEndEvent);				
 			}
@@ -546,16 +551,13 @@ if(! window.smartly){
 		}
 		
 		// 繰り返し
-		scrollTo(
-			Math.ceil(currentX + vx),
-			Math.ceil(currentY + vy)
-		);
 		prevX = currentX;
 		prevY = currentY;
-
+		scrollTo(round(currentX + vx), round(currentY + vy));
+		
 		scrollProcessID = setTimeout(
 			function(){ processScroll(); },
-			smartly.interval
+			_inner.scrollProcessInterval
 		);
 	}
 	
@@ -568,10 +570,10 @@ if(! window.smartly){
 		if(targetHash !== ''){
 			resetHashChangeEvent(false);
 
-			if(history.ppushState !== undefined){
+			if(history.pushState !== undefined){
 				history.pushState('', document.title, location.pathname + '#' + targetHash);
 			
-			}else if(focusKeywordChanged() || smartly.marginLeft !== 0 || smartly.marginLeft !== 0){
+			}else if(focusKeywordChanged() || smartly.marginLeft !== 0 || smartly.marginTop !== 0){
 				
 					// ハッシュを変更する際に、そのハッシュをid属性に持つ要素へ移動するのを防ぐ必要がある。
 					// つまり、location.hash = StringX 呼び出す際に、id属性が StringX である要素が
@@ -777,17 +779,14 @@ if(! window.smartly){
 
 		return smartly;		
 	};
-		
-	smartly.on = function(elm, hashArg){
-		removeEvent(elm, 'click', startScroll);
-
-		var hashStr = hashArg? String(hashArg): '';
-		if(!elm.hash || hashArg !== undefined){
-			elm.hash = '#' + hashStr;
-		}else if(elm.hash){
-			elm.hash = '#';
+	
+	smartly.on = function(elm, target){
+		if(target !== undefined){
+			elm.scrollSmartlyTarget = target;
+		}else{
+			elm.scrollSmartlyTarget = '';			
 		}
-
+		
 		addEvent(elm, 'click', startScroll);
 		elm.style.cursor = 'pointer';
 
@@ -796,11 +795,44 @@ if(! window.smartly){
 	};
 
 	smartly.off = function(elm){
+		delete elm.scrollSmartlyTarget;
 		removeEvent(elm, 'click', startScroll);
 		elm.style.cursor = '';
 		
 		dequeue();
 		return smartly;
+	};
+
+	smartly.replaceAnchor = function(elm, calledFromMethod){
+		/*
+		**イベントリスナーを登録するリンク**:
+		・href属性が '#' で始まるページ内リンクであり、尚かつ、それが指し示すアンカーがページ内に存在するもの
+			-> id='anchor' である要素へのスクロール
+		・href属性が '#' 一文字のみのリンク -> ドキュメントの最上端へのスクロール
+		
+		**イベントリスナーを登録しないリンク**:
+		・href属性に '#' が含まれないリンク
+		・href属性に '#' を含むが、当該リンクのあるページ内のものではない、別ページのアンカーへのリンク
+		・href属性を持たないa要素
+		*/
+		
+		var hrefStr = elm.href + '';
+		var splitterIndex = hrefStr.lastIndexOf('#'); // '#' が無ければ -1 が代入される
+		
+		// '#' 以降を除いた文字列が、現在表示しているサイトのURLと一致しているかの判定。
+		// '#' が無ければ String.substring(0, -1) つまり '' となり、偽である。
+		if(hrefStr.substring(0, splitterIndex) === currentHref_WOHash){
+			if(elm.hash !== undefined){ // In HTML4?
+				elm.hash = hrefStr.substring(splitterIndex + 1);
+			}
+			delete elm.scrollSmartlyTarget;
+			addEvent(elm, 'click', startScroll);
+		}
+		
+		if(calledFromMethod !== true){
+			dequeue();
+			return smartly;
+		}
 	};
 	
 	smartly.all = function(){
@@ -814,34 +846,10 @@ if(! window.smartly){
 			return smartly;
 		}
 		
-		var currentHref_WOHash = location.href.split('#')[0];
 		// ページ内リンクにイベントを設定する
-		var linkElms = document.links;
+		var linkElms = document.links; // https://developer.mozilla.org/ja/docs/DOM/document.links
 		for(var i=0; i<linkElms.length; i++){
-			var hrefStr = linkElms[i].href;
-			var splitterIndex = hrefStr.lastIndexOf('#');
-
-			/*
-			イベントリスナーを登録するリンク:
-			・href属性が '#' で始まるページ内リンクであり、尚かつ、それが指し示すアンカーがページ内に存在するもの
-				-> id='anchor' である要素へのスクロール
-			・href属性が '#' 一文字のみのリンク -> ドキュメントの最上端へのスクロール
-			
-			イベントリスナーを登録しないリンク:
-			・href属性に '#' が含まれないリンク
-			・href属性に '#' を含むが、当該リンクが指し示すアンカーが存在しないリンク
-			・href属性に '#' を含むが、当該リンクのあるページ内のものではない、別ページのアンカーへのリンク
-			・href属性を持たないa要素
-			*/
-
-			if(hrefStr.substring(0, splitterIndex) === currentHref_WOHash){
-				var hashStr = hrefStr.substr(splitterIndex + 1);
-				if(hashStr !== '' && document.getElementById(hashStr)){
-					addEvent(linkElms[i], 'click', startScroll);
-				}else if(hashStr === ''){
-					addEvent(linkElms[i], 'click', startScroll);
-				}
-			}
+			smartly.replaceAnchor(linkElms[i], true);
 		}
 		
 		dequeue();

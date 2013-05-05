@@ -60,8 +60,13 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 
     * 引数1: *function*
     * 引数2: *milliSeconds* 遅延する時間をミリ秒で指定。
-   
-* ####`smartly.on(element [, id])`
+  
+* ####`smartly.replaceAnchor(element)`
+指定した要素が`href`属性を持つ場合、ページ内リンクとしてのデフォルト動作を無効 (
+`event.preventDefault`と`event.stopPropagation`を実行）にし、代わりに、クリックした際に本来のリンク先を目標要素として`smartly.scroll`を実行します。
+    * 引数1: *element*
+
+* ####`smartly.on(element [, target])`
 指定した要素のクリックイベントに、`smartly.scroll`メソッドをイベントリスナーとして登録します。
     * 引数1: *element*  
     * 引数2: *hash*
@@ -77,7 +82,6 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 初期値: *null*  
 現在のスクロール先要素です。`smartly.scroll`メソッドが実行された際に、最終的なスクロール先となる要素が本プロパティに代入されます。  
 スクロールが完了したときに初期値である`null`が再度代入されます。スクロール中であるかどうかを判別したい場合は、下記のように処理します。
-す。
 ```js
 if(smartly.scrolingTo !== null){
   //スクロール中であれば行う処理
