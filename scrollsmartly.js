@@ -53,12 +53,8 @@ if(! window.smartly){
 	};
 
 	// 遅延処理メソッド
-	smartly.delay = function(){
-		var isGeneratedFromDelay = false;
-		
-		var func;
-		var time = 0;
-		var args = [];
+	smartly.delay = function(){		
+		var func, time = 0, args = [];
 
 		switch(arguments.length){
 			case 0:
@@ -88,13 +84,13 @@ if(! window.smartly){
 		var waitObj = {};
 		for(var key in smartly){
 			if(typeof smartly[key] === 'function' && key !== 'delay'){
-				waitObj[key] = setFunctionDelay(smartly[key], time);
+				waitObj[key] = setDelay(smartly[key], time);
 			}else{
 				waitObj[key] = smartly[key];				
 			}
 		}
 		
-		function setFunctionDelay(origFunc, delay){
+		function setDelay(origFunc, delay){
 			return function(){
 				var origArgs = arguments;
 				
@@ -133,8 +129,7 @@ if(! window.smartly){
 	}
 	
 	//Preference
-	smartly.easing = 0.25;
-	smartly.interval = 15;
+	smartly.easing = 4;
 	smartly.scrollingTo = null;
 	smartly.scrolledTo = null;
 	smartly.hashScrollSynced = true;
@@ -183,8 +178,6 @@ if(! window.smartly){
 	var historyMoved = true;
 
 	var onBackOrForward = function(e){
-		//console.log(history.length, e);
-
 		if(! historyMoved || ! smartly.hashScrollSynced){
 			// 履歴の前後ではなく、本ライブラリのスクロールにより hashchange イベントが起きた場合
 			return;
@@ -198,7 +191,7 @@ if(! window.smartly){
 	
 	var scrollTimerID = null;
 		
-	var finishScroll = function(){
+	var scrollCompleteHandler = function(){
 		if(scrollTimerID !== null){
 			clearTimeout(scrollTimerID);
 		}
@@ -234,12 +227,11 @@ if(! window.smartly){
 			reportMutated();
 		});
 		
-	}else if('onpropertychange' in window){
+	}else if('onpropertychange' in document){
 		observer = {
 			"observe": function(elm){
 				addEvent(elm, 'propertychange', reportMutated);
 			},
-			
 			"disconnect": function(){
 				removeEvent(elm, 'propertychange', reportMutated);				
 			}
@@ -288,7 +280,7 @@ if(! window.smartly){
 		}else if('event' in window){ // IE
 
 			startScroll = function(){
-				var self = event.srcElement;
+				var self = event.srcElement || event.target;
 				event.returnValue = false;
 				event.cancelBubble = true;
 				smartly.scroll(self.hash.substring(1));
@@ -311,14 +303,14 @@ if(! window.smartly){
 				return htmlEvent;
 			};
 		}
-
+		
 		smartlyStartEvent = setCustomHTMLEvent('smartlystart');
 		smartlyEndEvent = setCustomHTMLEvent('smartlyend');
 		
 		// https://developer.mozilla.org/ja/docs/DOM/EventTarget.addEventListener
 		// #Multiple_identical_event_listeners
 		addEvent(window, 'hashchange', onBackOrForward);
-		addEvent(window, 'scroll', finishScroll);
+		addEvent(window, 'scroll', scrollCompleteHandler);
 		addEvent(window, 'resize', resizeCompleteHandler);
 		
 		// 本関数が再度呼ばれても何もしない
@@ -336,17 +328,17 @@ if(! window.smartly){
 		getWindowSize();
 		
 		// 外部からページ内リンク付きで呼び出された場合
-		if(smartly.hashScrollSynced && location.hash !== ''){
+		if(smartly.hashScrollSynced && (location.hash !== '' || smartly.homeElement !== rootElm)){
 			if(window.attachEvent !== undefined &&
 			window.opera === undefined){ // IE
 				// 少し待ってからスクロール
 				setTimeout(function(){
 					scrollTo(0, 0);
-					smartly.scroll(location.hash.substring(1));
+					smartly.scroll(location.hash.substring(1) || smartly.homeElement);
 				}, 30);
 			}else{
 				scrollTo(0, 0);
-				smartly.scroll(location.hash.substring(1));
+				smartly.scroll(location.hash.substring(1) || smartly.homeElement);
 			}
 		}
 		
@@ -354,12 +346,25 @@ if(! window.smartly){
 			resetHashChangeEvent(false);
 		});
 		
+		delete _inner.stillLoading;
 	});
 
+	// https://developer.mozilla.org/ja/docs/JavaScript/Reference/Global_Objects/Array/isArray#Compatibility
+	var isArray;
+	if(Array.isArray !== undefined){
+		isArray = Array.isArray;
+	}else{
+		var isArraySub = Object.prototype.toString.call;
+		isArray = function(obj){
+			return isArraySub(obj) === '[object Array]';
+		};
+	}
+		
 	smartly.scroll = function(){
 		
 		var targets = [''];
 		var callback = null;
+		var easing = '';
 		
 		switch (arguments.length){
 			case 0:
@@ -372,7 +377,7 @@ if(! window.smartly){
 					targets[0] = arguments[0];
 					
 				}else if(arguments[0].via !== undefined){
-					if(arguments[0].via.push !== undefined){
+					if(isArray(arguments[0].via)){
 						// viaプロパティが配列であった場合
 						targets = arguments[0].via;
 					}else{
@@ -456,9 +461,9 @@ if(! window.smartly){
 		// スクロール中にターゲット要素が移動した際、追跡するかどうか
 		if(observer !== undefined){
 			observer.observe( targetElm, {
-				attributes: true, 
+				attributes: true,
 				childList: true,
-				characterData: true
+				characterData: false
 			});
 		}
 
@@ -480,7 +485,7 @@ if(! window.smartly){
 			smartly.scrollingTo = targetElm;
 		}
 		
-		removeEvent(window, 'scroll', finishScroll);
+		removeEvent(window, 'scroll', scrollCompleteHandler);
 		resetHashChangeEvent(true);
 		
 		_inner.reachedCurrentTarget = false;
@@ -493,7 +498,7 @@ if(! window.smartly){
 	
 	var round = Math.round;
 	var abs = Math.abs;
-
+	
 	function processScroll(){
 		
 		if(_inner.mutated === true){
@@ -505,15 +510,14 @@ if(! window.smartly){
 
 		getCurrentXY();
 		
-		if(smartly.easing > 1){
+		if(smartly.easing < 1){
 			smartly.easing = 1;
-		}else if(smartly.easing < 0){
-			smartly.easing = 0;
 		}
-		var vx = (targetX - currentX) * smartly.easing;
-		var vy = (targetY - currentY) * smartly.easing;
 		
-		if((abs(vx) < 0.1 && abs(vy) < 0.1) ||
+		var vx = (targetX - currentX) / smartly.easing;
+		var vy = (targetY - currentY) / smartly.easing;
+		
+		if(//(abs(vx) < 0.1 && abs(vy) < 0.1) ||
 		(prevX === currentX && prevY === currentY) ||
 		_inner.reachedCurrentTarget){ // 目標座標付近に到達した場合
 			
@@ -521,7 +525,7 @@ if(! window.smartly){
 				observer.disconnect(); // DOMの変更通知の受取を止める
 			}
 			
-			addEvent(window, 'scroll', finishScroll);
+			addEvent(window, 'scroll', scrollCompleteHandler);
 
 			if(_inner.reachedCurrentTarget){ // scroll.stop が呼ばれていた場合
 				return;
@@ -559,6 +563,73 @@ if(! window.smartly){
 			function(){ processScroll(); },
 			_inner.scrollProcessInterval
 		);
+	}
+	
+	if(jQuery){
+		
+		var page = (function(){
+			var line = document.createElement('div');
+			line.style.position = 'absolute';
+			line.style.top = line.style.left = '0';
+			line.style.width = '1px';
+			line.style.height = '100%';
+			line.style.margin = '0px';
+			line.style.padding = '1px 0 0 0';
+			line.style.border = 'none';
+			line.style.visibility = 'hidden';
+
+			document.body.appendChild(line);
+			
+			var topElm = document.body;
+			var initialTop = topElm.scrollTop;
+			if(initialTop < 1){
+				topElm.scrollTop = 1;
+			}else{
+				topElm.scrollTop = initialTop - 1;		
+			}
+	
+			if(topElm.scrollTop === initialTop){
+				topElm = document.documentElement;
+			}else{
+				topElm.scrollTop = initialTop;				
+			}
+
+			document.body.removeChild(line);
+			return topElm;
+		}());
+		
+		page = $(page);
+		
+		window.jsmartly = function(elm, speedArg, es){
+			var offset = $(elm).offset();
+			var pageOffset = page.offset();
+			console.log(page.scrollLeft(), page.scrollTop());
+		
+			var complete = function(){console.log('c');};
+			var distance = Math.sqrt(
+				Math.pow(page.scrollLeft() - offset.left, 2) +
+				Math.pow(page.scrollTop() - offset.top, 2)
+			);
+		
+			var speed = speedArg || 3.5;
+			var duration = parseInt(distance / speed, 10);
+
+			page.animate({
+				scrollLeft: offset.left,
+				scrollTop: offset.top
+			},{
+				duration: duration || 550,
+				easing: es || 'easeOutExpo',
+				//progress: function(a1,a2,a3){console.log(a1,a2,a3);},
+				complete: complete
+			});
+	
+			//return $(this);
+		};
+	}
+	
+	function jQueryScroll(){
+		//tmp
 	}
 	
 	function setLocationHash(){
@@ -836,7 +907,7 @@ if(! window.smartly){
 	};
 	
 	smartly.all = function(){
-		if(_inner.stillLoading){
+		if(_inner.stillLoading === true){
 			addEvent(window, 'load', function(){
 				delete _inner.stillLoading;
 				smartly.all();
@@ -845,7 +916,6 @@ if(! window.smartly){
 			dequeue();
 			return smartly;
 		}
-		
 		// ページ内リンクにイベントを設定する
 		var linkElms = document.links; // https://developer.mozilla.org/ja/docs/DOM/document.links
 		for(var i=0; i<linkElms.length; i++){
@@ -858,4 +928,3 @@ if(! window.smartly){
 	
 }());
 
-smartly.all();

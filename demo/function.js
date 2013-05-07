@@ -22,21 +22,27 @@
 			segment.className = 'segment';
 			segment.href = location.pathname + '#seg' + (i+1);
 			segment.hash = '#seg' + (i+1);
-			segment.style.left = Math.round(Math.random() * 7200) + 'px';
-			segment.style.top = Math.round(Math.random() * 7200) + 'px';
+			segment.style.left = Math.round(Math.random() * 5000) + 'px';
+			segment.style.top = Math.round(Math.random() * 5000) + 'px';
 			segment.style.backgroundColor = '#' + parseInt(i*5, 10).toString(16) + '';
 		
 			document.getElementById('container').appendChild(segment);
 		}
 		
-		smartly.init();
+		smartly.all();
+		smartly.position = 'center center';
 		
 		function schedule(){
 			var elm = document.getElementById('seg' + Math.round(Math.random() * 4));
-			elm.style.top = (parseInt(elm.style.top, 10) + Math.round(Math.random() * 10)) + 'px';
-			elm.style.left = (parseInt(elm.style.left, 10) + Math.round(Math.random() * 10)) + 'px';
+			$(elm).animate({
+				top: '+=' + Math.round(Math.random() * 400 - 200) + 'px',
+				left: '+=' + Math.round(Math.random() * 400 - 200) + 'px'				
+			},{
+				duration: 500,
+				easing: 'swing'
+			});
 			
-			setTimeout(function(){ schedule(); }, 4);
+			setTimeout(function(){ schedule(); }, 500);
 		}
 		
 		schedule();
