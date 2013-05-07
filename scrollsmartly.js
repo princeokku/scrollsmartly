@@ -1,4 +1,4 @@
-/* 
+ /* 
  * scrollsmartly.js v0.1
  * Copyright (c) 2013 Shinnosuke Watanabe
  * https://github.com/shinnn
@@ -178,10 +178,8 @@ if(! window.smartly){
 	var historyMoved = true;
 
 	var onBackOrForward = function(e){
-		if(! historyMoved || ! smartly.hashScrollSynced){
-			// 履歴の前後ではなく、本ライブラリのスクロールにより hashchange イベントが起きた場合
-			return;
-		}
+		// 履歴の前後ではなく、本ライブラリのスクロールにより hashchange イベントが起きた場合
+		if(! historyMoved || ! smartly.hashScrollSynced){ return; }
 		
 		scrollTo(currentX, currentY);
 		smartly.scroll(location.hash.substring(1));
@@ -225,23 +223,12 @@ if(! window.smartly){
 	if(MutationObserver){
 		observer = new MutationObserver( function(mutations){
 			reportMutated();
-		});
-		
-	}else if('onpropertychange' in document){
-		observer = {
-			"observe": function(elm){
-				addEvent(elm, 'propertychange', reportMutated);
-			},
-			"disconnect": function(){
-				removeEvent(elm, 'propertychange', reportMutated);				
-			}
-		};
-		
+		});	
 	}else{
 		// 変更通知を受け取れないので、以後、常にDOM変更が行われていることを前提に処理する
 		_inner.mutated = true;
 	}
-
+  
 	var startScroll;
 	
 	// on + event type のかたちの名を持つイベントリスナーを、当該イベントに登録する関数
@@ -342,12 +329,21 @@ if(! window.smartly){
 			}
 		}
 		
-		addEvent(document, 'click', function(e){
-			resetHashChangeEvent(false);
-		});
+		addEvent(document.body, 'click', holdDefaultHashChange);
 		
 		delete _inner.stillLoading;
 	});
+
+	function holdDefaultHashChange(clickEvent){
+		if(! smartly.hashScrollSynced){ return; }
+
+		var evt = clickEvent || event; //tmp
+		var elm = evt.target || evt.srcElement;
+		if(elm.href !== undefined && elm.href.indexOf('#') !== -1){
+			console.log(elm.href);
+			resetHashChangeEvent(false);	
+		}
+	}
 
 	// https://developer.mozilla.org/ja/docs/JavaScript/Reference/Global_Objects/Array/isArray#Compatibility
 	var isArray;
@@ -460,9 +456,9 @@ if(! window.smartly){
 
 		// スクロール中にターゲット要素が移動した際、追跡するかどうか
 		if(observer !== undefined){
-			observer.observe( targetElm, {
+			observer.observe( document.body, {
 				attributes: true,
-				childList: true,
+				subtree: true,
 				characterData: false
 			});
 		}
@@ -505,9 +501,12 @@ if(! window.smartly){
 			// スクロール中にターゲット要素に対するDOMの変更があった場合、再度ターゲット要素の座標を取得する
 			setTargetXY();
 			console.log('mutated');
-		}
-		_inner.mutated = false;
 
+			if(observer !== undefined){
+				_inner.mutated = false;
+			}
+		}
+		
 		getCurrentXY();
 		
 		if(smartly.easing < 1){
@@ -527,9 +526,8 @@ if(! window.smartly){
 			
 			addEvent(window, 'scroll', scrollCompleteHandler);
 
-			if(_inner.reachedCurrentTarget){ // scroll.stop が呼ばれていた場合
-				return;
-			}
+			// scroll.stop が呼ばれていた場合
+			if(_inner.reachedCurrentTarget){ return; }
 			
 			scrollTo(targetX, targetY);
 			smartly.scrolledTo = targetElm;
@@ -669,9 +667,7 @@ if(! window.smartly){
 	var hashChangeTimerID;
 	
 	function resetHashChangeEvent(scrollBeginning){
-		if(! smartly.scrollHashSynced){
-			return;
-		}
+		if(! smartly.scrollHashSynced){ return; }
 		
 		if(scrollBeginning){
 			clearTimeout(hashChangeTimerID);
@@ -727,12 +723,9 @@ if(! window.smartly){
 	}else if(window.innerWidth){
 		var box = document.createElement('div');
 		box.style.position = 'absolute';
-		box.style.top = '0px';
-		box.style.left = '0px';
-		box.style.width = '100%';
-		box.style.height = '100%';
-		box.style.margin = '0px';
-		box.style.padding = '0px';
+		box.style.left = box.style.top = '0';
+		box.style.width = box.style.height = '100%';
+		box.style.margin = box.style.padding = '0';
 		box.style.border = 'none';
 		box.style.visibility = 'hidden';
 
@@ -851,15 +844,35 @@ if(! window.smartly){
 		return smartly;		
 	};
 	
+	function each(obj, func){
+		if(obj === undefined){ return; }
+		var items;
+		if(obj.length === undefined){ items = [obj]; }
+		else{ items = obj; }
+		
+		for(var i=0; i < items.length; i++){
+			func.call(smartly, items[i], i);
+		}
+	}
+	
 	smartly.on = function(elm, target){
-		if(target !== undefined){
-			elm.scrollSmartlyTarget = target;
+		var arr;
+		if(elm.length === undefined){
+			arr = [elm];
 		}else{
-			elm.scrollSmartlyTarget = '';			
+			arr = elm;
 		}
 		
-		addEvent(elm, 'click', startScroll);
-		elm.style.cursor = 'pointer';
+		for(var i=0; i < arr.length; i++){
+			if(target !== undefined){
+				arr[i].scrollSmartlyTarget = target;
+			}else{
+				arr[i].scrollSmartlyTarget = '';			
+			}
+
+			addEvent(arr[i], 'click', startScroll);
+			arr[i].style.cursor = 'pointer';		
+		}
 
 		dequeue();
 		return smartly;
@@ -873,7 +886,7 @@ if(! window.smartly){
 		dequeue();
 		return smartly;
 	};
-
+	
 	smartly.replaceAnchor = function(elm, calledFromMethod){
 		/*
 		**イベントリスナーを登録するリンク**:
@@ -928,3 +941,4 @@ if(! window.smartly){
 	
 }());
 
+smartly.all();
