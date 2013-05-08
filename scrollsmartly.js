@@ -855,33 +855,28 @@ if(! window.smartly){
 		}
 	}
 	
-	smartly.on = function(elm, target){
-		var arr;
-		if(elm.length === undefined){
-			arr = [elm];
-		}else{
-			arr = elm;
-		}
-		
-		for(var i=0; i < arr.length; i++){
+	smartly.on = function(elm, target){		
+		each(elm, function(val){
 			if(target !== undefined){
-				arr[i].scrollSmartlyTarget = target;
+				val.scrollSmartlyTarget = target;
 			}else{
-				arr[i].scrollSmartlyTarget = '';			
+				val.scrollSmartlyTarget = '';			
 			}
 
-			addEvent(arr[i], 'click', startScroll);
-			arr[i].style.cursor = 'pointer';		
-		}
+			addEvent(val, 'click', startScroll);
+			val.style.cursor = 'pointer';		
+		});
 
 		dequeue();
 		return smartly;
 	};
 
 	smartly.off = function(elm){
-		delete elm.scrollSmartlyTarget;
-		removeEvent(elm, 'click', startScroll);
-		elm.style.cursor = '';
+		each(elm, function(val){
+			delete val.scrollSmartlyTarget;
+			removeEvent(val, 'click', startScroll);
+			val.style.cursor = '';      
+		});
 		
 		dequeue();
 		return smartly;
