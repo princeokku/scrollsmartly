@@ -42,46 +42,48 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 
 メソッドの戻り値は全て`smartly`オジェクトなので、メソッドチェインが可能です。
 
-* ####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`, `smartly.scroll([properties])`
+####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`, `smartly.scroll([properties])`
 指定した要素へのスクロールを行います。経由する要素や、スクロールが完了した際に実行するコールバック関数を指定できます。
+
 #####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`
-    * 引数(1): *via1, via2, ...*
-    * 引数(2): *to* 
-    * 引数(3): *callback*
-#####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`
-    * 引数(1): *via1, via2, ...*
-    * 引数(2): *to* 
-    * 引数(3): *callback*
+* 引数(1): *via1, via2, ...*
+* 引数(2): *to* 
+* 引数(3): *callback*
     
-* ####`smartly.all()`
+#####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`
+* 引数(1): *via1, via2, ...*
+* 引数(2): *to* 
+* 引数(3): *callback*
+    
+####`smartly.all()`
 全てのページ内リンクのデフォルト動作を無効 (
 `event.preventDefault`と`event.stopPropagation`を実行）にし、代わりに、本来のリンク先であるアンカーへのスムーズスクロールを起動するボタンにします。
 
-    * 引数: なし
+* 引数: なし
     
-* ####`smartly.delay([function, ] [milliSeconds])`
+####`smartly.delay([function, ] [milliSeconds])`
 スクロールが終了するまでメソッドチェインの進行を停止します。*milliSeconds*ミリ秒後に、メソッドチェインの進行を再開します。*function*が指定されていれば、再開前にそれを実行します。
 
-    * 引数1: *function*
-    * 引数2: *milliSeconds* 遅延する時間をミリ秒で指定。
+* 引数1: *function*
+* 引数2: *milliSeconds* 遅延する時間をミリ秒で指定。
   
-* ####`smartly.replaceAnchor(element)`
+####`smartly.replaceAnchor(element)`
 指定した要素が`href`属性を持つ場合、ページ内リンクとしてのデフォルト動作を無効 (
 `event.preventDefault`と`event.stopPropagation`を実行）にし、代わりに、クリックした際に本来のリンク先を目標要素として`smartly.scroll`を実行します。
-    * 引数1: *element*
+* 引数1: *element*
 
-* ####`smartly.on(element [, target])`
+####`smartly.on(element [, target])`
 指定した要素のクリックイベントに、`smartly.scroll`メソッドをイベントリスナーとして登録します。
-    * 引数1: *element*  
-    * 引数2: *hash*
+* 引数1: *element*  
+* 引数2: *hash*
 
-* ####`smartly.off(element)`
+####`smartly.off(element)`
 指定した要素のクリックイベントに紐付いている`smartly.scroll`メソッドを取り除きます。  
-    * 引数1: *element*
+* 引数1: *element*
 
 ###プロパティ
 
-* ####`smartly.scrollingTo`
+####`smartly.scrollingTo`
 型: **`HTMLElement`**  
 初期値: *null*  
 現在のスクロール先要素です。`smartly.scroll`メソッドが実行された際に、最終的なスクロール先となる要素が本プロパティに代入されます。  
@@ -92,36 +94,35 @@ if(smartly.scrolingTo !== null){
 }
 ```
 
-* ####`smartly.scrolledTo`
+####`smartly.scrolledTo`
 型: **`HTMLElement`**  
 初期値: *null*  
 直前のスクロールで到達した要素です。`smartly.scroll`メソッドによるスクロールが完了した直後に、その際のスクロール先だった要素が代入されます。
 
-* ####`smartly.homeElement`
+####`smartly.homeElement`
 型: **`HTMLElement`**  
 初期値: **html 要素**  
 目標要素が指定されていないスクロールは、全てこの要素へのスクロールとなります。
 
-* ####`smartly.poition`
+####`smartly.poition`
 型: **`Stirng`**  
 初期値: **'left top'**  
 スクロール後、目標の要素がウィンドウ内のどこに位置するかを、キーワードかパーセントで指定します。  
 横の位置と縦の位置をスペースで区切り記述します。スペースで区切らずひとつだけ記述した場合、横位置と縦位置の両方に適用されます。 
-使用できるキーワードは
+使用できるキーワードは、CSSの`background-position`と同様のものです。
 
-
-* ####`smartly.marginLeft`, `smartly.marginTop`
+####`smartly.marginLeft`, `smartly.marginTop`
 型: **`Number`**  
 初期値: **0**  
 到達地点の座標を設定します。
 
 ###イベント
 
-* ####`smartlystart`
+####`smartlystart`
 型: **Object (HTMLEvent)**  
 `smartly.scroll`メソッドが実行され、スクロールが始まる直前に発生します。
 
-* ####`smartlyend`
+####`smartlyend`
 型: **Object (HTMLEvent)**  
 `smartly.scroll`メソッドが実行され、スクロールが目標に到達した直後に発生します。
 
