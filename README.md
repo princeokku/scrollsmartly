@@ -44,8 +44,14 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 
 * ####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`, `smartly.scroll([properties])`
 指定した要素へのスクロールを行います。経由する要素や、スクロールが完了した際に実行するコールバック関数を指定できます。
-
-    * 引数: *via1, via2, ...* 
+#####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`
+    * 引数(1): *via1, via2, ...*
+    * 引数(2): *to* 
+    * 引数(3): *callback*
+#####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`
+    * 引数(1): *via1, via2, ...*
+    * 引数(2): *to* 
+    * 引数(3): *callback*
     
 * ####`smartly.all()`
 全てのページ内リンクのデフォルト動作を無効 (
@@ -53,8 +59,6 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 
     * 引数: なし
     
-    * 戻り値: *(Object) smartly*
-
 * ####`smartly.delay([function, ] [milliSeconds])`
 スクロールが終了するまでメソッドチェインの進行を停止します。*milliSeconds*ミリ秒後に、メソッドチェインの進行を再開します。*function*が指定されていれば、再開前にそれを実行します。
 
