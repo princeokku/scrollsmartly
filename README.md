@@ -46,15 +46,13 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 指定した要素へのスクロールを行います。経由する要素や、スクロールが完了した際に実行するコールバック関数を指定できます。
 
 #####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`
-* 引数(1): *via1, via2, ...*
-* 引数(2): *to* 
+* 引数(1): *via1, via2, ...* | スクロール先に辿り着くまでに経由する要素を表すELEMENT Node、またはそれらの要素のid属性の文字列。複数が指定された場合、指定順にスクロールします。省略した場合は、`to`で指定した最終目標に直接スクロールします。
+* 引数(2): *to* | スクロール先の要素を表すELEMENT Node、またはスクロール先の要素のid属性の文字列。省略した場合は、`smartly.homeElement`にスクロールします。
 * 引数(3): *callback*
     
-#####`smartly.scroll([via1, ] [via2, … ] [to, ] [callback])`
-* 引数(1): *via1, via2, ...*
-* 引数(2): *to* 
-* 引数(3): *callback*
-    
+#####`smartly.scroll([properties])`
+* 引数: *Object*
+
 ####`smartly.all()`
 全てのページ内リンクのデフォルト動作を無効 (
 `event.preventDefault`と`event.stopPropagation`を実行）にし、代わりに、本来のリンク先であるアンカーへのスムーズスクロールを起動するボタンにします。
@@ -64,8 +62,8 @@ HashChangeEventを補完できるライブラリはいくつか公開されて�
 ####`smartly.delay([function, ] [milliSeconds])`
 スクロールが終了するまでメソッドチェインの進行を停止します。*milliSeconds*ミリ秒後に、メソッドチェインの進行を再開します。*function*が指定されていれば、再開前にそれを実行します。
 
-* 引数1: *function*
-* 引数2: *milliSeconds* 遅延する時間をミリ秒で指定。
+* 引数1: *function* | 停止を終えた際に呼び出される関数を指定。
+* 引数2: *milliSeconds* | 遅延する時間をミリ秒で指定。
   
 ####`smartly.replaceAnchor(element)`
 指定した要素が`href`属性を持つ場合、ページ内リンクとしてのデフォルト動作を無効 (
