@@ -1,0 +1,200 @@
+@charset "UTF-8";
+/* line 3, ../_elements.scss */
+body {
+  margin: 0;
+  padding: 0;
+  border: none;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* line 17, ../_elements.scss */
+a {
+  text-decoration: none;
+  color: #efefef;
+}
+/* line 21, ../_elements.scss */
+a:focus, a:active, a::-moz-focus-inner {
+  border: none;
+  outline: 0;
+}
+
+/* line 27, ../_elements.scss */
+p, h1, h2, h3, h4, hr, ol, ul, menu {
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-margin-start: 0;
+  -webkit-margin-end: 0;
+  -webkit-padding-start: 0;
+  -webkit-padding-end: 0;
+  line-height: 1.75em;
+  margin: 0;
+  padding: 0;
+}
+
+/* line 39, ../_elements.scss */
+img, figure {
+  margin: 0;
+  padding: 0;
+}
+
+/* line 44, ../_elements.scss */
+p {
+  line-height: 1.75em;
+}
+
+/* line 48, ../_elements.scss */
+p, h1, h2, h3, h4, b, strong {
+  font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+}
+
+/* line 52, ../_elements.scss */
+ul, ol, menu {
+  list-style-type: none;
+}
+
+/* line 56, ../_elements.scss */
+h2 {
+  font-size: 17px;
+  margin-bottom: 6px;
+}
+
+/* line 61, ../_elements.scss */
+h3 {
+  font-size: 20px;
+}
+
+/* line 65, ../_elements.scss */
+h4 {
+  font-size: 18px;
+}
+
+/* line 14, ../styles.scss */
+body {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* line 19, ../styles.scss */
+a {
+  text-decoration: none;
+}
+
+/* line 25, ../styles.scss */
+#container {
+  padding: 900px;
+}
+
+/* line 29, ../styles.scss */
+header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  background: rgba(6, 6, 6, 0.45);
+  z-index: 1;
+}
+
+/* line 41, ../styles.scss */
+#monitor {
+  margin: 7.5px;
+  width: 75px;
+  height: 75px;
+}
+
+/* line 47, ../styles.scss */
+#monitor a {
+  display: block;
+  float: left;
+  margin: 1px;
+  width: 22.5px;
+  height: 22.5px;
+  background: #FFFFFF;
+  color: #999999;
+  text-align: center;
+}
+
+/* line 58, ../styles.scss */
+#container {
+  position: absolute;
+  width: 400%;
+  height: 400%;
+}
+/* line 63, ../styles.scss */
+#container > section {
+  float: left;
+  width: 100%;
+}
+
+/* line 69, ../styles.scss */
+#intro {
+  float: left;
+  width: 2580px;
+  height: 25%;
+}
+
+/* line 75, ../styles.scss */
+#home {
+  float: left;
+  width: 10%;
+  height: 200px;
+  margin: 10% 0 0 20px;
+  background: red;
+}
+
+/* line 83, ../styles.scss */
+.line {
+  width: 2580px;
+}
+
+/* line 88, ../styles.scss */
+.segment {
+  float: left;
+  width: 800px;
+  height: 800px;
+  margin: 20px;
+  border: 1px solid #FFFFFF;
+}
+/* line 96, ../styles.scss */
+.segment p {
+  font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+  font-size: 21px;
+}
+/* line 101, ../styles.scss */
+.segment .inner {
+  margin: 100px;
+}
+
+/* line 106, ../styles.scss */
+.segment a {
+  display: block;
+  width: 1em;
+  height: 1em;
+  color: #FEFFFF;
+  font-size: 400px;
+  line-height: 1;
+  text-shadow: 10px 10px #EEEEEE;
+}
+
+/* line 116, ../styles.scss */
+.label {
+  background-color: #BBBBBB;
+}
+/* line 120, ../styles.scss */
+.label h1, .label h2 {
+  color: #FFFFFF;
+}
+/* line 124, ../styles.scss */
+.label h1 {
+  font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+  font-size: 200px;
+  line-height: 1;
+  padding-bottom: 100px;
+}
+/* line 131, ../styles.scss */
+.label h2 {
+  font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+  font-size: 200px;
+  line-height: 0;
+}

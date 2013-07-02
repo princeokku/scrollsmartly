@@ -1,15 +1,8 @@
-$sans-serif : "Helvetica Neue", "Arial", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
-$serif : "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
-
 $container-width: 400%;
 $container-height: 400%;
 
-$segmentSize : 800px;
+$segmentSize : 1100px;
 $gutter : 24px;
-
-$common-white: #EFEFEF;
-
-@import "elements";
 
 body{
   height: 100%;
@@ -22,16 +15,12 @@ a{
 
 $headerHeight : 90px;
 
-#container{
-  padding: 900px;
-}
-
 header{
   position: fixed;
   left: 0;
   top: 0;
-  width: 200px;
-  height: 100%;
+  width: 100%;
+  height: $headerHeight;
   background: rgba(6, 6, 6, .45);
   z-index: 1;
 }
@@ -81,26 +70,17 @@ $monitorSize : $headerHeight - 15;
 }
 
 .line{
-  width: ($segmentSize + (20 + 10) * 2) * 3;
+  width: ($segmentSize + (20 + 10)*2) * 3;
 //  height: $segmentSize;
 }
 
 .segment{
   float: left;
   width: $segmentSize;
-  height: $segmentSize;
+  height: $segmentSize * 0.5;
   margin: 20px;
-  //border-radius: 20px;
-  border:1px solid #FFFFFF;
-  
-  p{
-    font-family: $serif;
-    font-size: 21px;
-  }
-  
-  .inner{
-    margin: 100px;
-  }
+  border-radius: 20px;
+  border:10px solid #FFFFFF;
 }
 
 .segment a{
@@ -113,24 +93,11 @@ $monitorSize : $headerHeight - 15;
   text-shadow:10px 10px #EEEEEE;
 }
 
-.label{
-  //width: $segmentSize * 0.5;
-  background-color: #BBBBBB;
-  
-  h1, h2{
-    color: #FFFFFF;
-  }
-  
-  h1{
-    font-family: $serif;
-    font-size: 200px;
-    line-height: 1;
-    padding-bottom: 100px;
-  }
-
-  h2{
-    font-family: $serif;
-    font-size: 200px;
-    line-height: 0;
+$hue : -40%;
+@each $elm in '#a', '#b', '#c', '#d', '#e', '#f', '#g', '#h', '#i'{
+  $hue : $hue + 40%;
+  $color : hsl($hue, 80%, 80%);
+  #{$elm}{
+    background-color: $color;
   }
 }

@@ -1,0 +1,35 @@
+{
+  "name": "scrollsmartly",
+  "version": "0.0.0",
+  "description": "##1. 概要",
+  "main": "scrollsmartly.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shinnn/scrollsmartly.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/shinnn/scrollsmartly/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.4.4",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-shell": "~0.3.0",
+    "grunt-contrib-compass": "~0.3.0",
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jade": "~0.7.0",
+    "grunt-prettify": "~0.1.4",
+    "grunt-contrib-clean": "~0.4.1",
+    "grunt-modernizr": "~0.3.0",
+    "lodash": "~1.3.1",
+    "grunt-lodash": "~0.2.0",
+    "grunt-contrib-csslint": "~0.1.2",
+    "grunt-svgmin": "~0.2.0"
+  }
+}

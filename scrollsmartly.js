@@ -1,16 +1,14 @@
- /* 
- * scrollsmartly.js v0.1
- * Copyright (c) 2013 Shinnosuke Watanabe
- * https://github.com/shinnn
- * Licensed under the MIT License:
- * http://www.opensource.org/licenses/mit-license.php
- *
- * This program is the branch originated from:
- *   scrollsmoothly.js
- *   Copyright (c) 2008 KAZUMiX
- *   http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly
- *   Licensed under the MIT License
-*/
+// scrollsmartly.js v0.1
+// Copyright (c) 2013 Shinnosuke Watanabe
+// https://github.com/shinnn
+// Licensed under the MIT License:
+// http://www.opensource.org/licenses/mit-license.php
+
+// This program is the branch originated from:
+//   scrollsmoothly.js
+//   Copyright (c) 2008 KAZUMiX
+//   http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly
+//   Licensed under the MIT License
 
 if(! window.smartly){
   var smartly = {};
@@ -129,7 +127,7 @@ if(! window.smartly){
   }
   
   //Preference
-  smartly.easing = 4;
+  smartly.easing = 5;
   smartly.scrollingTo = null;
   smartly.scrolledTo = null;
   smartly.hashScrollSynced = true;
@@ -164,8 +162,8 @@ if(! window.smartly){
     removeEvent = function(elm, eventType, func){
       elm.removeEventListener(eventType, func, false);
     };
-    
-  }else if('attachEvent' in window){ // IE and old Opera
+  // IE and old Opera
+  }else if('attachEvent' in window){ 
     addEvent = function(elm, eventType, func){
       elm.attachEvent('on'+eventType, func);
     };
@@ -563,7 +561,7 @@ if(! window.smartly){
     );
   }
   
-  if(jQuery){
+  if(window.jQuery){
     
     var page = (function(){
       var line = document.createElement('div');
@@ -829,7 +827,8 @@ if(! window.smartly){
   }
   
   smartly.stop = function(){
-    _inner.reachedCurrentTarget = true; // 目標に到達「したこと」にし、スクロール処理を終了させる
+    // 目標に到達「したこと」にし、スクロール処理を終了させる
+    _inner.reachedCurrentTarget = true;
     _inner.transit= [];
     smartly.scrollingTo = null;
     
@@ -841,7 +840,7 @@ if(! window.smartly){
     _inner.delayedFunctionsQueue= [];
     smartly.stop();
 
-    return smartly;    
+    return smartly;
   };
   
   function each(obj, func){

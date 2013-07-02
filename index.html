@@ -4,20 +4,32 @@
   <meta charset='utf-8'>
   <title>scrollsmartly Demo</title>
   
-  <meta name='keywords' content="JavaScript, scroll, History API">
+  <meta name='keywords' content="JavaScript,scroll,library,demo,History API">
   <meta name='description' content="">
-  <meta name='author' content="Shinnosuke Watanabe">
+  <meta name='author' content='Shinnosuke Watanabe'>
 
   <meta property='og:type' content='website'>
   <meta property='og:url' content="http://shinnn.github.io/scrollsmartly/">
   <meta property='og:image' content="">
-  <meta property='og:description' content="">
-  <meta property='og:site_name' content="scrollsmartly">
+  <meta property='og:description' content=''>
+  <meta property='og:site_name' content='scrollsmartly'>
 
   <link href='css/normalize.css' rel='stylesheet' media='screen'>
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.2.0/base-min.css">
   <link href='css/styles.css' rel='stylesheet' media='screen'>
 </head>
 <body>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-36461297-4', 'shinnn.github.io');
+    ga('send', 'pageview');
+
+  </script>
+  
   <header>
     <div id='monitor'>
       <a href='#a'>A</a>
@@ -32,41 +44,61 @@
     </div>
   </header>
   <div id='container'>
-    <div class='line'>
-      <div id ='a' class='segment'><a href='#b'>a</a></div>
-      <div id ='b' class='segment'><a href='#c'>b</a></div>
-      <div id ='c' class='segment'><a href='#d'>c</a></div>
+    <div id='intro'>
+      <div id='home'>
+        <h1>scrollsmartly</h1>
+        <h2>JavaScript Library<h2>
+      </div>
     </div>
-    <div class='line'>
-      <div id ='d' class='segment'><a href='#e'>d</a></div>
-      <div id ='e' class='segment'><a href='#f'>e</a></div>
-      <div id ='f' class='segment'><a href='#g'>f</a></div>
-    </div>
-    <div class='line'>
-      <div id ='g' class='segment'><a href='#h'>g</a></div>
-      <div id ='h' class='segment'><a href='#i'>h</a></div>
-      <div id ='i' class='segment'><a href='#a'>i</a></div>
-    </div>
+    <section>
+      <div class='line'>
+        <div id ='a' class='segment label'>
+          <div class='inner'>
+            <h1 class=''>1.</h1>
+            <h2>概要</h2>
+        </div>
+        </div>
+        <div id ='b' class='segment'>
+          <div class='inner'>
+            <p>Webサイトにページ内スムーズスクロール機能を追加するためのJavaScriptライブラリです。</p>
+            <p>単一ページのサイトなどの制作に役立ちます。</p>
+            <h3><code>smartly</code>オブジェクトによる自由なユーザー設定</h3>
+            <p>ライブラリの読み込み直後に生成されるsmartlyオブジェクトのプロパティおよびメソッドを用いて、デフォルト動作、スクロール速度などをサイト作成者が変更できます。</p>
+            <h3>スクロールで「戻る」「進む」<h3>
+          </div>
+        </div>
+        <div id ='c' class='segment'><a href='#d'>c</a></div>
+      </div>
+      <div class='line'>
+        <div id ='d' class='segment'><a href='#e'>d</a></div>
+        <div id ='e' class='segment'><a href='#f'>e</a></div>
+        <div id ='f' class='segment'><a href='#g'>f</a></div>
+      </div>
+      <div class='line'>
+        <div id ='g' class='segment'><a href='#h'>g</a></div>
+        <div id ='h' class='segment'><a href='#i'>h</a></div>
+        <div id ='i' class='segment'><a href='#a'>i</a></div>
+      </div>
+    </section>
   </div>
+  <!--[if lt IE 7]>
+  <script src='js/IE7.js'></script>
+  <![endif]-->
+  <!--[if lt IE 8]>
+  <script src='js/IE8.js'></script>
+  <![endif]-->
   <!--[if lt IE 9]>
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src='js/IE9.js'></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery1.js"><\/script>')</script>
   <![endif]-->
   <!--[if gte IE 9]><!-->
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery.js"><\/script>')</script>
   <!--<![endif]-->
 
   <script src='scrollsmartly.js'></script>
-  <script>
-  (function(){
-    smartly.all();
-    
-    smartly.set({
-      position: 'center',
-    });
-    
-  }());
-  
-  </script>
+  <script src='js/script.js'></script>
   
 </body>
 
