@@ -31,17 +31,6 @@
   </script>
   
   <header>
-    <div id='monitor'>
-      <a href='#a'>A</a>
-      <a href='#b'>B</a>
-      <a href='#c'>C</a>
-      <a href='#d'>D</a>
-      <a href='#e'>E</a>
-      <a href='#f'>F</a>
-      <a href='#g'>G</a>
-      <a href='#h'>H</a>
-      <a href='#i'>I</a>
-    </div>
     <ul>
       <li class='to-about'>About</li>
       <li class='to-start'>Getting Started</li>
@@ -80,14 +69,15 @@
 
   jQueryなどの、本ライブラリ以外のJavaScriptライブラリとの依存関係がありません。ただし、Internet Exproler 6, 7などの<code>HashChangeEvent</code>を実装していないブラウザでは、履歴の前後に伴うスクロールを行うことができません。旧バージョンのIEなどを含めた多くのブラウザで動作させるには、<code>HashChangeEvent</code>を補完するライブラリを別途用意し、下記のように scrollsmartly.js より先にロードする必要があります。</p>
   <pre>
-    //<script src='PATH/history.js'></script>
-    //<script src='PATH/scrollsmartly.js'></script>
+    &lt;script src=&#x27;PATH/history.js&#x27;&gt;&lt;/script&gt;
+    &lt;script src=&#x27;PATH/scrollsmartly.js&#x27;&gt;&lt;/script&gt;
   </pre>
   
   <p><code>HashChangeEvent</code>を補完できるライブラリはいくつか公開されていますが、動作確認を行っているのはHistory API JavaScript Library(© Dmitrii Pakhtinov)です。こちらの使用を推奨します。</p>
 </div>
         </div>
       </div>
+      
       <div class='line'>
         <div id='b0' class='segment label'>
           <div class='inner'>
@@ -96,13 +86,14 @@
         </div>
         <div id ='b1' class='segment'>
           <div class='inner'>
+            <h3>最も簡単な使い方</h3>
             <p><code>smartly.all</code>メソッドを呼び出すことで、<code>href</code>属性が<code>#</code>で始まる、通常はページ内リンクとして機能するA要素全てに対し自動的にスムーズスクロール機能を上書きします。</p>
             <h3>読み込み方の例</h3>
             <pre>
-              //script src='PATH/scrollsmartly.js'>/script>
-              //script>
-                //smartly.all();
-              ///script>
+              &lt;script src=&#x27;PATH/scrollsmartly.js&#x27;&gt;&lt;/script&gt;
+              &lt;script&gt;
+                smartly.all();
+              &lt;/script&gt;
             </pre>
           </div>
         </div>
@@ -202,7 +193,7 @@
           <div class='inner'>
             <h2>smartly.replaceAnchor(element)</h2>
 
-            <p>指定した要素が<code>href</code>属性を持つ場合、ページ内リンクとしてのデフォルト動作を無効 ( <code>event.preventDefault</code>と<code>event.stopPropagation</code>を実行）にし、代わりに、クリックした際に本来のリンク先を目標要素として<code>smartly.scroll</code>を実行します。</p>
+            <p>指定した要素が<code>href</code>属性を持つ場合、ページ内リンクとしてのデフォルト動作を無効にし、代わりに、クリックした際に本来のリンク先を目標要素として<code>smartly.scroll</code>を実行します。</p>
             <ul>
               <li>
                 <h4>引数(1): element</h4>
@@ -223,7 +214,7 @@
         <div id='g1' class='segment'>
           <div class='inner'>
             <h2>smartly.all()</h2>
-            <p>全てのページ内リンクのデフォルト動作を無効 ( <code>event.preventDefault</code>と<code>event.stopPropagation</code>を実行）にし、代わりに、本来のリンク先であるアンカーへのスムーズスクロールを起動するボタンにします。全てのリンクに対して<code>smartly.replaceAnchor</code>メソッドを実行した場合と同様の動作です。</p>
+            <p>全てのページ内リンクのデフォルト動作を無効にし、代わりに、本来のリンク先であるアンカーへのスムーズスクロールを起動するボタンにします。全てのリンクに対して<code>smartly.replaceAnchor</code>メソッドを実行した場合と同様の動作です。</p>
             <ul>
               <li>
                 <h4>引数: なし</h4>
@@ -273,10 +264,15 @@
               <li>型: HTMLElement</li>
               <li>初期値: null</li>
             </ul>
-            <p>現在のスクロール先要素です。<code>smartly.scroll</code>メソッドが実行された際に、最終的なスクロール先となる要素が本プロパティに代入されます。<br>スクロールが完了したときに初期値である<code>null</code>が再度代入されます。</p>
+            <p>現在のスクロール先要素です。<code>smartly.scroll</code>メソッドが実行された際に、最終的なスクロール先となる要素が本プロパティに代入されます。<br>スクロールが完了したときに初期値である<code>null</code>が再度代入されます。スクロール中であるかどうかを判別したい場合は、下記のように処理します。</p>
+            <pre>
+              if(smartly.scrolingTo !== null){
+                //&#x30B9;&#x30AF;&#x30ED;&#x30FC;&#x30EB;&#x4E2D;&#x3067;&#x3042;&#x308C;&#x3070;&#x884C;&#x3046;&#x51E6;&#x7406;
+              }
+            </pre>
             <h2>smartly.scrolledTo</h2>
             <ul>
-              <li>型: **HTMLElement**</li>
+              <li>型: HTMLElement</li>
               <li>初期値: null</li>
             </ul>
             <p>直前のスクロールで到達した要素です。smartly.scrollメソッドによるスクロールが完了した直後に、その際のスクロール先だった要素が代入されます。</p>
@@ -295,12 +291,12 @@
         </div>
         <div id='j1' class='segment'>
           <div class='inner'>
-            <h2>smartly.scrollingTo</h2>
+            <h2>smartly.homeElement</h2>
             <ul>
               <li>型: HTMLElement</li>
-              <li>初期値: null</li>
+              <li>初期値: document.documentElement</li>
             </ul>
-            <p>現在のスクロール先要素です。<code>smartly.scroll</code>メソッドが実行された際に、最終的なスクロール先となる要素が本プロパティに代入されます。<br>スクロールが完了したときに初期値である<code>null</code>が再度代入されます。</p>
+            <p>目標要素が指定されていないスクロール（例えば<code>smartly.scroll( )</code>）は、全てこの要素へのスクロールとなります。特に何も指定していなければ、多くの場合ページの左上（X:0, Y:0）へのスクロールとなります。</p>
           </div>
         </div>
         <div id='i2' class='segment'>

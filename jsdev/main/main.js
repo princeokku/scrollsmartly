@@ -17,9 +17,14 @@
     $('.to-method').css('cursor', 'pointer').on('click', function() {
       return smartly.scroll(c0, c1);
     });
-    return $('.to-property').css('cursor', 'pointer').on('click', function() {
+    $('.to-property').css('cursor', 'pointer').on('click', function() {
       return smartly.scroll(i0, i1);
     });
+    $('pre').addClass('brush: js');
+    SyntaxHighlighter.all();
+    return setTimeout(function() {
+      return $('.syntaxhighlighter .toolbar').remove();
+    }, 300);
   });
 
 }).call(this);

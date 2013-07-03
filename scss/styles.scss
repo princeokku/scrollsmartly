@@ -10,6 +10,8 @@ $gutter : 24px;
 $common-white: #EFEFEF;
 
 @import "elements";
+@import "shCore";
+@import "shCoreDefault";
 
 @import "compass/css3/box-shadow";
 
@@ -24,18 +26,23 @@ a{
 
 $headerLength : 280px;
 
-#container{
-  padding: 900px 900px 900px 0;
-}
-
 header{
   position: fixed;
   left: 0;
   top: 0;
   width: $headerLength;
   height: 100%;
-  background: rgba(#2F2F2F, .97);
+  background: rgba(#2F2F2F, .92);
   z-index: 99;
+  
+  ul{
+    margin: 20px;
+  }
+  li{
+    font-size: 20px;
+    color: white;
+    margin-bottom: 15px;
+  }
 }
 
 $monitorSize : $headerLength - 15;
@@ -59,8 +66,10 @@ $monitorSize : $headerLength - 15;
 
 #container{
   position: absolute;
-  width: 400%;
+  //width: 400%;
   height: $container-height;
+  
+  padding: 900px 90px 900px 0;
   
   & > section{
     float: left;
@@ -84,7 +93,7 @@ $monitorSize : $headerLength - 15;
 
 .line{
   overflow: auto;
-  width: ($segmentSize + (20 + 10) * 2) * 5;
+  width: ($segmentSize + (20 + 10) * 2) * 4.5;
 //  height: $segmentSize;
   margin-bottom: 100px;
   
@@ -182,34 +191,58 @@ p + p{
 }
 
 #a0{ // about
-  background-color: red;
-  
+  background-color: #e74c3c;
   &:after{
-    border-left-color: red;
+    border-left-color: #e74c3c;
+  };
+}
+
+#a0:hover{
+  background-color: #c0392b;
+  &:after{
+    border-left-color: #c0392b;
   };
 }
 
 #b0{
-  background-color: green;  
-
+  background-color: #1abc9c;
   &:after{
-    border-left-color: green;
+    border-left-color: #1abc9c;
+  };
+}
+
+#b0:hover{
+  background-color: #16a085;
+  &:after{
+    border-left-color: #16a085;
   };
 }
 
 #c0{
-  background-color: blue;
-
+  background-color: #3498db;
   &:after{
-    border-left-color: blue;
+    border-left-color: #3498db;
+  };
+}
+
+#c0:hover{
+  background-color: #2980b9;
+  &:after{
+    border-left-color: #2980b9;
   };
 }
 
 #i0{
-  background-color: yellow;
-
+  background-color: #9b59b6;
   &:after{
-    border-left-color: yellow;
+    border-left-color: #9b59b6;
+  };
+}
+
+#i0:hover{
+  background-color: #8e44ad;
+  &:after{
+    border-left-color: #8e44ad;
   };
 }
 

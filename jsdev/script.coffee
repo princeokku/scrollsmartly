@@ -27,3 +27,9 @@ $ ->
   .css('cursor', 'pointer')
   .on 'click', ->
     smartly.scroll i0, i1
+
+  $('pre').addClass 'brush: js'
+  SyntaxHighlighter.all()
+  setTimeout ->
+    $('.syntaxhighlighter .toolbar').remove()
+  , 300

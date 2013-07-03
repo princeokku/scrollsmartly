@@ -10,7 +10,7 @@
 //   http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly
 //   Licensed under the MIT License
 
-if(! window.smartly){
+if(typeof window.smartly !== 'object'){
   var smartly = {};
 }
 
