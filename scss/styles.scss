@@ -11,6 +11,8 @@ $common-white: #EFEFEF;
 
 @import "elements";
 
+@import "compass/css3/box-shadow";
+
 body{
   height: 100%;
   -webkit-text-size-adjust: 100%;
@@ -20,10 +22,10 @@ a{
   text-decoration: none;
 }
 
-$headerLength : 200px;
+$headerLength : 280px;
 
 #container{
-  padding: 900px;
+  padding: 900px 900px 900px 0;
 }
 
 header{
@@ -32,8 +34,8 @@ header{
   top: 0;
   width: $headerLength;
   height: 100%;
-  background: #2F2F2F;
-  z-index: 1;
+  background: rgba(#2F2F2F, .97);
+  z-index: 99;
 }
 
 $monitorSize : $headerLength - 15;
@@ -85,6 +87,9 @@ $monitorSize : $headerLength - 15;
   width: ($segmentSize + (20 + 10) * 2) * 5;
 //  height: $segmentSize;
   margin-bottom: 100px;
+  
+  //border-bottom: 1px solid rgba(0, 0, 0, .2);
+  //@include box-shadow(rgba(255, 255, 255, .3)0 1px 0);
 }
 
 .segment{
@@ -92,7 +97,7 @@ $monitorSize : $headerLength - 15;
   width: $segmentSize;
   height: $segmentSize;
   margin: 20px;
-  margin-left: 80px;
+  margin-right: 80px;
   //border-radius: 20px;
   border: 1px solid #FFFFFF;
   background-color: #FDFDFD;
@@ -102,7 +107,12 @@ $monitorSize : $headerLength - 15;
     font-size: 21px;
     margin-bottom: 30px;
   }
-    
+
+  li p{
+    font-family: $sans-serif;
+    font-size: 18px;
+  }
+      
   .inner{
     margin: 50px;
   }
@@ -118,6 +128,10 @@ $monitorSize : $headerLength - 15;
     margin-top: 30px;
     margin-bottom: 15px;
   }
+  
+  &[id$="2"]{
+    //background-color: red;
+  }
 }
 
 
@@ -125,32 +139,80 @@ p + p{
   margin-bottom: 0;
 }
 
-.segment a{
-  display: block;
-  width: 1em;
-  height: 1em;
-  color: #FEFFFF;
-  font-size: 400px;
-  line-height: 1;
-  text-shadow:10px 10px #EEEEEE;
-}
-
 .label{
   //width: $segmentSize * 0.5;
-  background-color: #BBBBBB;
+  //background-color: #BBBBBB;
+  position: relative;
+  margin-right: 80px + 200px + 100px;
+  margin-left: 0;
+  padding-left: 500px;
   
   h1, h2{
     color: #FFFFFF;
+    font-family: $sans-serif;
   }
   
   h1{
-    font-family: "Adobe Garamond Pro", $serif;
+    font-weight: 100;
+    letter-spacing: 4px;
     font-size: 200px;
     line-height: 1;
     padding-bottom: 100px;
   }
 }
 
-#a0{
+.segment:after {
+	left: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+  z-index: 10;
+}
+
+.segment:after {
+	//border-color: rgba(136, 183, 213, 0);
+	//border-left-color: #88b7d5;
+	border-width: 400px 200px;
+	top: 50%;
+	margin-top: -400px;
+  z-index: 10;
+}
+
+#a0{ // about
   background-color: red;
+  
+  &:after{
+    border-left-color: red;
+  };
+}
+
+#b0{
+  background-color: green;  
+
+  &:after{
+    border-left-color: green;
+  };
+}
+
+#c0{
+  background-color: blue;
+
+  &:after{
+    border-left-color: blue;
+  };
+}
+
+#i0{
+  background-color: yellow;
+
+  &:after{
+    border-left-color: yellow;
+  };
+}
+
+.line:nth-child(even){
+  //background-color: #EFEFEF;
 }

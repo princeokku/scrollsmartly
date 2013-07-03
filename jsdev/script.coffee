@@ -22,3 +22,8 @@ $ ->
   .css('cursor', 'pointer')
   .on 'click', ->
     smartly.scroll c0, c1
+
+  $('.to-property')
+  .css('cursor', 'pointer')
+  .on 'click', ->
+    smartly.scroll i0, i1

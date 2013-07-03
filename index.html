@@ -45,7 +45,8 @@
     <ul>
       <li class='to-about'>About</li>
       <li class='to-start'>Getting Started</li>
-      <li class='to-method'>API</li>
+      <li class='to-method'>API - Method</li>
+      <li class='to-property'>API - Property</li>
   </header>
   <div id='container'>
     <div id='intro'>
@@ -56,12 +57,14 @@
     </div>
     <section>
       <div class='line'>
-        <div id ='a0' class='segment label'>
-          <div class='inner'>
-            <h1 class=''>About</h1>
-        </div>
-        </div>
-        <div id ='a1' class='segment'>
+        <a href='#a1'>
+          <div id ='a0' class='segment label'>
+            <div class='inner'>
+              <h1 class=''>About</h1>
+            </div>
+          </div>
+        </a>
+        <div id='a1' class='segment'>
           <div class='inner'>
             <p>Webサイトにページ内スムーズスクロール機能を追加するためのJavaScriptライブラリです。単一ページのサイトなどの制作に役立ちます。</p>
             <h3><code>smartly</code>オブジェクトによる自由なユーザー設定</h3>
@@ -105,18 +108,14 @@
         </div>
         <div id='b2' class='segment'></div>
       </div>
+      
       <div class='line'>
         <div id ='c0' class='segment label'>
           <div class='inner'>
-            <h1 class=''>API</h1>
+            <h1 class=''>API - Method</h1>
           </div>
         </div>
-        <div id='c1' class='segment label'>
-          <div class='inner'>
-            <h1 class=''>Method</h1>
-          </div>
-        </div>
-        <div id='c2' class='segment'>
+        <div id='c1' class='segment'>
           <div class='inner'>
             <h2>smartly.scroll([via1, ] [via2, … ] [to, ] [callback])</h2> <p>指定した要素へのスクロールを行います。経由する要素や、スクロールが完了した際に実行するコールバック関数を指定できます。<p>
             <ul>
@@ -141,16 +140,13 @@
           </div>
         </div>
       </div>
+      
       <div class='line'>
-        <div id ='d0' class='segment label'>
+        <div id='d0' class='segment label'>
           <div class='inner'>
           </div>
         </div>
-        <div id='d1' class='segment label'>
-          <div class='inner'>
-          </div>
-        </div>
-        <div id='d2' class='segment'>
+        <div id='d1' class='segment'>
           <div class='inner'>
             <h2>smartly.delay([callback, ] [milliSeconds])</h2>
             <p>スクロールが終了するまでメソッドチェインの進行を停止します。milliSecondsミリ秒後に、メソッドチェインの進行を再開します。callbackが指定されていれば、再開前にそれを実行します。</p>
@@ -166,12 +162,153 @@
             </ul>
           </div>
         </div>
-        <div id='d3' class='segment'>
-          <div class='inner'>
-            
+        <div id='d2' class='segment'>
+          <div class='inner'>            
           </div>
         </div>
       </div>
+
+      <div class='line'>
+        <div id ='e0' class='segment label'>
+          <div class='inner'>
+          </div>
+        </div>
+        <div id='e1' class='segment'>
+          <div class='inner'>
+            <h2>smartly.on(element [, target])</h2>
+            <h2>smartly.off(element)</h2> <p>指定した要素のクリックイベントに、<code>smartly.scroll</code>メソッドをイベントリスナーとして登録、または登録解除します。</p>
+            <ul>
+              <li>
+                <h4>引数(1): element</h4>
+              </li>
+              <li>
+                <h4>引数(2): target</h4>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id='e2' class='segment'>
+          <div class='inner'>            
+          </div>
+        </div>
+      </div>
+
+      <div class='line'>
+        <div id ='f0' class='segment label'>
+          <div class='inner'>
+          </div>
+        </div>
+        <div id='f1' class='segment'>
+          <div class='inner'>
+            <h2>smartly.replaceAnchor(element)</h2>
+
+            <p>指定した要素が<code>href</code>属性を持つ場合、ページ内リンクとしてのデフォルト動作を無効 ( <code>event.preventDefault</code>と<code>event.stopPropagation</code>を実行）にし、代わりに、クリックした際に本来のリンク先を目標要素として<code>smartly.scroll</code>を実行します。</p>
+            <ul>
+              <li>
+                <h4>引数(1): element</h4>
+                <p>スクロールボタンに入れ替える要素。</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id='f2' class='segment'>
+        </div>
+      </div>
+
+      <div class='line'>
+        <div id ='g0' class='segment label'>
+          <div class='inner'>
+          </div>
+        </div>
+        <div id='g1' class='segment'>
+          <div class='inner'>
+            <h2>smartly.all()</h2>
+            <p>全てのページ内リンクのデフォルト動作を無効 ( <code>event.preventDefault</code>と<code>event.stopPropagation</code>を実行）にし、代わりに、本来のリンク先であるアンカーへのスムーズスクロールを起動するボタンにします。全てのリンクに対して<code>smartly.replaceAnchor</code>メソッドを実行した場合と同様の動作です。</p>
+            <ul>
+              <li>
+                <h4>引数: なし</h4>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id='g2' class='segment'>
+          <div class='inner'>            
+          </div>
+        </div>
+      </div>
+
+      <div class='line'>
+        <div id ='h0' class='segment label'>
+          <div class='inner'>
+          </div>
+        </div>
+        <div id='h1' class='segment'>
+          <div class='inner'>
+            <h2>smartly.set([properties])</h2>
+            <p><code>smartly</code>オブジェクトの複数のプロパティをまとめて変更します。</p>
+            <ul>
+              <li>
+                <h4>引数: Object</h4>
+                <p><code>smartly</code>オブジェクトのプロパティをkey、変更後の値をvalueとして持つオブジェクトを渡します。</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id='h2' class='segment'>
+          <div class='inner'>            
+          </div>
+        </div>
+      </div>
+
+      <div class='line'>
+        <div id ='i0' class='segment label'>
+          <div class='inner'>
+            <h1 class=''>API - Property</h1>
+          </div>
+        </div>
+        <div id='i1' class='segment'>
+          <div class='inner'>
+            <h2>smartly.scrollingTo</h2>
+            <ul>
+              <li>型: HTMLElement</li>
+              <li>初期値: null</li>
+            </ul>
+            <p>現在のスクロール先要素です。<code>smartly.scroll</code>メソッドが実行された際に、最終的なスクロール先となる要素が本プロパティに代入されます。<br>スクロールが完了したときに初期値である<code>null</code>が再度代入されます。</p>
+            <h2>smartly.scrolledTo</h2>
+            <ul>
+              <li>型: **HTMLElement**</li>
+              <li>初期値: null</li>
+            </ul>
+            <p>直前のスクロールで到達した要素です。smartly.scrollメソッドによるスクロールが完了した直後に、その際のスクロール先だった要素が代入されます。</p>
+          </div>
+        </div>
+        <div id='i2' class='segment'>
+          <div class='inner'>            
+          </div>
+        </div>
+      </div>
+
+      <div class='line'>
+        <div id ='j0' class='segment label'>
+          <div class='inner'>
+          </div>
+        </div>
+        <div id='j1' class='segment'>
+          <div class='inner'>
+            <h2>smartly.scrollingTo</h2>
+            <ul>
+              <li>型: HTMLElement</li>
+              <li>初期値: null</li>
+            </ul>
+            <p>現在のスクロール先要素です。<code>smartly.scroll</code>メソッドが実行された際に、最終的なスクロール先となる要素が本プロパティに代入されます。<br>スクロールが完了したときに初期値である<code>null</code>が再度代入されます。</p>
+          </div>
+        </div>
+        <div id='i2' class='segment'>
+          <div class='inner'>            
+          </div>
+        </div>
+      </div>
+      
     </section>
   </div>
   <!--[if lt IE 7]>

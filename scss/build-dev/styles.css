@@ -66,7 +66,7 @@ h3 {
 
 /* line 65, ../_elements.scss */
 h4 {
-  font-size: 18px;
+  font-size: 22px;
 }
 
 /* line 69, ../_elements.scss */
@@ -83,72 +83,72 @@ pre {
   margin: 15px 5px;
 }
 
-/* line 14, ../styles.scss */
+/* line 16, ../styles.scss */
 body {
   height: 100%;
   -webkit-text-size-adjust: 100%;
 }
 
-/* line 19, ../styles.scss */
+/* line 21, ../styles.scss */
 a {
   text-decoration: none;
 }
 
-/* line 25, ../styles.scss */
+/* line 27, ../styles.scss */
 #container {
-  padding: 900px;
+  padding: 900px 900px 900px 0;
 }
 
-/* line 29, ../styles.scss */
+/* line 31, ../styles.scss */
 header {
   position: fixed;
   left: 0;
   top: 0;
-  width: 200px;
+  width: 280px;
   height: 100%;
-  background: #2F2F2F;
-  z-index: 1;
+  background: rgba(47, 47, 47, 0.97);
+  z-index: 99;
 }
 
-/* line 41, ../styles.scss */
+/* line 43, ../styles.scss */
 #monitor {
   margin: 7.5px;
-  width: 185px;
-  height: 185px;
+  width: 265px;
+  height: 265px;
 }
 
-/* line 47, ../styles.scss */
+/* line 49, ../styles.scss */
 #monitor a {
   display: block;
   float: left;
   margin: 1px;
-  width: 55.5px;
-  height: 55.5px;
+  width: 79.5px;
+  height: 79.5px;
   background: #FFFFFF;
   color: #999999;
   text-align: center;
 }
 
-/* line 58, ../styles.scss */
+/* line 60, ../styles.scss */
 #container {
   position: absolute;
   width: 400%;
   height: 400%;
 }
-/* line 63, ../styles.scss */
+/* line 65, ../styles.scss */
 #container > section {
   float: left;
   width: 100%;
 }
 
-/* line 69, ../styles.scss */
+/* line 71, ../styles.scss */
 #intro {
   float: left;
   width: 2580px;
   height: 25%;
 }
 
-/* line 75, ../styles.scss */
+/* line 77, ../styles.scss */
 #home {
   float: left;
   width: 10%;
@@ -157,79 +157,129 @@ header {
   background: red;
 }
 
-/* line 83, ../styles.scss */
+/* line 85, ../styles.scss */
 .line {
   overflow: auto;
   width: 4300px;
   margin-bottom: 100px;
 }
 
-/* line 90, ../styles.scss */
+/* line 95, ../styles.scss */
 .segment {
   float: left;
   width: 800px;
   height: 800px;
   margin: 20px;
-  margin-left: 80px;
+  margin-right: 80px;
   border: 1px solid #FFFFFF;
   background-color: #FDFDFD;
 }
-/* line 100, ../styles.scss */
+/* line 105, ../styles.scss */
 .segment p {
   font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
   font-size: 21px;
   margin-bottom: 30px;
 }
-/* line 106, ../styles.scss */
+/* line 111, ../styles.scss */
+.segment li p {
+  font-family: "Helvetica Neue", "Arial", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+  font-size: 18px;
+}
+/* line 116, ../styles.scss */
 .segment .inner {
   margin: 50px;
 }
-/* line 110, ../styles.scss */
+/* line 120, ../styles.scss */
 .segment h2 {
   font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
   font-size: 50px;
   line-height: 1.2;
   margin-bottom: 30px;
 }
-/* line 117, ../styles.scss */
+/* line 127, ../styles.scss */
 .segment h3 {
   margin-top: 30px;
   margin-bottom: 15px;
 }
 
-/* line 124, ../styles.scss */
+/* line 138, ../styles.scss */
 p + p {
   margin-bottom: 0;
 }
 
-/* line 128, ../styles.scss */
-.segment a {
-  display: block;
-  width: 1em;
-  height: 1em;
-  color: #FEFFFF;
-  font-size: 400px;
-  line-height: 1;
-  text-shadow: 10px 10px #EEEEEE;
-}
-
-/* line 138, ../styles.scss */
-.label {
-  background-color: #BBBBBB;
-}
 /* line 142, ../styles.scss */
+.label {
+  position: relative;
+  margin-right: 380px;
+  margin-left: 0;
+  padding-left: 500px;
+}
+/* line 150, ../styles.scss */
 .label h1, .label h2 {
   color: #FFFFFF;
+  font-family: "Helvetica Neue", "Arial", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
 }
-/* line 146, ../styles.scss */
+/* line 155, ../styles.scss */
 .label h1 {
-  font-family: "Adobe Garamond Pro", "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+  font-weight: 100;
+  letter-spacing: 4px;
   font-size: 200px;
   line-height: 1;
   padding-bottom: 100px;
 }
 
-/* line 154, ../styles.scss */
+/* line 164, ../styles.scss */
+.segment:after {
+  left: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* line 175, ../styles.scss */
+.segment:after {
+  border-width: 400px 200px;
+  top: 50%;
+  margin-top: -400px;
+  z-index: 10;
+}
+
+/* line 184, ../styles.scss */
 #a0 {
   background-color: red;
+}
+/* line 187, ../styles.scss */
+#a0:after {
+  border-left-color: red;
+}
+
+/* line 192, ../styles.scss */
+#b0 {
+  background-color: green;
+}
+/* line 195, ../styles.scss */
+#b0:after {
+  border-left-color: green;
+}
+
+/* line 200, ../styles.scss */
+#c0 {
+  background-color: blue;
+}
+/* line 203, ../styles.scss */
+#c0:after {
+  border-left-color: blue;
+}
+
+/* line 208, ../styles.scss */
+#i0 {
+  background-color: yellow;
+}
+/* line 211, ../styles.scss */
+#i0:after {
+  border-left-color: yellow;
 }

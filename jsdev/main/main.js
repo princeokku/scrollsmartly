@@ -14,8 +14,11 @@
     $('.to-start').css('cursor', 'pointer').on('click', function() {
       return smartly.scroll(b0, b1);
     });
-    return $('.to-method').css('cursor', 'pointer').on('click', function() {
+    $('.to-method').css('cursor', 'pointer').on('click', function() {
       return smartly.scroll(c0, c1);
+    });
+    return $('.to-property').css('cursor', 'pointer').on('click', function() {
+      return smartly.scroll(i0, i1);
     });
   });
 
