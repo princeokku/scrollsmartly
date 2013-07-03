@@ -42,6 +42,10 @@
       <a href='#h'>H</a>
       <a href='#i'>I</a>
     </div>
+    <ul>
+      <li class='to-about'>About</li>
+      <li class='to-start'>Getting Started</li>
+      <li class='to-method'>API</li>
   </header>
   <div id='container'>
     <div id='intro'>
@@ -52,32 +56,121 @@
     </div>
     <section>
       <div class='line'>
-        <div id ='a' class='segment label'>
+        <div id ='a0' class='segment label'>
           <div class='inner'>
-            <h1 class=''>1.</h1>
-            <h2>概要</h2>
+            <h1 class=''>About</h1>
         </div>
         </div>
-        <div id ='b' class='segment'>
+        <div id ='a1' class='segment'>
           <div class='inner'>
-            <p>Webサイトにページ内スムーズスクロール機能を追加するためのJavaScriptライブラリです。</p>
-            <p>単一ページのサイトなどの制作に役立ちます。</p>
+            <p>Webサイトにページ内スムーズスクロール機能を追加するためのJavaScriptライブラリです。単一ページのサイトなどの制作に役立ちます。</p>
             <h3><code>smartly</code>オブジェクトによる自由なユーザー設定</h3>
-            <p>ライブラリの読み込み直後に生成されるsmartlyオブジェクトのプロパティおよびメソッドを用いて、デフォルト動作、スクロール速度などをサイト作成者が変更できます。</p>
-            <h3>スクロールで「戻る」「進む」<h3>
+            <p>ライブラリの読み込み直後に生成される<code>smartly</code>オブジェクトのプロパティおよびメソッドを用いて、デフォルト動作、スクロール速度などをサイト作成者が変更できます。</p>
+            <h3>スクロールで「戻る」「進む」</h3>
+            <p>スクロールした後にURLのハッシュ値を変更しますが、既存のスクロールライブラリには、ブラウザで履歴を前後した際に、URLのハッシュとページの表示位置が一致しないという問題がありました。 scrollsmartly.js では、履歴の前後に合わせて適切な位置にスクロールすることで、その問題を解決しています。</p>
           </div>
         </div>
-        <div id ='c' class='segment'><a href='#d'>c</a></div>
+        <div id ='a2' class='segment'>
+          <div class='inner'>
+            <h3>その他のライブラリに依存しない</h3>
+            <p>
+
+  jQueryなどの、本ライブラリ以外のJavaScriptライブラリとの依存関係がありません。ただし、Internet Exproler 6, 7などの<code>HashChangeEvent</code>を実装していないブラウザでは、履歴の前後に伴うスクロールを行うことができません。旧バージョンのIEなどを含めた多くのブラウザで動作させるには、<code>HashChangeEvent</code>を補完するライブラリを別途用意し、下記のように scrollsmartly.js より先にロードする必要があります。</p>
+  <pre>
+    //<script src='PATH/history.js'></script>
+    //<script src='PATH/scrollsmartly.js'></script>
+  </pre>
+  
+  <p><code>HashChangeEvent</code>を補完できるライブラリはいくつか公開されていますが、動作確認を行っているのはHistory API JavaScript Library(© Dmitrii Pakhtinov)です。こちらの使用を推奨します。</p>
+</div>
+        </div>
       </div>
       <div class='line'>
-        <div id ='d' class='segment'><a href='#e'>d</a></div>
-        <div id ='e' class='segment'><a href='#f'>e</a></div>
-        <div id ='f' class='segment'><a href='#g'>f</a></div>
+        <div id='b0' class='segment label'>
+          <div class='inner'>
+            <h1>Getting Started<h1>
+          </div>
+        </div>
+        <div id ='b1' class='segment'>
+          <div class='inner'>
+            <p><code>smartly.all</code>メソッドを呼び出すことで、<code>href</code>属性が<code>#</code>で始まる、通常はページ内リンクとして機能するA要素全てに対し自動的にスムーズスクロール機能を上書きします。</p>
+            <h3>読み込み方の例</h3>
+            <pre>
+              //script src='PATH/scrollsmartly.js'>/script>
+              //script>
+                //smartly.all();
+              ///script>
+            </pre>
+          </div>
+        </div>
+        <div id='b2' class='segment'></div>
       </div>
       <div class='line'>
-        <div id ='g' class='segment'><a href='#h'>g</a></div>
-        <div id ='h' class='segment'><a href='#i'>h</a></div>
-        <div id ='i' class='segment'><a href='#a'>i</a></div>
+        <div id ='c0' class='segment label'>
+          <div class='inner'>
+            <h1 class=''>API</h1>
+          </div>
+        </div>
+        <div id='c1' class='segment label'>
+          <div class='inner'>
+            <h1 class=''>Method</h1>
+          </div>
+        </div>
+        <div id='c2' class='segment'>
+          <div class='inner'>
+            <h2>smartly.scroll([via1, ] [via2, … ] [to, ] [callback])</h2> <p>指定した要素へのスクロールを行います。経由する要素や、スクロールが完了した際に実行するコールバック関数を指定できます。<p>
+            <ul>
+              <li>
+                <h4>引数(1): via1, via2, ... </h4>
+                <p>スクロール先に辿り着くまでに経由する要素を表すELEMENT Node、またはそれらの要素のid属性の文字列。省略した場合は、toで指定した最終目標に直接スクロールします。</p>
+              </li>
+              <li>
+                <h4>引数(2): to</h4>
+                <p>スクロール先の要素を表すELEMENT Node、またはスクロール先の要素のid属性の文字列。省略した場合は、<code>smartly.homeElement</code>にスクロールします。</p>
+                </li>
+              <li>
+                <h4>引数(3): callback</h4>
+                <p>スクロール完了後に実行するコールバック関数を指定します。</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id='c3' class='segment'>
+          <div class='inner'>
+            <h2></h2>
+          </div>
+        </div>
+      </div>
+      <div class='line'>
+        <div id ='d0' class='segment label'>
+          <div class='inner'>
+          </div>
+        </div>
+        <div id='d1' class='segment label'>
+          <div class='inner'>
+          </div>
+        </div>
+        <div id='d2' class='segment'>
+          <div class='inner'>
+            <h2>smartly.delay([callback, ] [milliSeconds])</h2>
+            <p>スクロールが終了するまでメソッドチェインの進行を停止します。milliSecondsミリ秒後に、メソッドチェインの進行を再開します。callbackが指定されていれば、再開前にそれを実行します。</p>
+            <ul>
+              <li>
+                <h4>引数(1): function</h4>
+                <p>停止を終えた際に呼び出される関数を指定。</p>
+              </li>
+              <li>
+                <h4>引数(2): milliSeconds</h4>
+                <p>遅延する時間をミリ秒で指定。</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id='d3' class='segment'>
+          <div class='inner'>
+            
+          </div>
+        </div>
       </div>
     </section>
   </div>

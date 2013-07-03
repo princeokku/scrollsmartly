@@ -18,7 +18,7 @@ $(function(){
     if(document.webkitIsFullScreen){
       document.webkitCancelFullScreen();
     }else{
-      var body = document.getElementsByTagName('body')[0];
+      var body = document.body;
       if(body.webkitRequestFullScreen){
         console.log("\"webkitRequestFullScreen()\"");
         body.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
@@ -35,22 +35,29 @@ $(function(){
   Mousetrap.bind(['f', 'F'], toggleFullscreen);
 });
 
-(function(){
-  // Setup scrollsmartly
+(function() {
   smartly.set({
     position: 'center',
+    marginLeft: 150,
     easing: 5
   });
 
   smartly.all();
-  
-}());
 
-$(function(){
-  /*
-  $('#intro').css(
-    'width',
-    $(window).width() + 'px'
-  );
-  */
-});
+  $(function() {
+    $('.to-about').css('cursor', 'pointer').on('click', function() {
+      return smartly.scroll(a0, a1);
+    });
+    $('.to-start').css('cursor', 'pointer').on('click', function() {
+      return smartly.scroll(b0, b1);
+    });
+    return $('.to-method').css('cursor', 'pointer').on('click', function() {
+      return smartly.scroll(c0, c1);
+    });
+  });
+
+}).call(this);
+
+/*
+//@ sourceMappingURL=main.js.map
+*/

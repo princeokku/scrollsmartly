@@ -61,12 +61,26 @@ h2 {
 
 /* line 61, ../_elements.scss */
 h3 {
-  font-size: 20px;
+  font-size: 25px;
 }
 
 /* line 65, ../_elements.scss */
 h4 {
   font-size: 18px;
+}
+
+/* line 69, ../_elements.scss */
+code, pre {
+  border: solid 1px #9AACAE;
+  border-radius: 4px 4px;
+  background: #EFEFEF;
+  margin: 5px;
+  padding: 2px 5px;
+}
+
+/* line 78, ../_elements.scss */
+pre {
+  margin: 15px 5px;
 }
 
 /* line 14, ../styles.scss */
@@ -92,15 +106,15 @@ header {
   top: 0;
   width: 200px;
   height: 100%;
-  background: rgba(6, 6, 6, 0.45);
+  background: #2F2F2F;
   z-index: 1;
 }
 
 /* line 41, ../styles.scss */
 #monitor {
   margin: 7.5px;
-  width: 75px;
-  height: 75px;
+  width: 185px;
+  height: 185px;
 }
 
 /* line 47, ../styles.scss */
@@ -108,8 +122,8 @@ header {
   display: block;
   float: left;
   margin: 1px;
-  width: 22.5px;
-  height: 22.5px;
+  width: 55.5px;
+  height: 55.5px;
   background: #FFFFFF;
   color: #999999;
   text-align: center;
@@ -145,28 +159,50 @@ header {
 
 /* line 83, ../styles.scss */
 .line {
-  width: 2580px;
+  overflow: auto;
+  width: 4300px;
+  margin-bottom: 100px;
 }
 
-/* line 88, ../styles.scss */
+/* line 90, ../styles.scss */
 .segment {
   float: left;
   width: 800px;
   height: 800px;
   margin: 20px;
+  margin-left: 80px;
   border: 1px solid #FFFFFF;
+  background-color: #FDFDFD;
 }
-/* line 96, ../styles.scss */
+/* line 100, ../styles.scss */
 .segment p {
   font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
   font-size: 21px;
+  margin-bottom: 30px;
 }
-/* line 101, ../styles.scss */
+/* line 106, ../styles.scss */
 .segment .inner {
-  margin: 100px;
+  margin: 50px;
+}
+/* line 110, ../styles.scss */
+.segment h2 {
+  font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+  font-size: 50px;
+  line-height: 1.2;
+  margin-bottom: 30px;
+}
+/* line 117, ../styles.scss */
+.segment h3 {
+  margin-top: 30px;
+  margin-bottom: 15px;
 }
 
-/* line 106, ../styles.scss */
+/* line 124, ../styles.scss */
+p + p {
+  margin-bottom: 0;
+}
+
+/* line 128, ../styles.scss */
 .segment a {
   display: block;
   width: 1em;
@@ -177,24 +213,23 @@ header {
   text-shadow: 10px 10px #EEEEEE;
 }
 
-/* line 116, ../styles.scss */
+/* line 138, ../styles.scss */
 .label {
   background-color: #BBBBBB;
 }
-/* line 120, ../styles.scss */
+/* line 142, ../styles.scss */
 .label h1, .label h2 {
   color: #FFFFFF;
 }
-/* line 124, ../styles.scss */
+/* line 146, ../styles.scss */
 .label h1 {
-  font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+  font-family: "Adobe Garamond Pro", "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
   font-size: 200px;
   line-height: 1;
   padding-bottom: 100px;
 }
-/* line 131, ../styles.scss */
-.label h2 {
-  font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
-  font-size: 200px;
-  line-height: 0;
+
+/* line 154, ../styles.scss */
+#a0 {
+  background-color: red;
 }

@@ -20,7 +20,7 @@ a{
   text-decoration: none;
 }
 
-$headerHeight : 90px;
+$headerLength : 200px;
 
 #container{
   padding: 900px;
@@ -30,16 +30,16 @@ header{
   position: fixed;
   left: 0;
   top: 0;
-  width: 200px;
+  width: $headerLength;
   height: 100%;
-  background: rgba(6, 6, 6, .45);
+  background: #2F2F2F;
   z-index: 1;
 }
 
-$monitorSize : $headerHeight - 15;
+$monitorSize : $headerLength - 15;
 
 #monitor{
-  margin: ($headerHeight - $monitorSize) * 0.5;
+  margin: ($headerLength - $monitorSize) * 0.5;
   width: $monitorSize;
   height: $monitorSize;
 }
@@ -68,7 +68,7 @@ $monitorSize : $headerHeight - 15;
 
 #intro{
   float: left;
-  width: ($segmentSize + (20 + 10)*2) * 3;
+  width: ($segmentSize + (20 + 10) * 2) * 3;
   height: 100% * (100% / $container-height);
 }
 
@@ -81,8 +81,10 @@ $monitorSize : $headerHeight - 15;
 }
 
 .line{
-  width: ($segmentSize + (20 + 10) * 2) * 3;
+  overflow: auto;
+  width: ($segmentSize + (20 + 10) * 2) * 5;
 //  height: $segmentSize;
+  margin-bottom: 100px;
 }
 
 .segment{
@@ -90,17 +92,37 @@ $monitorSize : $headerHeight - 15;
   width: $segmentSize;
   height: $segmentSize;
   margin: 20px;
+  margin-left: 80px;
   //border-radius: 20px;
-  border:1px solid #FFFFFF;
+  border: 1px solid #FFFFFF;
+  background-color: #FDFDFD;
   
   p{
     font-family: $serif;
     font-size: 21px;
+    margin-bottom: 30px;
+  }
+    
+  .inner{
+    margin: 50px;
+  }
+
+  h2{
+    font-family: $serif;
+    font-size: 50px;
+    line-height: 1.2;
+    margin-bottom: 30px;
   }
   
-  .inner{
-    margin: 100px;
+  h3{
+    margin-top: 30px;
+    margin-bottom: 15px;
   }
+}
+
+
+p + p{
+  margin-bottom: 0;
 }
 
 .segment a{
@@ -122,15 +144,13 @@ $monitorSize : $headerHeight - 15;
   }
   
   h1{
-    font-family: $serif;
+    font-family: "Adobe Garamond Pro", $serif;
     font-size: 200px;
     line-height: 1;
     padding-bottom: 100px;
   }
+}
 
-  h2{
-    font-family: $serif;
-    font-size: 200px;
-    line-height: 0;
-  }
+#a0{
+  background-color: red;
 }

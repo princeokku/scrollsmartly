@@ -20,6 +20,13 @@ module.exports = (grunt)->
           environment: 'production'
           outputStyle: 'compressed'
     
+    coffee:
+      main:
+        options:
+          sourceMap: true
+        files:
+          'jsdev/main/main.js': ['jsdev/*.coffee']
+          
     concat:
       main:
         src: ['jsdev/main/*.js']
@@ -31,13 +38,6 @@ module.exports = (grunt)->
           import: false
           ids: false
         src: ['scss/build-dev/*.css']
-
-    coffee:
-      main:
-        options:
-          sourceMap: true
-        files:
-          'jsdev/build-dev/main.js': ['jsdev/main-coffee/*.coffee']
     
     watch:
       options:
@@ -49,10 +49,16 @@ module.exports = (grunt)->
       compass:
         files: ['scss/*.scss']
         tasks: ['compass']
+      coffee:
+        files: ['jsdev/*.coffee']
+        tasks: ['coffee']
+      concat:
+        files: ['jsdev/main/*.js']
+        tasks: ['concat']
       html:
         files: ['index.html']
 
   grunt.task.registerTask 'default', [
-    'compass', 'concat'
+    'compass', 'coffee', 'concat'
     'watch'
   ]
