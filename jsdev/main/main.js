@@ -37,12 +37,12 @@
         position: 'left, top',
         marginLeft: 250
       }).scroll(h1, function() {
-        alert();
+        alert('スクロール先を左上に設定しました');
         return smartly.set({
           position: 'center',
           marginLeft: 150
         }).scroll(h1, function() {
-          return alert();
+          return alert('スクロール先を中央に設定しました');
         });
       });
     });

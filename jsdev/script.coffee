@@ -50,12 +50,12 @@ $ ->
       position: 'left, top'
       marginLeft: 250
     .scroll h1, ->
-      alert()
+      alert('スクロール先を左上に設定しました')
       smartly.set
         position: 'center'
         marginLeft: 150
       .scroll h1, ->
-        alert()
+        alert('スクロール先を中央に設定しました')
       
   $('pre').addClass 'brush: js'
   SyntaxHighlighter.all()
