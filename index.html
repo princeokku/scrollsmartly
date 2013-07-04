@@ -32,10 +32,15 @@
   
   <header>
     <ul>
+      <li class='prev'></li>
+      <li class='next'></li>
+    </ul>
+    <ul>
       <li class='to-about'>About</li>
       <li class='to-start'>Getting Started</li>
       <li class='to-method'>API - Method</li>
       <li class='to-property'>API - Property</li>
+      <li class='to-property'>API - Event</li>
   </header>
   <div id='container'>
     <div id='intro'>
@@ -123,6 +128,7 @@
                 <p>スクロール完了後に実行するコールバック関数を指定します。</p>
               </li>
             </ul>
+            <div class='example basicscroll'>>> Example</div>
           </div>
         </div>
         <div id='c3' class='segment'>
@@ -151,6 +157,7 @@
                 <p>遅延する時間をミリ秒で指定。</p>
               </li>
             </ul>
+            <div class='example delay'>>> Example</div>
           </div>
         </div>
         <div id='d2' class='segment'>
@@ -243,6 +250,9 @@
                 <p><code>smartly</code>オブジェクトのプロパティをkey、変更後の値をvalueとして持つオブジェクトを渡します。</p>
               </li>
             </ul>
+            <div class='example setleft'>>> Example</div>            
+            <div class='example setright'>>> Example</div> 
+            <div class='example setcenter'>>> Example</div> 
           </div>
         </div>
         <div id='h2' class='segment'>
@@ -299,14 +309,63 @@
             <p>目標要素が指定されていないスクロール（例えば<code>smartly.scroll( )</code>）は、全てこの要素へのスクロールとなります。特に何も指定していなければ、多くの場合ページの左上（X:0, Y:0）へのスクロールとなります。</p>
           </div>
         </div>
-        <div id='i2' class='segment'>
+        <div id='j2' class='segment'>
           <div class='inner'>            
+          </div>
+        </div>
+      </div>
+      
+      <div class='line'>
+        <div id ='k0' class='segment label'>
+          <div class='inner'>
+          </div>
+        </div>
+        <div id='k1' class='segment'>
+          <div class='inner'>
+            <h2>smartly.position</h2>
+            <ul>
+              <li>型: Stirng</li>
+              <li>初期値: 'left top'</li>
+            </ul>
+            <p>スクロール後、目標の要素がウィンドウ内のどこに位置するかを、キーワードかパーセントで指定します。        横の位置と縦の位置をスペースで区切り記述します。スペースで区切らずひとつだけ記述した場合、横位置と縦位置の両方に適用されます。 使用できるキーワードは、CSSの<code>background-position</code>と同様のものです。</p>
+            
+          </div>
+        </div>
+        <div id='k2' class='segment'>
+          <div class='inner'>            
+          </div>
+        </div>
+      </div>
+      
+      <div class='line'>
+        <div id ='l0' class='segment label'>
+          <div class='inner'>
+            <h1 class=''>API - Event</h1>
+          </div>
+        </div>
+        <div id='l1' class='segment'>
+          <div class='inner'>
+            <h2>smartlystart</h2>
+            <ul>
+              <li>型: Object (HTMLEvent)</li>
+              <li><code>smartly.scroll</code>メソッドが実行され、スクロールが始まる直前に発生します。</li>
+            </ul>
+            <h2>smartlyend</h2>
+            <ul>
+              <li>型: Object (HTMLEvent)</li>
+              <li><code>smartly.scroll</code>メソッドが実行され、スクロールが目標に到達した直後に発生します。</li>
+            </ul>
+          </div>
+        </div>
+        <div id='l2' class='segment'>
+          <div class='inner'>    
           </div>
         </div>
       </div>
       
     </section>
   </div>
+
   <!--[if lt IE 7]>
   <script src='js/IE7.js'></script>
   <![endif]-->

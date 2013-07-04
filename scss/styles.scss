@@ -246,6 +246,26 @@ p + p{
   };
 }
 
+#l0{
+  background-color: #e67e22;
+  &:after{
+    border-left-color: #e67e22;
+  };
+}
+
+#l0:hover{
+  background-color: #d35400;
+  &:after{
+    border-left-color: #d35400;
+  };
+}
+
+.example{
+  font-size: 25px;
+  color: #34495e;
+  text-decoration: underline;
+}
+
 .line:nth-child(even){
   //background-color: #EFEFEF;
 }

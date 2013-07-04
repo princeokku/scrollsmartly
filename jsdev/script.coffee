@@ -28,8 +28,39 @@ $ ->
   .on 'click', ->
     smartly.scroll i0, i1
 
+  $('.to-event')
+  .css('cursor', 'pointer')
+  .on 'click', ->
+    smartly.scroll l0, l1
+
+  $('.example')
+  .css('cursor', 'pointer')
+  
+  $('.basicscroll').on 'click', ->
+    smartly.scroll(a1, b1, c1, d1, e1, f1, g1, h1, i1, c1)
+  
+  $('.delay').on 'click', ->
+    smartly.scroll(d2, ->
+      alert('1秒待ちます')
+    ).delay(1000).scroll(d1)
+
+  $('.setleft').on 'click', ->
+    smartly
+    .set
+      position: 'left, top'
+      marginLeft: 250
+    .scroll h1, ->
+      alert()
+      smartly.set
+        position: 'center'
+        marginLeft: 150
+      .scroll h1, ->
+        alert()
+      
   $('pre').addClass 'brush: js'
   SyntaxHighlighter.all()
   setTimeout ->
     $('.syntaxhighlighter .toolbar').remove()
   , 300
+  
+  

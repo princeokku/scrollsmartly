@@ -128,6 +128,32 @@ $(function(){
     $('.to-property').css('cursor', 'pointer').on('click', function() {
       return smartly.scroll(i0, i1);
     });
+    $('.to-event').css('cursor', 'pointer').on('click', function() {
+      return smartly.scroll(l0, l1);
+    });
+    $('.example').css('cursor', 'pointer');
+    $('.basicscroll').on('click', function() {
+      return smartly.scroll(a1, b1, c1, d1, e1, f1, g1, h1, i1, c1);
+    });
+    $('.delay').on('click', function() {
+      return smartly.scroll(d2, function() {
+        return alert('1秒待ちます');
+      }).delay(1000).scroll(d1);
+    });
+    $('.setleft').on('click', function() {
+      return smartly.set({
+        position: 'left, top',
+        marginLeft: 250
+      }).scroll(h1, function() {
+        alert();
+        return smartly.set({
+          position: 'center',
+          marginLeft: 150
+        }).scroll(h1, function() {
+          return alert();
+        });
+      });
+    });
     $('pre').addClass('brush: js');
     SyntaxHighlighter.all();
     return setTimeout(function() {
