@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@import url(http://fonts.googleapis.com/css?family=Lato);
 /* line 3, ../_elements.scss */
 body {
   margin: 0;
@@ -879,77 +880,85 @@ pre {
   font-weight: bold !important;
 }
 
-/* line 18, ../styles.scss */
+/* line 20, ../styles.scss */
 body {
   height: 100%;
   -webkit-text-size-adjust: 100%;
 }
 
-/* line 23, ../styles.scss */
+/* line 25, ../styles.scss */
 a {
   text-decoration: none;
 }
 
-/* line 29, ../styles.scss */
+/* line 31, ../styles.scss */
 header {
   position: fixed;
   left: 0;
   top: 0;
-  width: 280px;
+  width: 380px;
   height: 100%;
   background: rgba(47, 47, 47, 0.92);
   z-index: 99;
 }
-/* line 38, ../styles.scss */
+/* line 40, ../styles.scss */
 header ul {
   margin: 20px;
 }
-/* line 41, ../styles.scss */
+/* line 43, ../styles.scss */
 header li {
+  font-family: 'Lato', sans-serif;
   font-size: 20px;
   color: white;
-  margin-bottom: 15px;
+  margin-bottom: 4px;
 }
 
-/* line 50, ../styles.scss */
+/* line 51, ../styles.scss */
+.to-about, .to-start, .to-method, .to-property, .to-event {
+  font-weight: bold;
+  font-size: 24px;
+  margin-top: 48px;
+}
+
+/* line 59, ../styles.scss */
 #monitor {
   margin: 7.5px;
-  width: 265px;
-  height: 265px;
+  width: 365px;
+  height: 365px;
 }
 
-/* line 56, ../styles.scss */
+/* line 65, ../styles.scss */
 #monitor a {
   display: block;
   float: left;
   margin: 1px;
-  width: 79.5px;
-  height: 79.5px;
+  width: 109.5px;
+  height: 109.5px;
   background: #FFFFFF;
   color: #999999;
   text-align: center;
 }
 
-/* line 67, ../styles.scss */
+/* line 76, ../styles.scss */
 #container {
   position: absolute;
   height: 400%;
   padding: 900px 90px 900px 0;
 }
-/* line 74, ../styles.scss */
+/* line 83, ../styles.scss */
 #container > section {
   float: left;
   width: 100%;
 }
 
-/* line 80, ../styles.scss */
+/* line 89, ../styles.scss */
 #intro {
   float: left;
   width: 2580px;
   height: 25%;
 }
 
-/* line 86, ../styles.scss */
+/* line 95, ../styles.scss */
 #home {
   float: left;
   width: 10%;
@@ -958,69 +967,68 @@ header li {
   background: red;
 }
 
-/* line 94, ../styles.scss */
+/* line 103, ../styles.scss */
 .line {
   overflow: auto;
   width: 3870px;
   margin-bottom: 100px;
 }
 
-/* line 104, ../styles.scss */
+/* line 113, ../styles.scss */
 .segment {
   float: left;
   width: 800px;
-  height: 800px;
   margin: 20px;
   margin-right: 80px;
   border: 1px solid #FFFFFF;
   background-color: #FDFDFD;
 }
-/* line 114, ../styles.scss */
+/* line 123, ../styles.scss */
 .segment p {
   font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
   font-size: 21px;
   margin-bottom: 30px;
 }
-/* line 120, ../styles.scss */
+/* line 129, ../styles.scss */
 .segment li p {
   font-family: "Helvetica Neue", "Arial", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
   font-size: 18px;
 }
-/* line 125, ../styles.scss */
+/* line 134, ../styles.scss */
 .segment .inner {
   margin: 50px;
 }
-/* line 129, ../styles.scss */
+/* line 138, ../styles.scss */
 .segment h2 {
   font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
   font-size: 50px;
   line-height: 1.2;
   margin-bottom: 30px;
 }
-/* line 136, ../styles.scss */
+/* line 145, ../styles.scss */
 .segment h3 {
   margin-top: 30px;
   margin-bottom: 15px;
 }
 
-/* line 147, ../styles.scss */
+/* line 156, ../styles.scss */
 p + p {
   margin-bottom: 0;
 }
 
-/* line 151, ../styles.scss */
+/* line 160, ../styles.scss */
 .label {
   position: relative;
   margin-right: 380px;
   margin-left: 0;
-  padding-left: 500px;
+  padding-left: 600px;
 }
-/* line 159, ../styles.scss */
+/* line 168, ../styles.scss */
 .label h1, .label h2 {
   color: #FFFFFF;
   font-family: "Helvetica Neue", "Arial", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
 }
-/* line 164, ../styles.scss */
+/* line 173, ../styles.scss */
 .label h1 {
   font-weight: 100;
   letter-spacing: 4px;
@@ -1029,7 +1037,7 @@ p + p {
   padding-bottom: 100px;
 }
 
-/* line 173, ../styles.scss */
+/* line 182, ../styles.scss */
 .segment:after {
   left: 100%;
   border: solid transparent;
@@ -1041,7 +1049,7 @@ p + p {
   z-index: 10;
 }
 
-/* line 184, ../styles.scss */
+/* line 193, ../styles.scss */
 .segment:after {
   border-width: 400px 200px;
   top: 50%;
@@ -1049,97 +1057,97 @@ p + p {
   z-index: 10;
 }
 
-/* line 193, ../styles.scss */
+/* line 202, ../styles.scss */
 #a0 {
   background-color: #e74c3c;
 }
-/* line 195, ../styles.scss */
+/* line 204, ../styles.scss */
 #a0:after {
   border-left-color: #e74c3c;
 }
 
-/* line 200, ../styles.scss */
+/* line 209, ../styles.scss */
 #a0:hover {
   background-color: #c0392b;
 }
-/* line 202, ../styles.scss */
+/* line 211, ../styles.scss */
 #a0:hover:after {
   border-left-color: #c0392b;
 }
 
-/* line 207, ../styles.scss */
+/* line 216, ../styles.scss */
 #b0 {
   background-color: #1abc9c;
 }
-/* line 209, ../styles.scss */
+/* line 218, ../styles.scss */
 #b0:after {
   border-left-color: #1abc9c;
 }
 
-/* line 214, ../styles.scss */
+/* line 223, ../styles.scss */
 #b0:hover {
   background-color: #16a085;
 }
-/* line 216, ../styles.scss */
+/* line 225, ../styles.scss */
 #b0:hover:after {
   border-left-color: #16a085;
 }
 
-/* line 221, ../styles.scss */
+/* line 230, ../styles.scss */
 #c0 {
   background-color: #3498db;
 }
-/* line 223, ../styles.scss */
+/* line 232, ../styles.scss */
 #c0:after {
   border-left-color: #3498db;
 }
 
-/* line 228, ../styles.scss */
+/* line 237, ../styles.scss */
 #c0:hover {
   background-color: #2980b9;
 }
-/* line 230, ../styles.scss */
+/* line 239, ../styles.scss */
 #c0:hover:after {
   border-left-color: #2980b9;
 }
 
-/* line 235, ../styles.scss */
+/* line 244, ../styles.scss */
 #i0 {
   background-color: #9b59b6;
 }
-/* line 237, ../styles.scss */
+/* line 246, ../styles.scss */
 #i0:after {
   border-left-color: #9b59b6;
 }
 
-/* line 242, ../styles.scss */
+/* line 251, ../styles.scss */
 #i0:hover {
   background-color: #8e44ad;
 }
-/* line 244, ../styles.scss */
+/* line 253, ../styles.scss */
 #i0:hover:after {
   border-left-color: #8e44ad;
 }
 
-/* line 249, ../styles.scss */
+/* line 258, ../styles.scss */
 #l0 {
   background-color: #e67e22;
 }
-/* line 251, ../styles.scss */
+/* line 260, ../styles.scss */
 #l0:after {
   border-left-color: #e67e22;
 }
 
-/* line 256, ../styles.scss */
+/* line 265, ../styles.scss */
 #l0:hover {
   background-color: #d35400;
 }
-/* line 258, ../styles.scss */
+/* line 267, ../styles.scss */
 #l0:hover:after {
   border-left-color: #d35400;
 }
 
-/* line 263, ../styles.scss */
+/* line 272, ../styles.scss */
 .example {
   font-size: 25px;
   color: #34495e;

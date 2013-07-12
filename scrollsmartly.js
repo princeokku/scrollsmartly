@@ -18,13 +18,13 @@ if(typeof window.smartly !== 'object'){
   var currentHref_WOHash = location.href.split('#')[0];
   
   var _inner = {
-    "scrollProcessInterval": 15,
-    "stillLoading": true,
-    "callback": undefined,
-    "delayedFunctionsQueue": [],
-    "transit": [],
-    "mutated": null,
-    "reachedCurrentTarget": true
+    scrollProcessInterval: 15,
+    stillLoading: true,
+    callback: undefined,
+    delayedFunctionsQueue: [],
+    transit: [],
+    mutated: null,
+    reachedCurrentTarget: true
   };
   
   smartly.set = function(){
@@ -139,6 +139,7 @@ if(typeof window.smartly !== 'object'){
   smartly.position = 'left top';
   smartly.marginLeft = 0;
   smartly.marginTop = 0;
+  smartly.velocity = [0, 0];
     
   var targetX = 0, targetY = 0, targetElm, targetHash = '';
   var currentX = 0, currentY = 0;
@@ -407,7 +408,7 @@ if(typeof window.smartly !== 'object'){
       break;
       
       default:
-      var lastKey = arguments.length-1;
+      var lastKey = arguments.length - 1;
       
       for(var i=0; i < lastKey; i++){
         targets[i] = arguments[i];
@@ -514,6 +515,8 @@ if(typeof window.smartly !== 'object'){
     var vx = (targetX - currentX) / smartly.easing;
     var vy = (targetY - currentY) / smartly.easing;
     
+    smartly.velocity = [vx, vy];
+    
     if(//(abs(vx) < 0.1 && abs(vy) < 0.1) ||
     (prevX === currentX && prevY === currentY) ||
     _inner.reachedCurrentTarget){ // 目標座標付近に到達した場合
@@ -530,7 +533,8 @@ if(typeof window.smartly !== 'object'){
       scrollTo(targetX, targetY);
       smartly.scrolledTo = targetElm;
       _inner.reachedCurrentTarget = true; // 直近の目標に到達したことを表す
-            
+      smartly.velocity = [0, 0];
+      
       if(_inner.transit.length > 0){ // 経由する要素がまだ残っている場合
         smartly.scroll(_inner.transit.shift());
         
@@ -560,74 +564,7 @@ if(typeof window.smartly !== 'object'){
       _inner.scrollProcessInterval
     );
   }
-  
-  if(window.jQuery){
     
-    var page = (function(){
-      var line = document.createElement('div');
-      line.style.position = 'absolute';
-      line.style.top = line.style.left = '0';
-      line.style.width = '1px';
-      line.style.height = '100%';
-      line.style.margin = '0px';
-      line.style.padding = '1px 0 0 0';
-      line.style.border = 'none';
-      line.style.visibility = 'hidden';
-
-      document.body.appendChild(line);
-      
-      var topElm = document.body;
-      var initialTop = topElm.scrollTop;
-      if(initialTop < 1){
-        topElm.scrollTop = 1;
-      }else{
-        topElm.scrollTop = initialTop - 1;    
-      }
-  
-      if(topElm.scrollTop === initialTop){
-        topElm = document.documentElement;
-      }else{
-        topElm.scrollTop = initialTop;        
-      }
-
-      document.body.removeChild(line);
-      return topElm;
-    }());
-    
-    page = $(page);
-    
-    window.jsmartly = function(elm, speedArg, es){
-      var offset = $(elm).offset();
-      var pageOffset = page.offset();
-      console.log(page.scrollLeft(), page.scrollTop());
-    
-      var complete = function(){console.log('c');};
-      var distance = Math.sqrt(
-        Math.pow(page.scrollLeft() - offset.left, 2) +
-        Math.pow(page.scrollTop() - offset.top, 2)
-      );
-    
-      var speed = speedArg || 3.5;
-      var duration = parseInt(distance / speed, 10);
-
-      page.animate({
-        scrollLeft: offset.left,
-        scrollTop: offset.top
-      },{
-        duration: duration || 550,
-        easing: es || 'easeOutExpo',
-        //progress: function(a1,a2,a3){console.log(a1,a2,a3);},
-        complete: complete
-      });
-  
-      //return $(this);
-    };
-  }
-  
-  function jQueryScroll(){
-    //tmp
-  }
-  
   function setLocationHash(){
     if(! smartly.scrollHashSynced ||
     targetHash === location.hash.substring(1) || _inner.delayedFunctionsQueue.length > 0){

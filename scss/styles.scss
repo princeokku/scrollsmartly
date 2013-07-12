@@ -15,6 +15,8 @@ $common-white: #EFEFEF;
 
 @import "compass/css3/box-shadow";
 
+@import url(http://fonts.googleapis.com/css?family=Lato);
+
 body{
   height: 100%;
   -webkit-text-size-adjust: 100%;
@@ -24,7 +26,7 @@ a{
   text-decoration: none;
 }
 
-$headerLength : 280px;
+$headerLength : 380px;
 
 header{
   position: fixed;
@@ -39,10 +41,17 @@ header{
     margin: 20px;
   }
   li{
+    font-family: 'Lato', sans-serif;
     font-size: 20px;
     color: white;
-    margin-bottom: 15px;
+    margin-bottom: 4px;
   }
+}
+
+.to-about, .to-start, .to-method, .to-property, .to-event{
+  font-weight: bold;
+  font-size: 24px;
+  margin-top: 48px;
 }
 
 $monitorSize : $headerLength - 15;
@@ -104,7 +113,7 @@ $monitorSize : $headerLength - 15;
 .segment{
   float: left;
   width: $segmentSize;
-  height: $segmentSize;
+  //height: $segmentSize;
   margin: 20px;
   margin-right: 80px;
   //border-radius: 20px;
@@ -154,7 +163,7 @@ p + p{
   position: relative;
   margin-right: 80px + 200px + 100px;
   margin-left: 0;
-  padding-left: 500px;
+  padding-left: $headerLength + 220px;
   
   h1, h2{
     color: #FFFFFF;

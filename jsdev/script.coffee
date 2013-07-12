@@ -1,3 +1,5 @@
+$('.label').has('h1').css 'height', '800px'
+
 # Setup scrollsmartly
 smartly.set {
   position: 'center',

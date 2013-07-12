@@ -1,4 +1,6 @@
 (function() {
+  $('.label').has('h1').css('height', '800px');
+
   smartly.set({
     position: 'center',
     marginLeft: 150,
