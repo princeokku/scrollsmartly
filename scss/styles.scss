@@ -86,7 +86,7 @@ $monitorSize : $headerLength - 15;
   //width: 400%;
   height: $container-height;
   
-  padding: 900px 90px 900px 0;
+  padding: 300px 90px 900px 0;
   
   & > section{
     float: left;
@@ -96,16 +96,18 @@ $monitorSize : $headerLength - 15;
 
 #intro{
   float: left;
-  width: ($segmentSize + (20 + 10) * 2) * 3;
-  height: 100% * (100% / $container-height);
+  width: 1534px;
+  height: 1234px;
+  background: url(../img/logo.png) no-repeat;
+  background-size: contain;
+  
+  margin-left: $headerLength + 220px;
 }
 
 #home{
   float: left;
   width: 10%;
   height: 200px;
-  margin: 40% * (100% / $container-height) 0 0 20px;
-  background: red;
 }
 
 .line{

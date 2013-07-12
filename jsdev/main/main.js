@@ -1,4 +1,17 @@
 (function() {
+  var clicktime;
+
+  clicktime = setTimeout(function() {
+    return smartly.scroll();
+  }, 1000 * 60 * 3);
+
+  $(document).on('scroll', function() {
+    clearTimeout(clicktime);
+    return clicktime = setTimeout(function() {
+      return smartly.scroll();
+    }, 1000 * 60 * 3);
+  });
+
   $('.label').has('h1').css('height', '800px');
 
   smartly.set({

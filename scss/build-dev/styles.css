@@ -952,7 +952,7 @@ a li:hover {
 #container {
   position: absolute;
   height: 400%;
-  padding: 900px 90px 900px 0;
+  padding: 300px 90px 900px 0;
 }
 /* line 91, ../styles.scss */
 #container > section {
@@ -963,27 +963,28 @@ a li:hover {
 /* line 97, ../styles.scss */
 #intro {
   float: left;
-  width: 2580px;
-  height: 25%;
+  width: 1534px;
+  height: 1234px;
+  background: url(../img/logo.png) no-repeat;
+  background-size: contain;
+  margin-left: 600px;
 }
 
-/* line 103, ../styles.scss */
+/* line 107, ../styles.scss */
 #home {
   float: left;
   width: 10%;
   height: 200px;
-  margin: 10% 0 0 20px;
-  background: red;
 }
 
-/* line 111, ../styles.scss */
+/* line 113, ../styles.scss */
 .line {
   overflow: auto;
   width: 3870px;
   margin-bottom: 100px;
 }
 
-/* line 121, ../styles.scss */
+/* line 123, ../styles.scss */
 .segment {
   float: left;
   width: 800px;
@@ -992,52 +993,52 @@ a li:hover {
   border: 1px solid #FFFFFF;
   background-color: #FDFDFD;
 }
-/* line 131, ../styles.scss */
+/* line 133, ../styles.scss */
 .segment p {
   font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
   font-size: 21px;
   margin-bottom: 30px;
 }
-/* line 137, ../styles.scss */
+/* line 139, ../styles.scss */
 .segment li p {
   font-family: "Helvetica Neue", "Arial", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
   font-size: 18px;
 }
-/* line 142, ../styles.scss */
+/* line 144, ../styles.scss */
 .segment .inner {
   margin: 50px;
 }
-/* line 146, ../styles.scss */
+/* line 148, ../styles.scss */
 .segment h2 {
   font-family: "Times New Roman", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
   font-size: 50px;
   line-height: 1.2;
   margin-bottom: 30px;
 }
-/* line 153, ../styles.scss */
+/* line 155, ../styles.scss */
 .segment h3 {
   margin-top: 30px;
   margin-bottom: 15px;
 }
 
-/* line 164, ../styles.scss */
+/* line 166, ../styles.scss */
 p + p {
   margin-bottom: 0;
 }
 
-/* line 168, ../styles.scss */
+/* line 170, ../styles.scss */
 .label {
   position: relative;
   margin-right: 380px;
   margin-left: 0;
   padding-left: 600px;
 }
-/* line 176, ../styles.scss */
+/* line 178, ../styles.scss */
 .label h1, .label h2 {
   color: #FFFFFF;
   font-family: "Helvetica Neue", "Arial", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
 }
-/* line 181, ../styles.scss */
+/* line 183, ../styles.scss */
 .label h1 {
   font-weight: 100;
   letter-spacing: 4px;
@@ -1046,7 +1047,7 @@ p + p {
   padding-bottom: 100px;
 }
 
-/* line 190, ../styles.scss */
+/* line 192, ../styles.scss */
 .segment:after {
   left: 100%;
   border: solid transparent;
@@ -1058,7 +1059,7 @@ p + p {
   z-index: 10;
 }
 
-/* line 201, ../styles.scss */
+/* line 203, ../styles.scss */
 .segment:after {
   border-width: 400px 200px;
   top: 50%;
@@ -1066,97 +1067,97 @@ p + p {
   z-index: 10;
 }
 
-/* line 210, ../styles.scss */
+/* line 212, ../styles.scss */
 #a0 {
   background-color: #e74c3c;
 }
-/* line 212, ../styles.scss */
+/* line 214, ../styles.scss */
 #a0:after {
   border-left-color: #e74c3c;
 }
 
-/* line 217, ../styles.scss */
+/* line 219, ../styles.scss */
 #a0:hover {
   background-color: #c0392b;
 }
-/* line 219, ../styles.scss */
+/* line 221, ../styles.scss */
 #a0:hover:after {
   border-left-color: #c0392b;
 }
 
-/* line 224, ../styles.scss */
+/* line 226, ../styles.scss */
 #b0 {
   background-color: #1abc9c;
 }
-/* line 226, ../styles.scss */
+/* line 228, ../styles.scss */
 #b0:after {
   border-left-color: #1abc9c;
 }
 
-/* line 231, ../styles.scss */
+/* line 233, ../styles.scss */
 #b0:hover {
   background-color: #16a085;
 }
-/* line 233, ../styles.scss */
+/* line 235, ../styles.scss */
 #b0:hover:after {
   border-left-color: #16a085;
 }
 
-/* line 238, ../styles.scss */
+/* line 240, ../styles.scss */
 #c0 {
   background-color: #3498db;
 }
-/* line 240, ../styles.scss */
+/* line 242, ../styles.scss */
 #c0:after {
   border-left-color: #3498db;
 }
 
-/* line 245, ../styles.scss */
+/* line 247, ../styles.scss */
 #c0:hover {
   background-color: #2980b9;
 }
-/* line 247, ../styles.scss */
+/* line 249, ../styles.scss */
 #c0:hover:after {
   border-left-color: #2980b9;
 }
 
-/* line 252, ../styles.scss */
+/* line 254, ../styles.scss */
 #i0 {
   background-color: #9b59b6;
 }
-/* line 254, ../styles.scss */
+/* line 256, ../styles.scss */
 #i0:after {
   border-left-color: #9b59b6;
 }
 
-/* line 259, ../styles.scss */
+/* line 261, ../styles.scss */
 #i0:hover {
   background-color: #8e44ad;
 }
-/* line 261, ../styles.scss */
+/* line 263, ../styles.scss */
 #i0:hover:after {
   border-left-color: #8e44ad;
 }
 
-/* line 266, ../styles.scss */
+/* line 268, ../styles.scss */
 #l0 {
   background-color: #e67e22;
 }
-/* line 268, ../styles.scss */
+/* line 270, ../styles.scss */
 #l0:after {
   border-left-color: #e67e22;
 }
 
-/* line 273, ../styles.scss */
+/* line 275, ../styles.scss */
 #l0:hover {
   background-color: #d35400;
 }
-/* line 275, ../styles.scss */
+/* line 277, ../styles.scss */
 #l0:hover:after {
   border-left-color: #d35400;
 }
 
-/* line 280, ../styles.scss */
+/* line 282, ../styles.scss */
 .example {
   font-size: 25px;
   color: #34495e;

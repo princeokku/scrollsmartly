@@ -1,3 +1,13 @@
+clicktime = setTimeout ->
+  smartly.scroll()
+, 1000 * 60 * 3
+
+$(document).on 'scroll', ->
+  clearTimeout clicktime
+  clicktime = setTimeout ->
+    smartly.scroll()
+  , 1000 * 60 * 3
+
 $('.label').has('h1').css 'height', '800px'
 
 # Setup scrollsmartly
