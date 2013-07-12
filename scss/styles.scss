@@ -34,7 +34,7 @@ header{
   top: 0;
   width: $headerLength;
   height: 100%;
-  background: rgba(#2F2F2F, .92);
+  background-color: rgba(#2F2F2F, .92);
   z-index: 99;
   
   ul{
@@ -52,6 +52,14 @@ header{
   font-weight: bold;
   font-size: 24px;
   margin-top: 48px;
+  
+  &:hover{
+    background-color: rgba(#9F9F9F, .92);
+  }
+}
+
+a li:hover{
+  background-color: rgba(#9F9F9F, .92);
 }
 
 $monitorSize : $headerLength - 15;
