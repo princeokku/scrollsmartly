@@ -4,17 +4,18 @@
 // Licensed under the MIT License:
 // http://www.opensource.org/licenses/mit-license.php
 
-// This program is the branch originated from:
+// This library is originated from:
 //   scrollsmoothly.js
 //   Copyright (c) 2008 KAZUMiX
 //   http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly
 //   Licensed under the MIT License
 
-if(typeof window.smartly !== 'object'){
+(function(define){ define([], function(){
+  
+  'use strict';
+  
   var smartly = {};
-}
-
-(function(){
+  
   var currentHref_WOHash = location.href.split('#')[0];
   
   var _inner = {
@@ -876,4 +877,15 @@ if(typeof window.smartly !== 'object'){
     return smartly;
   };
   
-}());
+  return smartly;
+});
+}(
+  typeof define !== 'undefined' ?
+  // use define for AMD if available
+  define :
+  // If no define, look for module to export as a CommonJS module.
+  // If no define or module, attach to current context.
+  typeof module !== 'undefined' ?
+  function(deps, factory) { module.exports = factory(); } :
+  function(deps, factory) { this.smartly = factory(); }  
+));
