@@ -133,9 +133,9 @@ if(typeof window.smartly !== 'object'){
   smartly.hashScrollSynced = true;
   smartly.scrollHashSynced = true;
   
-  smartly.start = {"x": 0, "y": 0};
-  smartly.current = smartly.end = smartly.scrollable = smartly.start;
-  
+  smartly.currentLeft = 0;
+  smartly.currentTop = 0;
+    
   smartly.position = 'left top';
   smartly.marginLeft = 0;
   smartly.marginTop = 0;
@@ -189,12 +189,15 @@ if(typeof window.smartly !== 'object'){
   var scrollTimerID = null;
     
   var scrollCompleteHandler = function(){
+    getCurrentXY();
+    /*
     if(scrollTimerID !== null){
       clearTimeout(scrollTimerID);
     }
     scrollTimerID = setTimeout(function(){
       getCurrentXY();
     }, 150);
+    */
   };
   
   var resizeTimerID = null;
@@ -621,6 +624,9 @@ if(typeof window.smartly !== 'object'){
   function getCurrentXY(){
     currentX = document.documentElement.scrollLeft || document.body.scrollLeft;
     currentY = document.documentElement.scrollTop || document.body.scrollTop;
+    
+    smartly.currentLeft = currentX;
+    smartly.currentTop = currentY;
   }  
   
   var getScrollMaxXY;
