@@ -254,13 +254,13 @@
       setCustomHTMLEvent = function(eventType){
         var htmlEvent = document.createEvent('HTMLEvents');
         htmlEvent.initEvent(eventType, false, false);
-        window['on'+eventType] = null;
+        this['on'+eventType] = null;
 
         addEvent(window, eventType, function(e){
-          if(typeof window['on'+eventType] === 'function'){
-            window['on'+eventType](e);
-          }else if(window['on'+eventType] !== null){
-            console.log('on'+eventType+':', window['on'+eventType]); // デバッグ用
+          if(typeof this['on'+eventType] === 'function'){
+            this['on'+eventType](e);
+          }else if(this['on'+eventType] !== null){
+            console.log('on'+eventType+':', this['on'+eventType]); // デバッグ用
           }
         });
         
@@ -279,14 +279,14 @@
       setCustomHTMLEvent = function(eventType){
         var htmlEvent = document.createEvent('HTMLEvents');
         htmlEvent.initEvent(eventType, false, false);
-        window['on'+eventType] = null;
+        this['on'+eventType] = null;
 
         addEvent(window, eventType, function(){
           var e = event;
-          if(typeof window['on'+eventType] === 'function'){
-            window['on'+eventType](e);
-          }else if(window['on'+eventType] !== null){
-            console.log('on'+eventType+':', window['on'+eventType]);
+          if(typeof this['on'+eventType] === 'function'){
+            this['on'+eventType](e);
+          }else if(this['on'+eventType] !== null){
+            console.log('on'+eventType+':', this['on'+eventType]);
           }
         });
       
