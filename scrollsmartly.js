@@ -1,14 +1,12 @@
-// scrollsmartly.js v0.1
-// Copyright (c) 2013 Shinnosuke Watanabe
-// https://github.com/shinnn
-// Licensed under the MIT License:
-// http://www.opensource.org/licenses/mit-license.php
+/*!
+ scrollsmartly.js v0.1 
+ Copyright (c) 2013 Shinnosuke Watanabe
+ Licensed under the MIT License
 
-// This library is originated from:
-//   scrollsmoothly.js
-//   Copyright (c) 2008 KAZUMiX
-//   http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly
-//   Licensed under the MIT License
+ This library is originated from scrollsmoothly.js
+ Copyright (c) 2008 KAZUMiX
+ Licensed under the MIT License
+*/
 
 (function(define){ define([], function(){
   
@@ -18,15 +16,13 @@
   
   var currentHref_WOHash = location.href.split('#')[0];
   
-  var _inner = {
-    scrollProcessInterval: 15,
-    stillLoading: true,
-    callback: undefined,
-    delayedFunctionsQueue: [],
-    transit: [],
-    mutated: null,
-    reachedCurrentTarget: true
-  };
+  var processInterval = 15,
+      stillLoading = true,
+      callback,
+      delayedFunctionsQueue = [],
+      transit = [],
+      mutated = null,
+      reachedCurrentTarget = true;
   
   smartly.set = function(){
     switch (arguments.length){
@@ -103,7 +99,7 @@
         };
 
         if(smartly.scrollingTo !== null){
-          _inner.delayedFunctionsQueue[_inner.delayedFunctionsQueue.length] = delayedFunction;
+          delayedFunctionsQueue[delayedFunctionsQueue.length] = delayedFunction;
 
         }else{
           delayedFunction();
@@ -120,9 +116,9 @@
   };
   
   function dequeue(){
-    if(_inner.delayedFunctionsQueue.length > 0){
-      console.log(_inner.delayedFunctionsQueue);
-      var currentQueue = _inner.delayedFunctionsQueue.shift();
+    if(delayedFunctionsQueue.length > 0){
+      console.log(delayedFunctionsQueue);
+      var currentQueue = delayedFunctionsQueue.shift();
         currentQueue();
     }
   }
@@ -167,11 +163,11 @@
   // IE and old Opera
   }else if('attachEvent' in window){ 
     addEvent = function(elm, eventType, func){
-      elm.attachEvent('on'+eventType, func);
+      elm.attachEvent('on' + eventType, func);
     };
     
     removeEvent = function(elm, eventType, func){
-      elm.detachEvent('on'+eventType, func);
+      elm.detachEvent('on' + eventType, func);
     };
   }
   
@@ -220,7 +216,7 @@
   var observer;
   
   function reportMutated(){
-    _inner.mutated = true;        
+    mutated = true;        
   }
   
   if(MutationObserver){
@@ -229,7 +225,7 @@
     });  
   }else{
     // 変更通知を受け取れないので、以後、常にDOM変更が行われていることを前提に処理する
-    _inner.mutated = true;
+    mutated = true;
   }
   
   var startScroll;
@@ -254,13 +250,11 @@
       setCustomHTMLEvent = function(eventType){
         var htmlEvent = document.createEvent('HTMLEvents');
         htmlEvent.initEvent(eventType, false, false);
-        this['on'+eventType] = null;
+        this['on' + eventType] = null;
 
         addEvent(window, eventType, function(e){
-          if(typeof this['on'+eventType] === 'function'){
-            this['on'+eventType](e);
-          }else if(this['on'+eventType] !== null){
-            console.log('on'+eventType+':', this['on'+eventType]); // デバッグ用
+          if(typeof this['on' + eventType] === 'function'){
+            this['on' + eventType](e);
           }
         });
         
@@ -279,14 +273,14 @@
       setCustomHTMLEvent = function(eventType){
         var htmlEvent = document.createEvent('HTMLEvents');
         htmlEvent.initEvent(eventType, false, false);
-        this['on'+eventType] = null;
+        this['on' + eventType] = null;
 
         addEvent(window, eventType, function(){
           var e = event;
-          if(typeof this['on'+eventType] === 'function'){
-            this['on'+eventType](e);
-          }else if(this['on'+eventType] !== null){
-            console.log('on'+eventType+':', this['on'+eventType]);
+          if(typeof this['on' + eventType] === 'function'){
+            this['on' + eventType](e);
+          }else if(this['on' + eventType] !== null){
+            console.log('on' + eventType+':', this['on' + eventType]);
           }
         });
       
@@ -318,7 +312,8 @@
     getWindowSize();
     
     // 外部からページ内リンク付きで呼び出された場合
-    if(smartly.hashScrollSynced && (location.hash !== '' || smartly.homeElement !== rootElm)){
+    if(smartly.hashScrollSynced &&
+    (location.hash !== '' || smartly.homeElement !== rootElm)){
       if(window.attachEvent !== undefined &&
       window.opera === undefined){ // IE
         // 少し待ってからスクロール
@@ -334,7 +329,7 @@
     
     addEvent(document.body, 'click', holdDefaultHashChange);
     
-    delete _inner.stillLoading;
+    stillLoading = false;
   });
 
   function holdDefaultHashChange(clickEvent){
@@ -344,7 +339,7 @@
     var elm = evt.target || evt.srcElement;
     if(elm.href !== undefined && elm.href.indexOf('#') !== -1){
       console.log(elm.href);
-      resetHashChangeEvent(false);  
+      resetHashChangeEvent(false);
     }
   }
 
@@ -452,7 +447,7 @@
     }
     
     if(targets.length > 0){
-      _inner.transit = targets;
+      transit = targets;
     }
     
     setTargetXY();
@@ -467,13 +462,13 @@
     }
 
     // スクロール中ではない場合、またはスクロール中であっても、次の目標にまだ到達していない場合
-    if(smartly.scrollingTo === null || ! _inner.reachedCurrentTarget){
+    if(smartly.scrollingTo === null || ! reachedCurrentTarget){
       // スクロールの開始処理
       
       smartly.scrollingTo = targetElm;
 
       // 'callback' 引数をコールバック関数に設定する
-      _inner.callback = callback || null;
+      callback = callback || null;
 
       clearTimeout(scrollProcessID);
 
@@ -487,7 +482,7 @@
     removeEvent(window, 'scroll', scrollCompleteHandler);
     resetHashChangeEvent(true);
     
-    _inner.reachedCurrentTarget = false;
+    reachedCurrentTarget = false;
     processScroll();
         
     return smartly;
@@ -500,13 +495,13 @@
   
   function processScroll(){
     
-    if(_inner.mutated === true){
+    if(mutated === true){
       // スクロール中にターゲット要素に対するDOMの変更があった場合、再度ターゲット要素の座標を取得する
       setTargetXY();
       console.log('mutated');
 
       if(observer !== undefined){
-        _inner.mutated = false;
+        mutated = false;
       }
     }
     
@@ -523,7 +518,7 @@
     
     if(//(abs(vx) < 0.1 && abs(vy) < 0.1) ||
     (prevX === currentX && prevY === currentY) ||
-    _inner.reachedCurrentTarget){ // 目標座標付近に到達した場合
+    reachedCurrentTarget){ // 目標座標付近に到達した場合
       
       if(observer !== undefined){
         observer.disconnect(); // DOMの変更通知の受取を止める
@@ -532,22 +527,22 @@
       addEvent(window, 'scroll', scrollCompleteHandler);
 
       // scroll.stop が呼ばれていた場合
-      if(_inner.reachedCurrentTarget){ return; }
+      if(reachedCurrentTarget){ return; }
       
       scrollTo(targetX, targetY);
       smartly.scrolledTo = targetElm;
-      _inner.reachedCurrentTarget = true; // 直近の目標に到達したことを表す
+      reachedCurrentTarget = true; // 直近の目標に到達したことを表す
       smartly.velocity = [0, 0];
       
-      if(_inner.transit.length > 0){ // 経由する要素がまだ残っている場合
-        smartly.scroll(_inner.transit.shift());
+      if(transit.length > 0){ // 経由する要素がまだ残っている場合
+        smartly.scroll(transit.shift());
         
       }else{ // 経由すべき要素は残っていないため、スクロールを完了する        
         setLocationHash();
         smartly.scrollingTo = prevX = prevY = null;
         
-        if(typeof _inner.callback === 'function'){
-          _inner.callback();
+        if(typeof callback === 'function'){
+          callback();
         }
                 
         dequeue();
@@ -565,13 +560,13 @@
     
     scrollProcessID = setTimeout(
       function(){ processScroll(); },
-      _inner.scrollProcessInterval
+      processInterval
     );
   }
     
   function setLocationHash(){
     if(! smartly.scrollHashSynced ||
-    targetHash === location.hash.substring(1) || _inner.delayedFunctionsQueue.length > 0){
+    targetHash === location.hash.substring(1) || delayedFunctionsQueue.length > 0){
       return;
     }
     
@@ -772,16 +767,16 @@
   
   smartly.stop = function(){
     // 目標に到達「したこと」にし、スクロール処理を終了させる
-    _inner.reachedCurrentTarget = true;
-    _inner.transit= [];
+    reachedCurrentTarget = true;
+    transit= [];
     smartly.scrollingTo = null;
     
     dequeue();
-    return smartly;    
+    return smartly;
   };
 
   smartly.finish = function(){
-    _inner.delayedFunctionsQueue= [];
+    delayedFunctionsQueue= [];
     smartly.stop();
 
     return smartly;
@@ -858,9 +853,9 @@
   };
   
   smartly.all = function(){
-    if(_inner.stillLoading === true){
+    if(stillLoading){
       addEvent(window, 'load', function(){
-        delete _inner.stillLoading;
+        stillLoading = false;
         smartly.all();
       });
       
@@ -877,6 +872,7 @@
     return smartly;
   };
   
+  // expose
   return smartly;
 });
 }(

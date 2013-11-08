@@ -13,15 +13,18 @@ module.exports = (grunt) ->
   DEST_ROOT = 'site/'
   
   grunt.initConfig
+    jshint:
+      main: 'scrollsmartly.js'
+      
     testem:
       main:
         src: 'testem.json'
         dest: 'tests.tap'
-        
+    
     uglify:
       dist:
         options:
-          preserveComments: 'true'
+          preserveComments: 'some'
           compress:
             global_defs:
               DEBUG: false
@@ -35,26 +38,14 @@ module.exports = (grunt) ->
         app: 'Google Chrome'
     
     watch:
-      options:
-        # http://feedback.livereload.com/knowledgebase/articles/86242
-        # if you want to use it with local files,
-        # be sure to enable “Allow access to file URLs” checkbox
-        # in Tools > Extensions > LiveReload after installation.
-        livereload: true
       concat_dist:
-        files: ["#{ DEST_ROOT }js/debug/*.js"]
-        tasks: ['concat:dist', 'clean:tmpfiles']
+        files: 'scrollsmartly.js'
+        tasks: ['jshint', 'uglify']
         
-    concurrent:
-      beginning: ['flexSVG', 'shell:coffeelint_grunt', 'shell:coffeelint']
-      dev: ['compass:dev', 'coffee:dev', 'jadeTemplate:dev']
-  
   defaultTasks = [
-    'clean:site' #reset
-    'concurrent:beginning'
-    'concurrent:dev', 'concurrent:dist'
+    'jshint'
     'uglify'
-    'connect', 'watch'
+    'watch'
   ]
   
   grunt.task.registerTask 'default', defaultTasks
