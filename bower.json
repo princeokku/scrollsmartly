@@ -1,0 +1,23 @@
+{
+  "name": "scrollsmartly",
+  "version": "0.0.1",
+  "description": "smooth scroll library based on scrollsmoothly.js",
+  "keywords": [
+    "scroll",
+    "history"
+  ],
+  "main": "scrollsmartly.js",
+  "homepage": "https://github.com/shinnn/scrollsmartly",
+  "authors": [
+    "Shinnosuke Watanabe <snnskwtnb@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "Gruntfile.coffee",
+    "testem.json"
+  ]
+}
