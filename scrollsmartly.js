@@ -1,5 +1,5 @@
 /*!
- scrollsmartly.js v0.1 
+ scrollsmartly.js v0.1
  Copyright (c) 2013 Shinnosuke Watanabe
  Licensed under the MIT License
 
@@ -10,11 +10,11 @@
 
 (function(define){ define([], function(){
   'use strict';
-  
+
   var smartly = {};
-  
-  var currentHref_WOHash = location.href.split('#')[0];
-  
+
+  var currentHrefWOHash = location.href.split('#')[0];
+
   var processInterval = 15,
       stillLoading = true,
       callback,
@@ -22,7 +22,7 @@
       transit = [],
       mutated = null,
       reachedCurrentTarget = true;
-  
+
   smartly.set = function(){
     switch (arguments.length){
       case 1:
@@ -34,14 +34,14 @@
         }
       }
       break;
-      
+
       case 2:
       if(smartly.hasOwnProperty(arguments[0])){
         smartly[arguments[0]] = arguments[1];
       }
       break;
     }
-    
+
     dequeue();
     return smartly;
   };
@@ -53,7 +53,7 @@
     switch(arguments.length){
       case 0:
       break;
-      
+
       case 1:
       if(typeof arguments[0] === 'function'){
         func = arguments[0];
@@ -61,12 +61,12 @@
         time = arguments[0];
       }
       break;
-      
+
       case 2:
       func = arguments[0];
       time = arguments[1];
       break;
-      
+
       default:
       func = arguments[0];
       time = arguments[1];
@@ -74,7 +74,7 @@
         args[i-2] = arguments[i];
       }
     }
-    
+
     var waitObj = {};
     for(var key in smartly){
       if(typeof smartly[key] === 'function' && key !== 'delay'){
@@ -83,15 +83,15 @@
         waitObj[key] = smartly[key];
       }
     }
-    
+
     function setDelay(origFunc, delay){
       return function(){
         var origArgs = arguments;
-        
+
         var delayedFunction = function(){
           setTimeout(function(){
             if(typeof func === 'function'){
-              func.apply(this, args);          
+              func.apply(this, args);
             }
             origFunc.apply(smartly, origArgs);
           }, delay);
@@ -103,17 +103,17 @@
         }else{
           delayedFunction();
         }
-        
+
         if(time !== -1){
           return smartly;
         }
         return smartly.delay(-1);
       };
     }
-    
+
     return waitObj;
   };
-  
+
   function dequeue(){
     if(delayedFunctionsQueue.length > 0){
       console.log(delayedFunctionsQueue);
@@ -121,55 +121,55 @@
         currentQueue();
     }
   }
-  
+
   // Preference
   smartly.easing = 5;
   smartly.scrollingTo = null;
   smartly.scrolledTo = null;
   smartly.hashScrollSynced = true;
   smartly.scrollHashSynced = true;
-  
+
   smartly.currentLeft = 0;
   smartly.currentTop = 0;
-  
+
   smartly.position = 'left top';
   smartly.marginLeft = 0;
   smartly.marginTop = 0;
   smartly.velocity = [0, 0];
-    
+
   var targetX = 0, targetY = 0, targetElm, targetHash = '';
   var currentX = 0, currentY = 0;
   var prevX = null, prevY = null;
   var rootElm = document.documentElement || document.body;
   smartly.homeElement = rootElm;
   var windowWidth = 0, windowHeight = 0;
-  
+
   // if ハッシュが '#' 一文字のみである場合、それを取り除く
   if(location.hash === ''&& location.href.indexOf('#') !== -1 &&
   history.replaceState !== undefined){
     history.replaceState('', document.title, location.pathname);
   }
-  
+
   var addEvent, removeEvent;
   if(window.addEventListener !== undefined){
     addEvent = function(elm, eventType, func){
       elm.addEventListener(eventType, func, false);
     };
-    
+
     removeEvent = function(elm, eventType, func){
       elm.removeEventListener(eventType, func, false);
     };
   // IE and old Opera
-  }else if('attachEvent' in window){ 
+  }else if('attachEvent' in window){
     addEvent = function(elm, eventType, func){
       elm.attachEvent('on' + eventType, func);
     };
-    
+
     removeEvent = function(elm, eventType, func){
       elm.detachEvent('on' + eventType, func);
     };
   }
-  
+
   var historyMoved = true;
 
   var onBackOrForward = function(e){
@@ -177,13 +177,13 @@
     if(! historyMoved || ! smartly.hashScrollSynced){
       return;
     }
-    
+
     scrollTo(currentX, currentY);
     smartly.scroll(location.hash.substring(1));
   };
-  
+
   var scrollTimerID = null;
-    
+
   var scrollCompleteHandler = function(){
     getCurrentXY();
     /*
@@ -195,14 +195,14 @@
     }, 150);
     */
   };
-  
+
   var resizeTimerID = null;
-  
+
   var resizeCompleteHandler = function(){
     if(resizeTimerID !== null){
       clearTimeout(scrollTimerID);
     }
-    
+
     resizeTimerID = setTimeout(function(){
       reportMutated();
     }, 50);
@@ -211,13 +211,13 @@
   // MutationObserver の polyfill
   MutationObserver = window.MutationObserver ||
   window.WebKitMutationObserver || window.MozMutationObserver || false;
-  
+
   var observer;
-  
+
   function reportMutated() {
     mutated = true;
   }
-  
+
   if (MutationObserver) {
     observer = new MutationObserver( function(mutations) {
       reportMutated();
@@ -226,13 +226,13 @@
     // 変更通知を受け取れないので、以後、常にDOM変更が行われていることを前提に処理する
     mutated = true;
   }
-  
+
   var startScroll;
-  
+
   // on + event type のかたちの名を持つイベントリスナーを、当該イベントに登録する関数
   var setCustomHTMLEvent;
   var smartlyStartEvent, smartlyEndEvent;
-  
+
   // 全体の初期設定
   var basicSettings = function(e) {
     if(e) {
@@ -245,7 +245,7 @@
           smartly.scroll(this.hash.substring(1));
         }
       };
-      
+
       setCustomHTMLEvent = function(eventType) {
         var htmlEvent = document.createEvent('HTMLEvents');
         htmlEvent.initEvent(eventType, false, false);
@@ -256,10 +256,10 @@
             this['on' + eventType](e);
           }
         });
-        
+
         return htmlEvent;
       };
-    
+
     }else if('event' in window) { // IE
 
       startScroll = function() {
@@ -282,20 +282,20 @@
             console.log('on' + eventType+':', this['on' + eventType]);
           }
         });
-      
+
         return htmlEvent;
       };
     }
-    
+
     smartlyStartEvent = setCustomHTMLEvent('smartlystart');
     smartlyEndEvent = setCustomHTMLEvent('smartlyend');
-    
+
     // https://developer.mozilla.org/ja/docs/DOM/EventTarget.addEventListener
     // #Multiple_identical_event_listeners
     addEvent(window, 'hashchange', onBackOrForward);
     addEvent(window, 'scroll', scrollCompleteHandler);
     addEvent(window, 'resize', resizeCompleteHandler);
-    
+
     // 本関数が再度呼ばれても何もしない
     basicSettings = function(){};
   };
@@ -303,13 +303,13 @@
   addEvent(document, 'DOMContentLoaded', function(e) {
     basicSettings(e);
   });
-    
+
   addEvent(window, 'load', function(e) {
     basicSettings(e);
-        
+
     getCurrentXY();
     getWindowSize();
-    
+
     // 外部からページ内リンク付きで呼び出された場合
     if (smartly.hashScrollSynced &&
     (location.hash !== '' || smartly.homeElement !== rootElm)) {
@@ -325,9 +325,9 @@
         smartly.scroll(location.hash.substring(1) || smartly.homeElement);
       }
     }
-    
+
     addEvent(document.body, 'click', holdDefaultHashChange);
-    
+
     stillLoading = false;
   });
 
@@ -352,23 +352,23 @@
       return isArraySub(obj) === '[object Array]';
     };
   }
-    
+
   smartly.scroll = function() {
-    
+
     var targets = [''];
     var callback = null;
     var easing = '';
-    
+
     switch (arguments.length) {
       case 0:
       break;
-      
+
       case 1:
       if (typeof arguments[0] === 'object') {
         if (arguments[0].nodeType === 1) {
           // 引数が一つのELEMENT Nodeであった場合
           targets[0] = arguments[0];
-          
+
         } else if(arguments[0].via !== undefined) {
           if (isArray(arguments[0].via)) {
             // viaプロパティが配列であった場合
@@ -376,15 +376,15 @@
           } else {
             targets = [arguments[0].via];
           }
-          
+
           if (arguments[0].to !== undefined) {
             targets.push(arguments[0].to);
           }
-          
+
         } else {
           targets[0] = arguments[0].to;
         }
-        
+
         if (arguments[0].callback !== undefined) {
           callback = arguments[0].callback;
         }
@@ -396,7 +396,7 @@
         callback = arguments[0];
       }
       break;
-      
+
       case 2:
       if(typeof arguments[1] === 'function'){
         targets[0] = arguments[0];
@@ -406,31 +406,31 @@
         targets[1] = arguments[1];
       }
       break;
-      
+
       default:
       var lastKey = arguments.length - 1;
-      
+
       for(var i=0; i < lastKey; i++){
         targets[i] = arguments[i];
       }
-      
+
       if(typeof arguments[lastKey] === 'function'){
         callback = arguments[lastKey];
-        
+
       }else{
         targets[lastKey] = arguments[lastKey];
       }
-      
+
       break;
     }
-    
+
     var currentTarget = targets.shift();
-        
+
     // ターゲット要素の座標を取得
     if(currentTarget.nodeType === 1){ // ELEMENT Node である場合
       targetElm = currentTarget;
       targetHash = currentTarget.id;
-      
+
     }else if(typeof currentTarget === 'string'){
       if(currentTarget !== ''){
         targetElm = document.getElementById(currentTarget);
@@ -439,18 +439,18 @@
       }else{
         targetElm = rootElm;
       }
-      
+
       targetHash = currentTarget;
     }
-    
+
     if(targetElm === null){
       return smartly;
     }
-    
+
     if(targets.length > 0){
       transit = targets;
     }
-    
+
     setTargetXY();
 
     // スクロール中にターゲット要素が移動した際、追跡するかどうか
@@ -465,7 +465,7 @@
     // スクロール中ではない場合、またはスクロール中であっても、次の目標にまだ到達していない場合
     if(smartly.scrollingTo === null || ! reachedCurrentTarget){
       // スクロールの開始処理
-      
+
       smartly.scrollingTo = targetElm;
 
       // 'callback' 引数をコールバック関数に設定する
@@ -475,27 +475,27 @@
 
       // smartlystart イベントを発生させる
       window.dispatchEvent(smartlyStartEvent);
-      
+
     } else {
       smartly.scrollingTo = targetElm;
     }
-    
+
     removeEvent(window, 'scroll', scrollCompleteHandler);
     resetHashChangeEvent(true);
-    
+
     reachedCurrentTarget = false;
     processScroll();
-        
+
     return smartly;
   };
-  
+
   var scrollProcessID;
-  
+
   var round = Math.round;
   var abs = Math.abs;
-  
+
   function processScroll(){
-    
+
     if(mutated === true){
       // スクロール中にターゲット要素に対するDOMの変更があった場合、再度ターゲット要素の座標を取得する
       setTargetXY();
@@ -505,72 +505,72 @@
         mutated = false;
       }
     }
-    
+
     getCurrentXY();
-    
+
     if(smartly.easing < 1){
       smartly.easing = 1;
     }
-    
+
     var vx = (targetX - currentX) / smartly.easing;
     var vy = (targetY - currentY) / smartly.easing;
-    
+
     smartly.velocity = [vx, vy];
-    
+
     if(//(abs(vx) < 0.1 && abs(vy) < 0.1) ||
     (prevX === currentX && prevY === currentY) ||
     reachedCurrentTarget){ // 目標座標付近に到達した場合
-      
+
       if(observer !== undefined){
         observer.disconnect(); // DOMの変更通知の受取を止める
       }
-      
+
       addEvent(window, 'scroll', scrollCompleteHandler);
 
       // scroll.stop が呼ばれていた場合
       if(reachedCurrentTarget){ return; }
-      
+
       scrollTo(targetX, targetY);
       smartly.scrolledTo = targetElm;
       reachedCurrentTarget = true; // 直近の目標に到達したことを表す
       smartly.velocity = [0, 0];
-      
+
       if(transit.length > 0){ // 経由する要素がまだ残っている場合
         smartly.scroll(transit.shift());
-        
-      }else{ // 経由すべき要素は残っていないため、スクロールを完了する        
+
+      }else{ // 経由すべき要素は残っていないため、スクロールを完了する
         setLocationHash();
         smartly.scrollingTo = prevX = prevY = null;
-        
+
         if(typeof callback === 'function'){
           callback();
         }
-                
+
         dequeue();
         // smartlyend イベントを発生させる
-        window.dispatchEvent(smartlyEndEvent);        
+        window.dispatchEvent(smartlyEndEvent);
       }
 
       return;
     }
-    
+
     // 繰り返し
     prevX = currentX;
     prevY = currentY;
     scrollTo(round(currentX + vx), round(currentY + vy));
-    
+
     scrollProcessID = setTimeout(
       function(){ processScroll(); },
       processInterval
     );
   }
-    
+
   function setLocationHash() {
     if (! smartly.scrollHashSynced ||
     targetHash === location.hash.substring(1) || delayedFunctionsQueue.length > 0) {
       return;
     }
-    
+
     if (targetHash !== '') {
       resetHashChangeEvent(false);
 
@@ -579,19 +579,19 @@
       } else if(focusKeywordChanged() ||
                 smartly.marginLeft !== 0 ||
                 smartly.marginTop !== 0) {
-        
+
           // ハッシュを変更する際に、そのハッシュをid属性に持つ要素へ移動するのを防ぐ必要がある。
           // つまり、location.hash = StringX 呼び出す際に、id属性が StringX である要素が
           // ドキュメント中に存在しないようにする必要がある。
-          
+
           targetElm.id = '';
           location.hash = '#' + targetHash;
           targetElm.id = targetHash;
-        
+
       } else {
-        location.hash = '#' + targetHash;        
+        location.hash = '#' + targetHash;
       }
-      
+
     } else {
       if (location.hash !== '' && history.pushState !== undefined) {
         resetHashChangeEvent(false);
@@ -599,36 +599,36 @@
       }
     }
   }
-  
+
   var hashChangeTimerID;
-  
+
   function resetHashChangeEvent(scrollBeginning){
     if (!smartly.scrollHashSynced) { return; }
-    
+
     if (scrollBeginning) {
       clearTimeout(hashChangeTimerID);
 
     } else {
       // 検知対象の HashChangeEvent では「ない」ことを表す
       historyMoved = false;
-      
+
       // HashChangeEvent が発生し終わった頃に、これから起こる HashChangeEvent が検知対象となるよう再設定する
       hashChangeTimerID = setTimeout( function() {
         historyMoved = true;
       }, 30);
     }
   }
-  
+
   function getCurrentXY() {
     currentX = document.documentElement.scrollLeft || document.body.scrollLeft;
     currentY = document.documentElement.scrollTop || document.body.scrollTop;
-    
+
     smartly.currentLeft = currentX;
     smartly.currentTop = currentY;
-  }  
-  
+  }
+
   var getScrollMaxXY;
-  
+
   if (window.scrollMaxX !== undefined) {
     getScrollMaxXY = function() {
       return {x: window.scrollMaxX, y: window.scrollMaxY};
@@ -642,7 +642,7 @@
         y: documentSize.height - windowHeight
       };
     };
-    
+
     var getDocumentSize = function() {
       return{
         width: Math.max(
@@ -655,15 +655,15 @@
       };
     };
   }
-  
+
   var getWindowSize;
-  
+
   if (rootElm.clientWidth !== undefined) {
     getWindowSize = function() {
       windowWidth = rootElm.clientWidth;
-      windowHeight = rootElm.clientHeight;      
+      windowHeight = rootElm.clientHeight;
     };
-    
+
   } else if(window.innerWidth) {
     var box = document.createElement('div');
     box.style.position = 'absolute';
@@ -676,34 +676,34 @@
     getWindowSize = function() {
       document.body.appendChild(box);
       windowWidth = box.offsetWidth;
-      windowHeight = box.offsetHeight;      
+      windowHeight = box.offsetHeight;
       document.body.removeChild(box);
     };
   }
-    
+
   function setTargetXY() {
     // スクロール先座標をセットする
     var x = 0;
     var y = 0;
     var elm = targetElm;
-    
+
     while(elm){
       if (elm.offsetLeft !== undefined) {
         x += elm.offsetLeft;
         y += elm.offsetTop;
-        
+
       } else {
         var rect = elm.getBoundingClientRect();
         x += rect.left;
         y += rect.top;
       }
-      
+
       elm = elm.offsetParent;
     }
 
     var maxScroll = getScrollMaxXY();
     var focus = getParsedFocus();
-    
+
     targetX = Math.min(x + focus.x, maxScroll.x);
     if (targetX < 0) {
       targetX = 0;
@@ -714,11 +714,11 @@
       targetY = 0;
     }
   }
-  
+
   function focusKeywordChanged(){
     return (smartly.position && smartly.position !== 'left top');
   }
-  
+
   function getParsedFocus(){
     var keywordX = 0;
     var keywordY = 0;
@@ -728,56 +728,56 @@
       if (words.length === 1) {
         words[1] = words[0];
       }
-      
+
       var elmWidth, elmHeight;
       if (targetElm.offsetWidth !== undefined) {
         elmWidth = targetElm.offsetWidth;
         elmHeight = targetElm.offsetHeight;
-        
+
       } else {
         var targetRect = targetElm.getBoundingClientRect();
         elmWidth = targetRect.width;
         elmHeight = targetRect.height;
       }
-      
+
       var fraction;
-      
+
       fraction = fractionalize(words[0]);
       keywordX = parseInt((windowWidth - elmWidth) * fraction, 10);
 
-      fraction = fractionalize(words[1]);      
+      fraction = fractionalize(words[1]);
       keywordY = parseInt((windowHeight - elmHeight) * fraction, 10);
     }
-        
+
     return {
       x: - (keywordX + smartly.marginLeft),
       y: - (keywordY + smartly.marginTop)
     };
   }
-  
+
   function fractionalize(keyword) {
     if (keyword === 'left' || keyword === 'top') {
       return 0;
-    
+
     } else if (keyword === 'center') {
       return 0.5;
-    
+
     } else if (keyword === 'right' || keyword === 'bottom') {
       return 1;
-    
+
     } else if (keyword.charAt(keyword.length-1) === '%') {
-      return parseFloat(keyword) * 0.01;  
+      return parseFloat(keyword) * 0.01;
     }
-    
+
     return 0;
   }
-  
+
   smartly.stop = function() {
     // 目標に到達「したこと」にし、スクロール処理を終了させる
     reachedCurrentTarget = true;
     transit= [];
     smartly.scrollingTo = null;
-    
+
     dequeue();
     return smartly;
   };
@@ -788,7 +788,7 @@
 
     return smartly;
   };
-  
+
   function each(obj, func) {
     if (obj === undefined) { return; }
     var items;
@@ -797,22 +797,22 @@
     } else {
       items = obj;
     }
-    
+
     for (var i=0; i < items.length; i++) {
       func.call(smartly, items[i], i);
     }
   }
-  
-  smartly.on = function(elm, target) {    
+
+  smartly.on = function(elm, target) {
     each(elm, function(val) {
       if (target !== undefined) {
         val.scrollSmartlyTarget = target;
       } else {
-        val.scrollSmartlyTarget = '';      
+        val.scrollSmartlyTarget = '';
       }
 
       addEvent(val, 'click', startScroll);
-      val.style.cursor = 'pointer';    
+      val.style.cursor = 'pointer';
     });
 
     dequeue();
@@ -825,50 +825,50 @@
       removeEvent(val, 'click', startScroll);
       val.style.cursor = '';
     });
-    
+
     dequeue();
     return smartly;
   };
-  
+
   smartly.replaceAnchor = function(elm, calledFromMethod) {
     /*
     **イベントリスナーを登録するリンク**:
     ・href属性が '#' で始まるページ内リンクであり、尚かつ、それが指し示すアンカーがページ内に存在するもの
       -> id='anchor' である要素へのスクロール
     ・href属性が '#' 一文字のみのリンク -> ドキュメントの最上端へのスクロール
-    
+
     **イベントリスナーを登録しないリンク**:
     ・href属性に '#' が含まれないリンク
     ・href属性に '#' を含むが、当該リンクのあるページ内のものではない、別ページのアンカーへのリンク
     ・href属性を持たないa要素
     */
-    
+
     var hrefStr = elm.href + '';
     var splitterIndex = hrefStr.lastIndexOf('#'); // '#' が無ければ -1 が代入される
-    
+
     // '#' 以降を除いた文字列が、現在表示しているサイトのURLと一致しているかの判定。
     // '#' が無ければ String.substring(0, -1) つまり '' となり、偽である。
-    if (hrefStr.substring(0, splitterIndex) === currentHref_WOHash) {
+    if (hrefStr.substring(0, splitterIndex) === currentHrefWOHash) {
       if (elm.hash !== undefined) { // In HTML4?
         elm.hash = hrefStr.substring(splitterIndex + 1);
       }
       delete elm.scrollSmartlyTarget;
       addEvent(elm, 'click', startScroll);
     }
-    
+
     if (calledFromMethod !== true) {
       dequeue();
       return smartly;
     }
   };
-  
+
   smartly.all = function() {
     if (stillLoading) {
       addEvent(window, 'load', function() {
         stillLoading = false;
         smartly.all();
       });
-      
+
       dequeue();
       return smartly;
     }
@@ -877,11 +877,11 @@
     for (var i=0; i<linkElms.length; i++) {
       smartly.replaceAnchor(linkElms[i], true);
     }
-    
+
     dequeue();
     return smartly;
   };
-  
+
   // expose
   return smartly;
 });
