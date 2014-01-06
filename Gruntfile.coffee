@@ -1,25 +1,29 @@
 module.exports = (grunt) ->
-  devDeps = grunt.file.readJSON('package.json').devDependencies
+  'use strict'
 
-  for taskName of devDeps
-    if 'grunt-' is taskName.substring 0, 6
-      grunt.loadNpmTasks taskName
-  
-  _ = grunt.util._
-  
-  BIN = "#{ process.cwd() }/node_modules/.bin/"
-
-  SRC_ROOT = ''
-  DEST_ROOT = 'site/'
-  
+  require('load-grunt-tasks')(grunt)
+    
   grunt.initConfig
     jshint:
+      options:
+        camelcase: true
+        trailing: true
+        #indent: 2
       main: 'scrollsmartly.js'
       
     testem:
       main:
         src: 'testem.json'
         dest: 'tests.tap'
+    
+    complexity:
+      generic:
+        src: ['scrollsmartly.js']
+        options:
+          errorsOnly: false
+          cyclomatic: 3
+          halstead: 8
+          maintainability: 100
     
     uglify:
       dist:
@@ -29,14 +33,9 @@ module.exports = (grunt) ->
             global_defs:
               DEBUG: false
             dead_code: true
-        src: 'scrollsmartly.js'
+        src: ['scrollsmartly.js']
         dest: 'scrollsmartly.min.js'
 
-    open:
-      site:
-        path: 'http://127.0.0.1:7357/'
-        app: 'Google Chrome'
-    
     watch:
       concat_dist:
         files: 'scrollsmartly.js'
@@ -48,5 +47,5 @@ module.exports = (grunt) ->
     'watch'
   ]
   
-  grunt.task.registerTask 'default', defaultTasks
+  grunt.registerTask 'default', defaultTasks
     
