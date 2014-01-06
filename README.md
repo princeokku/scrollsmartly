@@ -134,4 +134,6 @@ if(smartly.scrolingTo !== null){
 
 **[scrollsmoothly.js](http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly)**  
 Copyright (c) 2008 [KAZUMiX](http://d.hatena.ne.jp/KAZUMiX/)  
-Licensed under the MIT License  
+Licensed under the MIT License
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/shinnn/scrollsmartly/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
