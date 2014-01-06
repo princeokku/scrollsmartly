@@ -1,16 +1,15 @@
 /*!
  scrollsmartly.js v0.1
- Copyright (c) 2013 Shinnosuke Watanabe
- Licensed under the MIT License
+ Copyright (c) 2013 - 2014 Shinnosuke Watanabe | MIT License
 
  This library is originated from scrollsmoothly.js
- Copyright (c) 2008 KAZUMiX
- Licensed under the MIT License
+ Copyright (c) 2008 KAZUMiX | MIT License
+ http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly
 */
 
-(function(define){ define([], function(){
+(function(window, document, location, history, undefined) {
   'use strict';
-
+  
   var smartly = {};
 
   var currentHrefWOHash = location.href.split('#')[0];
@@ -23,10 +22,10 @@
       mutated = null,
       reachedCurrentTarget = true;
 
-  smartly.set = function(){
+  smartly.set = function() {
     switch (arguments.length){
       case 1:
-      if(typeof arguments[0] === 'object'){
+      if (typeof arguments[0] === 'object') {
         for(var key in arguments[0]){
           if(smartly.hasOwnProperty(key)){
             smartly[key] = arguments[0][key];
@@ -36,7 +35,7 @@
       break;
 
       case 2:
-      if(smartly.hasOwnProperty(arguments[0])){
+      if (smartly.hasOwnProperty(arguments[0])) {
         smartly[arguments[0]] = arguments[1];
       }
       break;
@@ -47,17 +46,17 @@
   };
 
   // 遅延処理メソッド
-  smartly.delay = function(){
+  smartly.delay = function() {
     var func, time = 0, args = [];
 
-    switch(arguments.length){
+    switch (arguments.length) {
       case 0:
       break;
 
       case 1:
-      if(typeof arguments[0] === 'function'){
+      if (typeof arguments[0] === 'function') {
         func = arguments[0];
-      }else{
+      } else {
         time = arguments[0];
       }
       break;
@@ -70,41 +69,41 @@
       default:
       func = arguments[0];
       time = arguments[1];
-      for(var i=2; i < arguments.length; i++){
+      for (var i=2; i < arguments.length; i++) {
         args[i-2] = arguments[i];
       }
     }
 
     var waitObj = {};
-    for(var key in smartly){
-      if(typeof smartly[key] === 'function' && key !== 'delay'){
+    for (var key in smartly) {
+      if (typeof smartly[key] === 'function' && key !== 'delay') {
         waitObj[key] = setDelay(smartly[key], time);
-      }else{
+      } else {
         waitObj[key] = smartly[key];
       }
     }
 
-    function setDelay(origFunc, delay){
-      return function(){
+    function setDelay(origFunc, delay) {
+      return function() {
         var origArgs = arguments;
 
-        var delayedFunction = function(){
-          setTimeout(function(){
-            if(typeof func === 'function'){
+        var delayedFunction = function() {
+          setTimeout(function() {
+            if (typeof func === 'function') {
               func.apply(this, args);
             }
             origFunc.apply(smartly, origArgs);
           }, delay);
         };
 
-        if(smartly.scrollingTo !== null){
+        if (smartly.scrollingTo !== null) {
           delayedFunctionsQueue[delayedFunctionsQueue.length] = delayedFunction;
 
-        }else{
+        } else {
           delayedFunction();
         }
 
-        if(time !== -1){
+        if (time !== -1) {
           return smartly;
         }
         return smartly.delay(-1);
@@ -114,8 +113,8 @@
     return waitObj;
   };
 
-  function dequeue(){
-    if(delayedFunctionsQueue.length > 0){
+  function dequeue() {
+    if (delayedFunctionsQueue.length > 0) {
       console.log(delayedFunctionsQueue);
       var currentQueue = delayedFunctionsQueue.shift();
         currentQueue();
@@ -145,36 +144,36 @@
   var windowWidth = 0, windowHeight = 0;
 
   // if ハッシュが '#' 一文字のみである場合、それを取り除く
-  if(location.hash === ''&& location.href.indexOf('#') !== -1 &&
-  history.replaceState !== undefined){
+  if (location.hash === ''&& location.href.indexOf('#') !== -1 &&
+  history.replaceState !== undefined) {
     history.replaceState('', document.title, location.pathname);
   }
 
   var addEvent, removeEvent;
-  if(window.addEventListener !== undefined){
-    addEvent = function(elm, eventType, func){
+  if (window.addEventListener !== undefined) {
+    addEvent = function(elm, eventType, func) {
       elm.addEventListener(eventType, func, false);
     };
 
-    removeEvent = function(elm, eventType, func){
+    removeEvent = function(elm, eventType, func) {
       elm.removeEventListener(eventType, func, false);
     };
   // IE and old Opera
-  }else if('attachEvent' in window){
-    addEvent = function(elm, eventType, func){
+  } else if ('attachEvent' in window) {
+    addEvent = function(elm, eventType, func) {
       elm.attachEvent('on' + eventType, func);
     };
 
-    removeEvent = function(elm, eventType, func){
+    removeEvent = function(elm, eventType, func) {
       elm.detachEvent('on' + eventType, func);
     };
   }
 
   var historyMoved = true;
 
-  var onBackOrForward = function(e){
+  var onBackOrForward = function(e) {
     // 履歴の前後ではなく、本ライブラリのスクロールにより hashchange イベントが起きた場合
-    if(! historyMoved || ! smartly.hashScrollSynced){
+    if (! historyMoved || ! smartly.hashScrollSynced) {
       return;
     }
 
@@ -184,7 +183,7 @@
 
   var scrollTimerID = null;
 
-  var scrollCompleteHandler = function(){
+  var scrollCompleteHandler = function() {
     getCurrentXY();
     /*
     if(scrollTimerID !== null){
@@ -198,19 +197,21 @@
 
   var resizeTimerID = null;
 
-  var resizeCompleteHandler = function(){
-    if(resizeTimerID !== null){
+  var resizeCompleteHandler = function() {
+    if (resizeTimerID !== null) {
       clearTimeout(scrollTimerID);
     }
 
-    resizeTimerID = setTimeout(function(){
+    resizeTimerID = setTimeout(function() {
       reportMutated();
     }, 50);
   };
 
   // MutationObserver の polyfill
   MutationObserver = window.MutationObserver ||
-  window.WebKitMutationObserver || window.MozMutationObserver || false;
+                     window.WebKitMutationObserver ||
+                     window.MozMutationObserver ||
+                     false;
 
   var observer;
 
@@ -235,7 +236,7 @@
 
   // 全体の初期設定
   var basicSettings = function(e) {
-    if(e) {
+    if (e) {
       startScroll = function(clickEvent) {
         clickEvent.preventDefault();
         clickEvent.stopPropagation();
@@ -312,11 +313,11 @@
 
     // 外部からページ内リンク付きで呼び出された場合
     if (smartly.hashScrollSynced &&
-    (location.hash !== '' || smartly.homeElement !== rootElm)) {
+        (location.hash !== '' || smartly.homeElement !== rootElm)) {
       if (window.attachEvent !== undefined &&
       window.opera === undefined){ // IE
         // 少し待ってからスクロール
-        setTimeout(function(){
+        setTimeout(function() {
           scrollTo(0, 0);
           smartly.scroll(location.hash.substring(1) || smartly.homeElement);
         }, 30);
@@ -369,7 +370,7 @@
           // 引数が一つのELEMENT Nodeであった場合
           targets[0] = arguments[0];
 
-        } else if(arguments[0].via !== undefined) {
+        } else if (arguments[0].via !== undefined) {
           if (isArray(arguments[0].via)) {
             // viaプロパティが配列であった場合
             targets = arguments[0].via;
@@ -389,19 +390,19 @@
           callback = arguments[0].callback;
         }
 
-      }else if(typeof arguments[0] !== 'function'){
+      } else if (typeof arguments[0] !== 'function') {
         targets[0] = arguments[0];
 
-      }else{
+      } else {
         callback = arguments[0];
       }
       break;
 
       case 2:
-      if(typeof arguments[1] === 'function'){
+      if (typeof arguments[1] === 'function') {
         targets[0] = arguments[0];
         callback = arguments[1];
-      }else{
+      } else {
         targets[0] = arguments[0];
         targets[1] = arguments[1];
       }
@@ -410,14 +411,14 @@
       default:
       var lastKey = arguments.length - 1;
 
-      for(var i=0; i < lastKey; i++){
+      for (var i=0; i < lastKey; i++) {
         targets[i] = arguments[i];
       }
 
-      if(typeof arguments[lastKey] === 'function'){
+      if (typeof arguments[lastKey] === 'function') {
         callback = arguments[lastKey];
 
-      }else{
+      } else {
         targets[lastKey] = arguments[lastKey];
       }
 
@@ -427,34 +428,34 @@
     var currentTarget = targets.shift();
 
     // ターゲット要素の座標を取得
-    if(currentTarget.nodeType === 1){ // ELEMENT Node である場合
+    if (currentTarget.nodeType === 1) { // ELEMENT Node である場合
       targetElm = currentTarget;
       targetHash = currentTarget.id;
 
-    }else if(typeof currentTarget === 'string'){
-      if(currentTarget !== ''){
+    } else if(typeof currentTarget === 'string') {
+      if (currentTarget !== '') {
         targetElm = document.getElementById(currentTarget);
-      }else if(smartly.homeElement){
+      } else if (smartly.homeElement) {
         targetElm = smartly.homeElement;
-      }else{
+      } else {
         targetElm = rootElm;
       }
 
       targetHash = currentTarget;
     }
 
-    if(targetElm === null){
+    if (targetElm === null) {
       return smartly;
     }
 
-    if(targets.length > 0){
+    if (targets.length > 0) {
       transit = targets;
     }
 
     setTargetXY();
 
     // スクロール中にターゲット要素が移動した際、追跡するかどうか
-    if(observer !== undefined){
+    if (observer !== undefined) {
       observer.observe( document.body, {
         attributes: true,
         subtree: true,
@@ -613,7 +614,7 @@
       historyMoved = false;
 
       // HashChangeEvent が発生し終わった頃に、これから起こる HashChangeEvent が検知対象となるよう再設定する
-      hashChangeTimerID = setTimeout( function() {
+      hashChangeTimerID = setTimeout(function() {
         historyMoved = true;
       }, 30);
     }
@@ -883,15 +884,21 @@
   };
 
   // expose
-  return smartly;
-});
-}(
-  typeof define !== 'undefined' ?
-  // use define for AMD if available
-  define :
-  // If no define, look for module to export as a CommonJS module.
-  // If no define or module, attach to current context.
-  typeof module !== 'undefined' ?
-  function(deps, factory) { module.exports = factory(); } :
-  function(deps, factory) { this.smartly = factory(); }
-));
+  window.smartly = smartly;
+  
+  // some AMD build optimizers like r.js check for condition patterns like the following:
+  if (typeof define == 'function' &&
+      typeof define.amd == 'object' &&
+      define.amd) {
+
+    // define as an anonymous module so, through path mapping, it can be
+    // referenced as the "underscore" module
+    define('scrollsmartly', [], function() {
+      return smartly;
+    });
+  }
+  // check for `exports` after `define` in case a build optimizer adds an `exports` object
+  else if (module !== undefined && module.exports) {
+    (module.exports = smartly).smartly = smartly;
+  }
+}(window, document, location, history));
