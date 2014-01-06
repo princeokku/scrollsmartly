@@ -9,7 +9,6 @@
 */
 
 (function(define){ define([], function(){
-  
   'use strict';
   
   var smartly = {};
@@ -48,7 +47,7 @@
   };
 
   // 遅延処理メソッド
-  smartly.delay = function(){    
+  smartly.delay = function(){
     var func, time = 0, args = [];
 
     switch(arguments.length){
@@ -81,7 +80,7 @@
       if(typeof smartly[key] === 'function' && key !== 'delay'){
         waitObj[key] = setDelay(smartly[key], time);
       }else{
-        waitObj[key] = smartly[key];        
+        waitObj[key] = smartly[key];
       }
     }
     
@@ -123,7 +122,7 @@
     }
   }
   
-  //Preference
+  // Preference
   smartly.easing = 5;
   smartly.scrollingTo = null;
   smartly.scrolledTo = null;
@@ -132,7 +131,7 @@
   
   smartly.currentLeft = 0;
   smartly.currentTop = 0;
-    
+  
   smartly.position = 'left top';
   smartly.marginLeft = 0;
   smartly.marginTop = 0;
@@ -145,7 +144,7 @@
   smartly.homeElement = rootElm;
   var windowWidth = 0, windowHeight = 0;
   
-  //ハッシュが '#' 一文字のみである場合、それを取り除く
+  // if ハッシュが '#' 一文字のみである場合、それを取り除く
   if(location.hash === ''&& location.href.indexOf('#') !== -1 &&
   history.replaceState !== undefined){
     history.replaceState('', document.title, location.pathname);
@@ -175,12 +174,12 @@
 
   var onBackOrForward = function(e){
     // 履歴の前後ではなく、本ライブラリのスクロールにより hashchange イベントが起きた場合
-    if(! historyMoved || ! smartly.hashScrollSynced){ return; }
+    if(! historyMoved || ! smartly.hashScrollSynced){
+      return;
+    }
     
     scrollTo(currentX, currentY);
     smartly.scroll(location.hash.substring(1));
-      
-    // HashChangeEvent の cancelable プロパティは false なので、return false; などは不要
   };
   
   var scrollTimerID = null;
@@ -215,15 +214,15 @@
   
   var observer;
   
-  function reportMutated(){
-    mutated = true;        
+  function reportMutated() {
+    mutated = true;
   }
   
-  if(MutationObserver){
-    observer = new MutationObserver( function(mutations){
+  if (MutationObserver) {
+    observer = new MutationObserver( function(mutations) {
       reportMutated();
-    });  
-  }else{
+    });
+  } else {
     // 変更通知を受け取れないので、以後、常にDOM変更が行われていることを前提に処理する
     mutated = true;
   }
@@ -235,24 +234,24 @@
   var smartlyStartEvent, smartlyEndEvent;
   
   // 全体の初期設定
-  var basicSettings = function(e){    
-    if(e){
-      startScroll = function(clickEvent){
+  var basicSettings = function(e) {
+    if(e) {
+      startScroll = function(clickEvent) {
         clickEvent.preventDefault();
         clickEvent.stopPropagation();
-        if(this.scrollSmartlyTarget !== undefined){
-          smartly.scroll(this.scrollSmartlyTarget);          
-        }else{
+        if (this.scrollSmartlyTarget !== undefined) {
+          smartly.scroll(this.scrollSmartlyTarget);
+        } else {
           smartly.scroll(this.hash.substring(1));
         }
       };
       
-      setCustomHTMLEvent = function(eventType){
+      setCustomHTMLEvent = function(eventType) {
         var htmlEvent = document.createEvent('HTMLEvents');
         htmlEvent.initEvent(eventType, false, false);
         this['on' + eventType] = null;
 
-        addEvent(window, eventType, function(e){
+        addEvent(window, eventType, function(e) {
           if(typeof this['on' + eventType] === 'function'){
             this['on' + eventType](e);
           }
@@ -261,25 +260,25 @@
         return htmlEvent;
       };
     
-    }else if('event' in window){ // IE
+    }else if('event' in window) { // IE
 
-      startScroll = function(){
+      startScroll = function() {
         var self = event.srcElement || event.target;
         event.returnValue = false;
         event.cancelBubble = true;
         smartly.scroll(self.hash.substring(1));
       };
 
-      setCustomHTMLEvent = function(eventType){
+      setCustomHTMLEvent = function(eventType) {
         var htmlEvent = document.createEvent('HTMLEvents');
         htmlEvent.initEvent(eventType, false, false);
         this['on' + eventType] = null;
 
-        addEvent(window, eventType, function(){
+        addEvent(window, eventType, function() {
           var e = event;
-          if(typeof this['on' + eventType] === 'function'){
+          if (typeof this['on' + eventType] === 'function') {
             this['on' + eventType](e);
-          }else if(this['on' + eventType] !== null){
+          } else if (this['on' + eventType] !== null) {
             console.log('on' + eventType+':', this['on' + eventType]);
           }
         });
@@ -301,27 +300,27 @@
     basicSettings = function(){};
   };
 
-  addEvent(document, 'DOMContentLoaded', function(e){
+  addEvent(document, 'DOMContentLoaded', function(e) {
     basicSettings(e);
   });
     
-  addEvent(window, 'load', function(e){
+  addEvent(window, 'load', function(e) {
     basicSettings(e);
         
     getCurrentXY();
     getWindowSize();
     
     // 外部からページ内リンク付きで呼び出された場合
-    if(smartly.hashScrollSynced &&
-    (location.hash !== '' || smartly.homeElement !== rootElm)){
-      if(window.attachEvent !== undefined &&
+    if (smartly.hashScrollSynced &&
+    (location.hash !== '' || smartly.homeElement !== rootElm)) {
+      if (window.attachEvent !== undefined &&
       window.opera === undefined){ // IE
         // 少し待ってからスクロール
         setTimeout(function(){
           scrollTo(0, 0);
           smartly.scroll(location.hash.substring(1) || smartly.homeElement);
         }, 30);
-      }else{
+      } else {
         scrollTo(0, 0);
         smartly.scroll(location.hash.substring(1) || smartly.homeElement);
       }
@@ -332,12 +331,12 @@
     stillLoading = false;
   });
 
-  function holdDefaultHashChange(clickEvent){
-    if(! smartly.hashScrollSynced){ return; }
+  function holdDefaultHashChange(clickEvent) {
+    if (!smartly.hashScrollSynced) { return; }
 
     var evt = clickEvent || event; //tmp
     var elm = evt.target || evt.srcElement;
-    if(elm.href !== undefined && elm.href.indexOf('#') !== -1){
+    if (elm.href !== undefined && elm.href.indexOf('#') !== -1) {
       console.log(elm.href);
       resetHashChangeEvent(false);
     }
@@ -345,48 +344,50 @@
 
   // https://developer.mozilla.org/ja/docs/JavaScript/Reference/Global_Objects/Array/isArray#Compatibility
   var isArray;
-  if(Array.isArray !== undefined){
+  if (Array.isArray !== undefined) {
     isArray = Array.isArray;
-  }else{
+  } else {
     var isArraySub = Object.prototype.toString.call;
-    isArray = function(obj){
+    isArray = function(obj) {
       return isArraySub(obj) === '[object Array]';
     };
   }
     
-  smartly.scroll = function(){
+  smartly.scroll = function() {
     
     var targets = [''];
     var callback = null;
     var easing = '';
     
-    switch (arguments.length){
+    switch (arguments.length) {
       case 0:
       break;
       
       case 1:
-      if(typeof arguments[0] === 'object'){
-        if(arguments[0].nodeType === 1){
+      if (typeof arguments[0] === 'object') {
+        if (arguments[0].nodeType === 1) {
           // 引数が一つのELEMENT Nodeであった場合
           targets[0] = arguments[0];
           
-        }else if(arguments[0].via !== undefined){
-          if(isArray(arguments[0].via)){
+        } else if(arguments[0].via !== undefined) {
+          if (isArray(arguments[0].via)) {
             // viaプロパティが配列であった場合
             targets = arguments[0].via;
-          }else{
+          } else {
             targets = [arguments[0].via];
           }
           
-          if(arguments[0].to !== undefined){
+          if (arguments[0].to !== undefined) {
             targets.push(arguments[0].to);
           }
           
-        }else{
+        } else {
           targets[0] = arguments[0].to;
         }
         
-        callback = arguments[0].callback !== undefined? arguments[0].callback: callback;
+        if (arguments[0].callback !== undefined) {
+          callback = arguments[0].callback;
+        }
 
       }else if(typeof arguments[0] !== 'function'){
         targets[0] = arguments[0];
@@ -399,7 +400,7 @@
       case 2:
       if(typeof arguments[1] === 'function'){
         targets[0] = arguments[0];
-        callback = arguments[1];        
+        callback = arguments[1];
       }else{
         targets[0] = arguments[0];
         targets[1] = arguments[1];
@@ -473,9 +474,9 @@
       clearTimeout(scrollProcessID);
 
       // smartlystart イベントを発生させる
-      window.dispatchEvent(smartlyStartEvent);      
+      window.dispatchEvent(smartlyStartEvent);
       
-    }else{
+    } else {
       smartly.scrollingTo = targetElm;
     }
     
@@ -564,19 +565,20 @@
     );
   }
     
-  function setLocationHash(){
-    if(! smartly.scrollHashSynced ||
-    targetHash === location.hash.substring(1) || delayedFunctionsQueue.length > 0){
+  function setLocationHash() {
+    if (! smartly.scrollHashSynced ||
+    targetHash === location.hash.substring(1) || delayedFunctionsQueue.length > 0) {
       return;
     }
     
-    if(targetHash !== ''){
+    if (targetHash !== '') {
       resetHashChangeEvent(false);
 
-      if(history.pushState !== undefined){
+      if (history.pushState !== undefined) {
         history.pushState('', document.title, location.pathname + '#' + targetHash);
-      
-      }else if(focusKeywordChanged() || smartly.marginLeft !== 0 || smartly.marginTop !== 0){
+      } else if(focusKeywordChanged() ||
+                smartly.marginLeft !== 0 ||
+                smartly.marginTop !== 0) {
         
           // ハッシュを変更する際に、そのハッシュをid属性に持つ要素へ移動するのを防ぐ必要がある。
           // つまり、location.hash = StringX 呼び出す際に、id属性が StringX である要素が
@@ -586,14 +588,14 @@
           location.hash = '#' + targetHash;
           targetElm.id = targetHash;
         
-      }else{
+      } else {
         location.hash = '#' + targetHash;        
       }
       
-    }else{
-      if(location.hash !== '' && history.pushState !== undefined){
+    } else {
+      if (location.hash !== '' && history.pushState !== undefined) {
         resetHashChangeEvent(false);
-        history.pushState('', document.title, location.pathname);          
+        history.pushState('', document.title, location.pathname);
       }
     }
   }
@@ -601,23 +603,23 @@
   var hashChangeTimerID;
   
   function resetHashChangeEvent(scrollBeginning){
-    if(! smartly.scrollHashSynced){ return; }
+    if (!smartly.scrollHashSynced) { return; }
     
-    if(scrollBeginning){
+    if (scrollBeginning) {
       clearTimeout(hashChangeTimerID);
 
-    }else{
+    } else {
       // 検知対象の HashChangeEvent では「ない」ことを表す
       historyMoved = false;
       
       // HashChangeEvent が発生し終わった頃に、これから起こる HashChangeEvent が検知対象となるよう再設定する
-      hashChangeTimerID = setTimeout( function(){
+      hashChangeTimerID = setTimeout( function() {
         historyMoved = true;
       }, 30);
     }
   }
   
-  function getCurrentXY(){
+  function getCurrentXY() {
     currentX = document.documentElement.scrollLeft || document.body.scrollLeft;
     currentY = document.documentElement.scrollTop || document.body.scrollTop;
     
@@ -627,12 +629,12 @@
   
   var getScrollMaxXY;
   
-  if(window.scrollMaxX !== undefined){
-    getScrollMaxXY = function(){
+  if (window.scrollMaxX !== undefined) {
+    getScrollMaxXY = function() {
       return {x: window.scrollMaxX, y: window.scrollMaxY};
     };
-  }else{
-    getScrollMaxXY = function(){
+  } else {
+    getScrollMaxXY = function() {
       var documentSize = getDocumentSize();
       getWindowSize();
       return {
@@ -641,23 +643,28 @@
       };
     };
     
-    var getDocumentSize = function(){
+    var getDocumentSize = function() {
       return{
-        width: Math.max(document.body.scrollWidth, document.documentElement.scrollWidth),
-        height: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
+        width: Math.max(
+          document.body.scrollWidth,
+          document.documentElement.scrollWidth
+        ),
+        height: Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight)
       };
     };
   }
   
   var getWindowSize;
   
-  if(rootElm.clientWidth !== undefined){
-    getWindowSize = function(){
+  if (rootElm.clientWidth !== undefined) {
+    getWindowSize = function() {
       windowWidth = rootElm.clientWidth;
       windowHeight = rootElm.clientHeight;      
     };
     
-  }else if(window.innerWidth){
+  } else if(window.innerWidth) {
     var box = document.createElement('div');
     box.style.position = 'absolute';
     box.style.left = box.style.top = '0';
@@ -666,7 +673,7 @@
     box.style.border = 'none';
     box.style.visibility = 'hidden';
 
-    getWindowSize = function(){
+    getWindowSize = function() {
       document.body.appendChild(box);
       windowWidth = box.offsetWidth;
       windowHeight = box.offsetHeight;      
@@ -674,18 +681,18 @@
     };
   }
     
-  function setTargetXY(){
+  function setTargetXY() {
     // スクロール先座標をセットする
     var x = 0;
     var y = 0;
     var elm = targetElm;
     
     while(elm){
-      if(elm.offsetLeft !== undefined){
+      if (elm.offsetLeft !== undefined) {
         x += elm.offsetLeft;
         y += elm.offsetTop;
         
-      }else{
+      } else {
         var rect = elm.getBoundingClientRect();
         x += rect.left;
         y += rect.top;
@@ -698,12 +705,12 @@
     var focus = getParsedFocus();
     
     targetX = Math.min(x + focus.x, maxScroll.x);
-    if(targetX < 0){
+    if (targetX < 0) {
       targetX = 0;
     }
 
     targetY = Math.min(y + focus.y, maxScroll.y);
-    if(targetY < 0){
+    if (targetY < 0) {
       targetY = 0;
     }
   }
@@ -716,18 +723,18 @@
     var keywordX = 0;
     var keywordY = 0;
 
-    if(focusKeywordChanged()){
+    if (focusKeywordChanged()) {
       var words = String(smartly.position).split(' ');
-      if(words.length === 1){
+      if (words.length === 1) {
         words[1] = words[0];
       }
       
       var elmWidth, elmHeight;
-      if(targetElm.offsetWidth !== undefined){
+      if (targetElm.offsetWidth !== undefined) {
         elmWidth = targetElm.offsetWidth;
         elmHeight = targetElm.offsetHeight;
         
-      }else{
+      } else {
         var targetRect = targetElm.getBoundingClientRect();
         elmWidth = targetRect.width;
         elmHeight = targetRect.height;
@@ -743,29 +750,29 @@
     }
         
     return {
-      "x": - (keywordX + smartly.marginLeft),
-      "y": - (keywordY + smartly.marginTop)
+      x: - (keywordX + smartly.marginLeft),
+      y: - (keywordY + smartly.marginTop)
     };
   }
   
-  function fractionalize(keyword){
-    if(keyword === 'left' || keyword === 'top'){
+  function fractionalize(keyword) {
+    if (keyword === 'left' || keyword === 'top') {
       return 0;
     
-    }else if(keyword === 'center'){
+    } else if (keyword === 'center') {
       return 0.5;
     
-    }else if(keyword === 'right' || keyword === 'bottom'){
+    } else if (keyword === 'right' || keyword === 'bottom') {
       return 1;
     
-    }else if(keyword.charAt(keyword.length-1) === '%'){
+    } else if (keyword.charAt(keyword.length-1) === '%') {
       return parseFloat(keyword) * 0.01;  
     }
     
     return 0;
   }
   
-  smartly.stop = function(){
+  smartly.stop = function() {
     // 目標に到達「したこと」にし、スクロール処理を終了させる
     reachedCurrentTarget = true;
     transit= [];
@@ -775,29 +782,32 @@
     return smartly;
   };
 
-  smartly.finish = function(){
+  smartly.finish = function() {
     delayedFunctionsQueue= [];
     smartly.stop();
 
     return smartly;
   };
   
-  function each(obj, func){
-    if(obj === undefined){ return; }
+  function each(obj, func) {
+    if (obj === undefined) { return; }
     var items;
-    if(obj.length === undefined){ items = [obj]; }
-    else{ items = obj; }
+    if (obj.length === undefined) {
+      items = [obj];
+    } else {
+      items = obj;
+    }
     
-    for(var i=0; i < items.length; i++){
+    for (var i=0; i < items.length; i++) {
       func.call(smartly, items[i], i);
     }
   }
   
-  smartly.on = function(elm, target){    
-    each(elm, function(val){
-      if(target !== undefined){
+  smartly.on = function(elm, target) {    
+    each(elm, function(val) {
+      if (target !== undefined) {
         val.scrollSmartlyTarget = target;
-      }else{
+      } else {
         val.scrollSmartlyTarget = '';      
       }
 
@@ -809,18 +819,18 @@
     return smartly;
   };
 
-  smartly.off = function(elm){
-    each(elm, function(val){
+  smartly.off = function(elm) {
+    each(elm, function(val) {
       delete val.scrollSmartlyTarget;
       removeEvent(val, 'click', startScroll);
-      val.style.cursor = '';      
+      val.style.cursor = '';
     });
     
     dequeue();
     return smartly;
   };
   
-  smartly.replaceAnchor = function(elm, calledFromMethod){
+  smartly.replaceAnchor = function(elm, calledFromMethod) {
     /*
     **イベントリスナーを登録するリンク**:
     ・href属性が '#' で始まるページ内リンクであり、尚かつ、それが指し示すアンカーがページ内に存在するもの
@@ -838,23 +848,23 @@
     
     // '#' 以降を除いた文字列が、現在表示しているサイトのURLと一致しているかの判定。
     // '#' が無ければ String.substring(0, -1) つまり '' となり、偽である。
-    if(hrefStr.substring(0, splitterIndex) === currentHref_WOHash){
-      if(elm.hash !== undefined){ // In HTML4?
+    if (hrefStr.substring(0, splitterIndex) === currentHref_WOHash) {
+      if (elm.hash !== undefined) { // In HTML4?
         elm.hash = hrefStr.substring(splitterIndex + 1);
       }
       delete elm.scrollSmartlyTarget;
       addEvent(elm, 'click', startScroll);
     }
     
-    if(calledFromMethod !== true){
+    if (calledFromMethod !== true) {
       dequeue();
       return smartly;
     }
   };
   
-  smartly.all = function(){
-    if(stillLoading){
-      addEvent(window, 'load', function(){
+  smartly.all = function() {
+    if (stillLoading) {
+      addEvent(window, 'load', function() {
         stillLoading = false;
         smartly.all();
       });
@@ -864,7 +874,7 @@
     }
     // ページ内リンクにイベントを設定する
     var linkElms = document.links; // https://developer.mozilla.org/ja/docs/DOM/document.links
-    for(var i=0; i<linkElms.length; i++){
+    for (var i=0; i<linkElms.length; i++) {
       smartly.replaceAnchor(linkElms[i], true);
     }
     
@@ -883,5 +893,5 @@
   // If no define or module, attach to current context.
   typeof module !== 'undefined' ?
   function(deps, factory) { module.exports = factory(); } :
-  function(deps, factory) { this.smartly = factory(); }  
+  function(deps, factory) { this.smartly = factory(); }
 ));
