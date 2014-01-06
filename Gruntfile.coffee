@@ -8,7 +8,6 @@ module.exports = (grunt) ->
       options:
         camelcase: true
         trailing: true
-        #indent: 2
       main: 'scrollsmartly.js'
       
     testem:
@@ -29,23 +28,21 @@ module.exports = (grunt) ->
       dist:
         options:
           preserveComments: 'some'
-          compress:
-            global_defs:
-              DEBUG: false
-            dead_code: true
         src: ['scrollsmartly.js']
         dest: 'scrollsmartly.min.js'
-
+    
     watch:
       concat_dist:
         files: 'scrollsmartly.js'
         tasks: ['jshint', 'uglify']
+    
+    release:
+      options:
+        file: 'bower.json'
+        npm: false
         
-  defaultTasks = [
+  grunt.registerTask 'default', [
     'jshint'
     'uglify'
     'watch'
   ]
-  
-  grunt.registerTask 'default', defaultTasks
-    
