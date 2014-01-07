@@ -11,9 +11,10 @@
   'use strict';
   
   var smartly = {};
-
+  
   var currentHrefWOHash = location.href.split('#')[0];
 
+  // Internal variables
   var processInterval = 15,
       stillLoading = true,
       callback,
@@ -45,7 +46,7 @@
     return smartly;
   };
 
-  // 遅延処理メソッド
+  // Delay processing
   smartly.delay = function() {
     var func, time = 0, args = [];
 
@@ -159,7 +160,7 @@
       elm.removeEventListener(eventType, func, false);
     };
   // IE and old Opera
-  } else if ('attachEvent' in window) {
+  } else {
     addEvent = function(elm, eventType, func) {
       elm.attachEvent('on' + eventType, func);
     };
@@ -207,7 +208,7 @@
     }, 50);
   };
 
-  // MutationObserver の polyfill
+  // polyfill for MutationObserver
   MutationObserver = window.MutationObserver ||
                      window.WebKitMutationObserver ||
                      window.MozMutationObserver ||
@@ -250,18 +251,19 @@
       setCustomHTMLEvent = function(eventType) {
         var htmlEvent = document.createEvent('HTMLEvents');
         htmlEvent.initEvent(eventType, false, false);
-        this['on' + eventType] = null;
+        window['on' + eventType] = null;
 
         addEvent(window, eventType, function(e) {
-          if(typeof this['on' + eventType] === 'function'){
-            this['on' + eventType](e);
+          var callback = this['on' + eventType];
+          if(typeof callback === 'function'){
+            callback(e);
           }
         });
 
         return htmlEvent;
       };
 
-    }else if('event' in window) { // IE
+    } else if ('event' in window) { // IE
 
       startScroll = function() {
         var self = event.srcElement || event.target;
@@ -273,14 +275,13 @@
       setCustomHTMLEvent = function(eventType) {
         var htmlEvent = document.createEvent('HTMLEvents');
         htmlEvent.initEvent(eventType, false, false);
-        this['on' + eventType] = null;
+        window['on' + eventType] = null;
 
         addEvent(window, eventType, function() {
           var e = event;
-          if (typeof this['on' + eventType] === 'function') {
-            this['on' + eventType](e);
-          } else if (this['on' + eventType] !== null) {
-            console.log('on' + eventType+':', this['on' + eventType]);
+          var callback = this['on' + eventType];
+          if (typeof callback === 'function') {
+            callback(e);
           }
         });
 
@@ -494,10 +495,10 @@
 
   var round = Math.round;
   var abs = Math.abs;
+  
+  function processScroll() {
 
-  function processScroll(){
-
-    if(mutated === true){
+    if (mutated === true) {
       // スクロール中にターゲット要素に対するDOMの変更があった場合、再度ターゲット要素の座標を取得する
       setTargetXY();
       console.log('mutated');
@@ -509,7 +510,7 @@
 
     getCurrentXY();
 
-    if(smartly.easing < 1){
+    if (smartly.easing < 1) {
       smartly.easing = 1;
     }
 
@@ -548,14 +549,14 @@
         }
 
         dequeue();
-        // smartlyend イベントを発生させる
+        // fire 'smartlyend' event
         window.dispatchEvent(smartlyEndEvent);
       }
 
       return;
     }
 
-    // 繰り返し
+    // reputation
     prevX = currentX;
     prevY = currentY;
     scrollTo(round(currentX + vx), round(currentY + vy));
@@ -621,11 +622,12 @@
   }
 
   function getCurrentXY() {
-    currentX = document.documentElement.scrollLeft || document.body.scrollLeft;
-    currentY = document.documentElement.scrollTop || document.body.scrollTop;
-
-    smartly.currentLeft = currentX;
-    smartly.currentTop = currentY;
+    smartly.currentLeft =
+               currentX = document.documentElement.scrollLeft || document.body.scrollLeft;
+    smartly.currentTop =
+              currentY = document.documentElement.scrollTop || document.body.scrollTop;
+    
+    return;
   }
 
   var getScrollMaxXY;
@@ -791,7 +793,7 @@
   };
 
   function each(obj, func) {
-    if (obj === undefined) { return; }
+    if (!obj) { return; }
     var items;
     if (obj.length === undefined) {
       items = [obj];
@@ -887,8 +889,8 @@
   window.smartly = smartly;
   
   // some AMD build optimizers like r.js check for condition patterns like the following:
-  if (typeof define == 'function' &&
-      typeof define.amd == 'object' &&
+  if (typeof define === 'function' &&
+      typeof define.amd === 'object' &&
       define.amd) {
 
     // define as an anonymous module so, through path mapping, it can be
@@ -898,7 +900,7 @@
     });
   }
   // check for `exports` after `define` in case a build optimizer adds an `exports` object
-  else if (module !== undefined && module.exports) {
+  else if (typeof module !== 'undefined' && module.exports) {
     (module.exports = smartly).smartly = smartly;
   }
 }(window, document, location, history));
