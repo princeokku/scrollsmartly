@@ -4,6 +4,8 @@ module.exports = (grunt) ->
   require('load-grunt-tasks')(grunt)
     
   grunt.initConfig
+    replace: {} # tmp
+    
     jshint:
       options:
         camelcase: true
