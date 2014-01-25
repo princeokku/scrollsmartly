@@ -1,5 +1,5 @@
 /*!
- scrollsmartly.js v0.0.4
+ scrollsmartly.js v0.1.0
  Copyright (c) 2013 - 2014 Shinnosuke Watanabe | MIT License
 
  This library is originated from scrollsmoothly.js
@@ -15,8 +15,7 @@
   var currentHrefWOHash = location.href.split('#')[0];
 
   // Internal variables
-  var processInterval = 15,
-      stillLoading = true,
+  var stillLoading = true,
       callback,
       delayedFunctionsQueue = [],
       transit = [],
@@ -123,7 +122,7 @@
   }
 
   // Preference
-  smartly.easing = 5;
+  smartly.easing = 6;
   smartly.scrollingTo = null;
   smartly.scrolledTo = null;
   smartly.hashScrollSynced = true;
@@ -173,7 +172,8 @@
   var historyMoved = true;
 
   var onBackOrForward = function(e) {
-    // 履歴の前後ではなく、本ライブラリのスクロールにより hashchange イベントが起きた場合
+    // 履歴の前後ではなく、
+    // 本ライブラリのスクロールにより hashchange イベントが起きた場合
     if (! historyMoved || ! smartly.hashScrollSynced) {
       return;
     }
@@ -183,11 +183,40 @@
   };
 
   var scrollTimerID = null;
+  
+  // requestAnimationFrame polyfill
+  // http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  var requestAnimationFrame, cancelAnimationFrame;
+  for (var x=0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+    cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] ||
+                           window[vendors[x]+'CancelRequestAnimationFrame'];
+  }
+  
+  vendors = null;
+
+  if (!requestAnimationFrame || !cancelAnimationFrame) {
+    requestAnimationFrame = function(callback, element) {
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      var id = setTimeout(function() {
+        callback(currTime + timeToCall);
+      }, timeToCall);
+      lastTime = currTime + timeToCall;
+      return id;
+    };
+    cancelAnimationFrame = function(id) {
+      clearTimeout(id);
+    };
+  }
+
 
   var scrollCompleteHandler = function() {
     getCurrentXY();
     /*
-    if(scrollTimerID !== null){
+    if (scrollTimerID !== null) {
       clearTimeout(scrollTimerID);
     }
     scrollTimerID = setTimeout(function(){
@@ -292,7 +321,7 @@
     smartlyStartEvent = setCustomHTMLEvent('smartlystart');
     smartlyEndEvent = setCustomHTMLEvent('smartlyend');
 
-    // https://developer.mozilla.org/ja/docs/DOM/EventTarget.addEventListener
+    // https://developer.mozilla.org/docs/DOM/EventTarget.addEventListener
     // #Multiple_identical_event_listeners
     addEvent(window, 'hashchange', onBackOrForward);
     addEvent(window, 'scroll', scrollCompleteHandler);
@@ -315,9 +344,9 @@
     // 外部からページ内リンク付きで呼び出された場合
     if (smartly.hashScrollSynced &&
         (location.hash !== '' || smartly.homeElement !== rootElm)) {
+      // IE の場合、少し待ってからスクロール
       if (window.attachEvent !== undefined &&
-      window.opera === undefined){ // IE
-        // 少し待ってからスクロール
+          window.opera === undefined){
         setTimeout(function() {
           scrollTo(0, 0);
           smartly.scroll(location.hash.substring(1) || smartly.homeElement);
@@ -339,19 +368,17 @@
     var evt = clickEvent || event; //tmp
     var elm = evt.target || evt.srcElement;
     if (elm.href !== undefined && elm.href.indexOf('#') !== -1) {
-      console.log(elm.href);
       resetHashChangeEvent(false);
     }
   }
 
-  // https://developer.mozilla.org/ja/docs/JavaScript/Reference/Global_Objects/Array/isArray#Compatibility
   var isArray;
   if (Array.isArray !== undefined) {
     isArray = Array.isArray;
   } else {
-    var isArraySub = Object.prototype.toString.call;
+    var _isArraySub = Object.prototype.toString.call;
     isArray = function(obj) {
-      return isArraySub(obj) === '[object Array]';
+      return _isArraySub(obj) === '[object Array]';
     };
   }
 
@@ -359,7 +386,6 @@
 
     var targets = [''];
     var callback = null;
-    var easing = '';
 
     switch (arguments.length) {
       case 0:
@@ -465,7 +491,7 @@
     }
 
     // スクロール中ではない場合、またはスクロール中であっても、次の目標にまだ到達していない場合
-    if(smartly.scrollingTo === null || ! reachedCurrentTarget){
+    if(smartly.scrollingTo === null || !reachedCurrentTarget){
       // スクロールの開始処理
 
       smartly.scrollingTo = targetElm;
@@ -473,7 +499,7 @@
       // 'callback' 引数をコールバック関数に設定する
       callback = callback || null;
 
-      clearTimeout(scrollProcessID);
+      cancelAnimationFrame(scrollProcessID);
 
       // smartlystart イベントを発生させる
       window.dispatchEvent(smartlyStartEvent);
@@ -499,9 +525,9 @@
   function processScroll() {
 
     if (mutated === true) {
-      // スクロール中にターゲット要素に対するDOMの変更があった場合、再度ターゲット要素の座標を取得する
+      // スクロール中にターゲット要素に対するDOMの変更があった場合、
+      // 再度ターゲット要素の座標を取得する
       setTargetXY();
-      console.log('mutated');
 
       if(observer !== undefined){
         mutated = false;
@@ -519,32 +545,38 @@
 
     smartly.velocity = [vx, vy];
 
-    if(//(abs(vx) < 0.1 && abs(vy) < 0.1) ||
-    (prevX === currentX && prevY === currentY) ||
-    reachedCurrentTarget){ // 目標座標付近に到達した場合
+    // 目標座標付近に到達した場合
+    if ((abs(vx) < 0.05 && abs(vy) < 0.05) ||
+        (prevX === currentX && prevY === currentY) ||
+        reachedCurrentTarget) {
 
-      if(observer !== undefined){
-        observer.disconnect(); // DOMの変更通知の受取を止める
+      if (observer !== undefined) {
+        // DOMの変更通知の受取を止める
+        observer.disconnect();
       }
 
       addEvent(window, 'scroll', scrollCompleteHandler);
 
       // scroll.stop が呼ばれていた場合
-      if(reachedCurrentTarget){ return; }
+      if (reachedCurrentTarget) { return; }
 
       scrollTo(targetX, targetY);
       smartly.scrolledTo = targetElm;
-      reachedCurrentTarget = true; // 直近の目標に到達したことを表す
+      // 直近の目標に到達したことを表す
+      reachedCurrentTarget = true;
       smartly.velocity = [0, 0];
 
-      if(transit.length > 0){ // 経由する要素がまだ残っている場合
+      if (transit.length > 0) {
+        // 経由する要素がまだ残っている場合
         smartly.scroll(transit.shift());
 
-      }else{ // 経由すべき要素は残っていないため、スクロールを完了する
+      } else {
+        // finish scroll
+        // because there is no element to pass through
         setLocationHash();
         smartly.scrollingTo = prevX = prevY = null;
 
-        if(typeof callback === 'function'){
+        if (typeof callback === 'function') {
           callback();
         }
 
@@ -557,14 +589,16 @@
     }
 
     // reputation
+
     prevX = currentX;
     prevY = currentY;
-    scrollTo(round(currentX + vx), round(currentY + vy));
-
-    scrollProcessID = setTimeout(
-      function(){ processScroll(); },
-      processInterval
+    
+    scrollTo(
+      currentX + (vx >= 0? Math.ceil(vx): Math.round(vx)),
+      currentY + (vy >= 0? Math.ceil(vy): Math.floor(vy))
     );
+
+    scrollProcessID = requestAnimationFrame(processScroll);
   }
 
   function setLocationHash() {
@@ -614,7 +648,8 @@
       // 検知対象の HashChangeEvent では「ない」ことを表す
       historyMoved = false;
 
-      // HashChangeEvent が発生し終わった頃に、これから起こる HashChangeEvent が検知対象となるよう再設定する
+      // HashChangeEvent が発生し終わった頃に、
+      // これから起こる HashChangeEvent が検知対象となるよう再設定する
       hashChangeTimerID = setTimeout(function() {
         historyMoved = true;
       }, 30);
@@ -669,12 +704,13 @@
 
   } else if(window.innerWidth) {
     var box = document.createElement('div');
-    box.style.position = 'absolute';
-    box.style.left = box.style.top = '0';
-    box.style.width = box.style.height = '100%';
-    box.style.margin = box.style.padding = '0';
-    box.style.border = 'none';
-    box.style.visibility = 'hidden';
+    var boxStyle = box.style;
+    boxStyle.position = 'absolute';
+    boxStyle.left = boxStyle.top = '0';
+    boxStyle.width = boxStyle.height = '100%';
+    boxStyle.margin = boxStyle.padding = '0';
+    boxStyle.border = 'none';
+    boxStyle.visibility = 'hidden';
 
     getWindowSize = function() {
       document.body.appendChild(box);
