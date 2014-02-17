@@ -1,6 +1,6 @@
 {
   "name": "scrollsmartly.js",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "A smooth scroll library based on scrollsmoothly.js",
   "main": "scrollsmartly.js",
   "scripts": {
@@ -26,7 +26,8 @@
     "grunt-testem": "~0.5.1",
     "grunt-contrib-jshint": "~0.8.0",
     "grunt-complexity": "~0.1.4",
-    "grunt-release": "~0.6.0",
-    "grunt-replace": "~0.5.1"
+    "grunt-release": "~0.7.0",
+    "grunt-replace": "~0.6.1",
+    "semver": "~2.2.1"
   }
 }
