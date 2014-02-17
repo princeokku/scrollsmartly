@@ -1,5 +1,7 @@
 #scrollsmartly.js – Smooth Scroll Library for JavaScript
 
+[![Bower version](https://badge.fury.io/bo/scrollsmartly.png)](http://badge.fury.io/bo/scrollsmartly)
+
 ##1. 概要
 
 Webサイトにページ内スムーズスクロール機能を追加するためのJavaScriptライブラリです。単一ページのサイトなどの制作に役立ちます。 *[scrollsmoothly.js](http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly)* (Copyright(C) [KAZUMiX](http://d.hatena.ne.jp/KAZUMiX/)) をフォークし、機能の追加、アルゴリズムの改善を行ったものです。
