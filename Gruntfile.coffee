@@ -1,10 +1,17 @@
 module.exports = (grunt) ->
   'use strict'
 
-  require('load-grunt-tasks')(grunt)
+  require('load-grunt-tasks') grunt
     
   grunt.initConfig
-    replace: {} # tmp
+    replace:
+      bump:
+        options:
+          prefix: ' v'
+          preservePrefix: true
+          patterns: []
+        files:
+          'scrollsmartly.js': ['scrollsmartly.js']
     
     jshint:
       options:
@@ -42,9 +49,19 @@ module.exports = (grunt) ->
       options:
         file: 'bower.json'
         npm: false
-        
-  grunt.registerTask 'default', [
-    'jshint'
-    'uglify'
-    'watch'
-  ]
+    
+  grunt.registerTask 'build', ['jshint', 'uglify']
+  grunt.registerTask 'default', ['build', 'watch']
+    
+  grunt.registerTask 'publish', ->
+    releaseType = this.args[0]
+    currentVer = grunt.file.readJSON('bower.json').version
+    nextVer = require('semver').inc currentVer, this.args[0]
+    if not nextVer
+      return
+    grunt.config 'replace.bump.options.patterns', [
+      match: currentVer
+      replacement: nextVer
+    ]
+    
+    grunt.task.run ['replace', 'build' ,"release:#{ releaseType }"]
