@@ -2,7 +2,7 @@
  scrollsmartly.js v0.1.0
  Copyright (c) 2013 - 2014 Shinnosuke Watanabe | MIT License
 
- This library is originated from scrollsmoothly.js
+ scrollsmoothly.js
  Copyright (c) 2008 KAZUMiX | MIT License
  http://d.hatena.ne.jp/KAZUMiX/20080418/scrollsmoothly
 */
@@ -185,7 +185,7 @@
   var scrollTimerID = null;
   
   // requestAnimationFrame polyfill
-  // http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
+  // www.paulirish.com/2011/requestanimationframe-for-smart-animating/
   var lastTime = 0;
   var vendors = ['ms', 'moz', 'webkit', 'o'];
   var requestAnimationFrame, cancelAnimationFrame;
@@ -264,7 +264,7 @@
   var setCustomHTMLEvent;
   var smartlyStartEvent, smartlyEndEvent;
 
-  // 全体の初期設定
+  // initial setting
   var basicSettings = function(e) {
     if (e) {
       startScroll = function(clickEvent) {
@@ -291,9 +291,9 @@
 
         return htmlEvent;
       };
-
-    } else if ('event' in window) { // IE
-
+      
+    // old IE
+    } else {
       startScroll = function() {
         var self = event.srcElement || event.target;
         event.returnValue = false;
@@ -327,7 +327,7 @@
     addEvent(window, 'scroll', scrollCompleteHandler);
     addEvent(window, 'resize', resizeCompleteHandler);
 
-    // 本関数が再度呼ばれても何もしない
+    // noop
     basicSettings = function(){};
   };
 
@@ -454,8 +454,10 @@
 
     var currentTarget = targets.shift();
 
-    // ターゲット要素の座標を取得
-    if (currentTarget.nodeType === 1) { // ELEMENT Node である場合
+    // get coordinate of target element
+
+    // if ELEMENT Node
+    if (currentTarget.nodeType === 1) {
       targetElm = currentTarget;
       targetHash = currentTarget.id;
 
@@ -501,7 +503,7 @@
 
       cancelAnimationFrame(scrollProcessID);
 
-      // smartlystart イベントを発生させる
+      // fire 'smartlystart' event
       window.dispatchEvent(smartlyStartEvent);
 
     } else {
@@ -883,12 +885,13 @@
     */
 
     var hrefStr = elm.href + '';
-    var splitterIndex = hrefStr.lastIndexOf('#'); // '#' が無ければ -1 が代入される
+    var splitterIndex = hrefStr.lastIndexOf('#');
 
     // '#' 以降を除いた文字列が、現在表示しているサイトのURLと一致しているかの判定。
     // '#' が無ければ String.substring(0, -1) つまり '' となり、偽である。
     if (hrefStr.substring(0, splitterIndex) === currentHrefWOHash) {
-      if (elm.hash !== undefined) { // In HTML4?
+      // In HTML4?
+      if (elm.hash !== undefined) {
         elm.hash = hrefStr.substring(splitterIndex + 1);
       }
       delete elm.scrollSmartlyTarget;
@@ -911,8 +914,8 @@
       dequeue();
       return smartly;
     }
-    // ページ内リンクにイベントを設定する
-    var linkElms = document.links; // https://developer.mozilla.org/ja/docs/DOM/document.links
+    // bind events to in-page links
+    var linkElms = document.links;
     for (var i=0; i<linkElms.length; i++) {
       smartly.replaceAnchor(linkElms[i], true);
     }
